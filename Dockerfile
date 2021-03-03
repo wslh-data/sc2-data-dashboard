@@ -30,7 +30,7 @@ RUN mkdir /app
 RUN mkdir /data
 
 # copy app into container
-COPY *.R /app
-COPY *.Rmd /app
+COPY *.R /app/
+COPY *.Rmd /app/
 
 CMD ["R", "-e", "rmarkdown::run('/app/index.Rmd', shiny_args = list(port = 3838, host = '0.0.0.0'))"]
