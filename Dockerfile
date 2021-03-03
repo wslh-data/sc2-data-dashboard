@@ -23,14 +23,16 @@ RUN R -e "install.packages(c(\
   'usmap',\
   'stringr',\
   'dplyr',\
+  'rmarkdown',\
   'flexdashboard',\
   'shinythemes'), repos = 'http://cran.us.r-project.org')"
 
-RUN mkdir /app
-RUN mkdir /data
+RUN mkdir /app && mkdir /data
 
 # copy app into container
 COPY *.R /app/
 COPY *.Rmd /app/
+
+EXPOSE 3838
 
 CMD ["R", "-e", "rmarkdown::run('/app/index.Rmd', shiny_args = list(port = 3838, host = '0.0.0.0'))"]
