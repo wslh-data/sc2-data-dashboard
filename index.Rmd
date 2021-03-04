@@ -1,44 +1,33 @@
 ---
 title: "SARS-CoV-2 Genomic Sequencing Report"
 runtime: shiny
-output: 
-  flexdashboard::flex_dashboard:
-    orientation: rows
-    vertical_layout: fill
-    social: menu
-    source_code: https://github.com/wslh-data/sc2-data-dashboard
-    theme: simplex
+output:
+  html_document:
+    css: "wslh-theme/wslh-style.css"
+    template: "wslh-theme/wslh-r-template.html"
 ---
 
-```{r setup, include=FALSE}
-library(flexdashboard)
-library(shiny)
-library(shinythemes)
-```
-
-Row
 -----------------------------------------------------------------------
 
 ### SARS-CoV-2 Variant Frequencies
 
-```{r}
+```{r echo=FALSE}
 source("sc2_variant_freq.R", local = knitr::knit_global())
 renderVariants()
 ```
 
-Row
 -----------------------------------------------------------------------
 
 ### SARS-CoV-2 Genomes by County
 
-```{r}
+```{r echo=FALSE}
 source("sequenceMap.R", local = knitr::knit_global())
 renderMap()
 ```
 
 ### Number of SARS-CoV-2 Genomes
 
-```{r}
+```{r echo=FALSE}
 source("sc2_variant_freq.R", local = knitr::knit_global())
 renderTotal()
 ```
