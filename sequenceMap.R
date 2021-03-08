@@ -3,9 +3,9 @@ library(rjson)
 library(usmap)
 library(stringr)
 
-renderMap <- function(){
+renderMap <- function(sc2Data,dhsdata){
   # get geojson data for counties in the US
-  geojson <- fromJSON(file="/data/geojson-counties-fips.json")
+  geojson <- fromJSON(file="./data/geojson-counties-fips.json")
 
   # filter out everything but WI
   c = 1
@@ -17,10 +17,6 @@ renderMap <- function(){
     }
   }
   geojson$features <- filteredfeatures
-
-  # load SC2 data
-  sc2Data = read.csv(Sys.glob(file.path('/data/gisaid_*tsv')),sep="\t")
-
   #get county
   sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
   sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
@@ -46,7 +42,6 @@ renderMap <- function(){
   CountyData$FIPS <- lapply(CountyData$County, fips, state="WI")
 
   #load DHS data
-  dhsdata = read.csv("/data/County_Table_data.csv")
   dhsdata <- dhsdata[dhsdata$Measure.Names == "Number of confirmed cases",]
   dhsdata <- dhsdata[,c(1,4)]
   names(dhsdata) <- c("County","ConfirmedCases")

@@ -1,9 +1,8 @@
 library(plotly)
 library(dplyr)
 
-renderTotal <- function(){
+renderTotal <- function(sc2Data){
   # load SC2 data
-  sc2Data = read.csv(Sys.glob(file.path('/data/gisaid_*tsv')),sep="\t")
   sc2byDate <- data.frame(table(sc2Data$Collection.date))
   names(sc2byDate) <- c("date","num")
   sc2byDate <- sc2byDate[!(sc2byDate$date=="2020"),]
@@ -27,9 +26,7 @@ renderTotal <- function(){
   return(fig)
 }
 
-renderVariants <- function(){
-  # load SC2 data
-  sc2Data = read.csv(Sys.glob(file.path('/data/gisaid_*tsv')),sep="\t")
+renderVariants <- function(sc2Data){
   sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))
   names(sc2bylineage) <- c("date","lineage","num")
   sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"),]

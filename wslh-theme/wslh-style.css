@@ -89,8 +89,10 @@ body {
   line-height: 1.5;
   color: var(--uw-body-font);
   text-align: left;
-  background-color: var(--uw-page-bg);
+  background-color: var(--uw-gray-darker);
 }
+
+
 
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: 0 !important;

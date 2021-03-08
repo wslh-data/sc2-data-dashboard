@@ -7,28 +7,37 @@ output:
     template: "wslh-theme/wslh-r-template.html"
 ---
 
+```{r global, include=FALSE}
+# load data in 'global' chunk so it can be shared by all users of the dashboard
+# this helps for faster loading!
+sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
+dhsdata = read.csv("./data/County_Table_data.csv")
+```
+
+# SARS-CoV-2 Sequencing Report
+
 -----------------------------------------------------------------------
 
 ### SARS-CoV-2 Variant Frequencies
 
-```{r echo=FALSE}
+```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
 source("sc2_variant_freq.R", local = knitr::knit_global())
-renderVariants()
+renderVariants(sc2Data)
 ```
 
 -----------------------------------------------------------------------
 
 ### SARS-CoV-2 Genomes by County
 
-```{r echo=FALSE}
+```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
 source("sequenceMap.R", local = knitr::knit_global())
-renderMap()
+renderMap(sc2Data,dhsdata)
 ```
 
 ### Number of SARS-CoV-2 Genomes
 
-```{r echo=FALSE}
+```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
 source("sc2_variant_freq.R", local = knitr::knit_global())
-renderTotal()
+renderTotal(sc2Data)
 ```
 
