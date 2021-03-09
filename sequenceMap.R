@@ -94,12 +94,21 @@ renderMap <- function(sc2Data,dhsdata){
     bgcolor = "#fff",
     visible = FALSE
   )
+  #mapbox projection options
+  m <- list(
+    style="white-bg",
+    center=list(
+      lon=-89.9941,
+      lat=44.6243
+      ),
+    zoom=5,
+    bearing=0.8
+    )
 
   fig <- plot_ly()
   fig <- fig %>% add_trace(
-    type="choropleth",
+    type="choroplethmapbox",
     geojson=geojson,
-    locationmode = "geojson-id",
     z = CountyData$Log,
     locations = CountyData$FIPS,
     text = CountyData$hover,
@@ -110,7 +119,8 @@ renderMap <- function(sc2Data,dhsdata){
     colors = 'Purples',
     marker = list(line = l)
   )
-  fig <- fig %>% layout(geo = g,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
+  fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
+  fig <- fig %>% config(scrollZoom=FALSE)
 
   return(fig)
 }

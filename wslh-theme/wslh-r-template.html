@@ -24,5 +24,16 @@
     <div class="container bg-white" style="padding-top: 80px">
       $body$
     </div>
+    <script> 
+ $$(document).ready(function () { 
+   window.buildTabsets("$idprefix$TOC"); 
+ }); 
+  
+ $$(document).ready(function () { 
+   $$('.tabset-dropdown > .nav-tabs > li').click(function () { 
+     $$(this).parent().toggleClass('nav-tabs-open') 
+   }); 
+ }); 
+ </script> 
   </body>
 </html>

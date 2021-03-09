@@ -21,19 +21,20 @@ renderTotal <- function(sc2Data){
       xaxis = list(
         type = "date",
         range=c('2020-01-01', format(Sys.Date(),"%Y-%m-%d"))
-      )
+      ),
+      hovermode = 'compare'
     )
   return(fig)
 }
-
-renderVariants <- function(sc2Data){
+renderVOC <- function(sc2Data){
   sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))
   names(sc2bylineage) <- c("date","lineage","num")
   sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"),]
 
   fig <- plot_ly()
   # b.1.1.7
-  data <- sc2bylineage[sc2bylineage$lineage == "B.1.1.7",]
+  data <- data.frame(date="2020-01-01",lineage="B.1.1.7",num=0)
+  data <- rbind(sc2bylineage[sc2bylineage$lineage == "B.1.1.7",])
   fig <- fig %>% add_trace(
     type = "scatter",
     x = as.Date(data$date, format= "%Y-%m-%d"),
@@ -43,7 +44,8 @@ renderVariants <- function(sc2Data){
   )
 
   # b.1.351
-  data <- sc2bylineage[sc2bylineage$lineage == "B.1.351",]
+  data <- data.frame(date="2020-01-01",lineage="B.1.351",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "B.1.351",])
   fig <- fig %>% add_trace(
     type = "scatter",
     x = as.Date(data$date, format= "%Y-%m-%d"),
@@ -53,7 +55,8 @@ renderVariants <- function(sc2Data){
   )
 
   # P.1
-  data <- sc2bylineage[sc2bylineage$lineage == "P.1",]
+  data <- data.frame(date="2020-01-01",lineage="P.1",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "P.1",])
   fig <- fig %>% add_trace(
     type = "scatter",
     x = as.Date(data$date, format= "%Y-%m-%d"),
@@ -62,8 +65,26 @@ renderVariants <- function(sc2Data){
     mode = "lines"
   )
 
+  fig <- fig %>%
+    layout(
+      xaxis = list(
+        type = "date",
+        range=c('2020-01-01', format(Sys.Date(),"%Y-%m-%d"))
+      ),
+      hovermode = 'compare'
+    )
+  return(fig)
+}
+
+renderVOI <- function(sc2Data){
+  sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))
+  names(sc2bylineage) <- c("date","lineage","num")
+  sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"),]
+  
+  fig <- plot_ly()
   # P.2
-  data <- sc2bylineage[sc2bylineage$lineage == "P.2",]
+  data <- data.frame(date="2020-01-01",lineage="P.2",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "P.2",])
   fig <- fig %>% add_trace(
     type = "scatter",
     x = as.Date(data$date, format= "%Y-%m-%d"),
@@ -71,9 +92,10 @@ renderVariants <- function(sc2Data){
     name = 'P.2',
     mode = "lines"
   )
-
+  
   #CAL.20C (B.1.429 & B.1.427)
-  data <- merge(sc2bylineage[sc2bylineage$lineage == "B.1.429",], sc2bylineage[sc2bylineage$lineage == "B.1.427",],by="date")
+  data <- data.frame(date="2020-01-01",lineage.x="B.1.429",num.x=0,lineage.y="B.1.427",num.y=0)
+  data <- rbind(data,merge(sc2bylineage[sc2bylineage$lineage == "B.1.429",], sc2bylineage[sc2bylineage$lineage == "B.1.427",],by="date"))
   data$num <- data$num.x + data$num.y
   fig <- fig %>% add_trace(
     type = "scatter",
@@ -82,9 +104,10 @@ renderVariants <- function(sc2Data){
     name = 'CAL.20C (B.1.429 & B.1.427)',
     mode = "lines"
   )
-
+  
   # B.1.525
-  data <- sc2bylineage[sc2bylineage$lineage == "B.1.525",]
+  data <- data.frame(date="2020-01-01",lineage="B.1.525",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "B.1.525",])
   fig <- fig %>% add_trace(
     type = "scatter",
     x = as.Date(data$date, format= "%Y-%m-%d"),
@@ -92,13 +115,14 @@ renderVariants <- function(sc2Data){
     name = 'B.1.525',
     mode = "lines"
   )
-
+  
   fig <- fig %>%
     layout(
       xaxis = list(
         type = "date",
         range=c('2020-01-01', format(Sys.Date(),"%Y-%m-%d"))
-      )
+      ),
+      hovermode = 'compare'
     )
   return(fig)
 }

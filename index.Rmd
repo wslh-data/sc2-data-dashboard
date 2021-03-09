@@ -18,12 +18,31 @@ dhsdata = read.csv("./data/County_Table_data.csv")
 
 -----------------------------------------------------------------------
 
-### SARS-CoV-2 Variant Frequencies
+### SARS-CoV-2 Genomes from Wisconsin
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
 source("sc2_variant_freq.R", local = knitr::knit_global())
-renderVariants(sc2Data)
+renderTotal(sc2Data)
 ```
+
+-----------------------------------------------------------------------
+
+### SARS-CoV-2 Variants {.tabset}
+
+#### Variants of Concern
+
+```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
+source("sc2_variant_freq.R", local = knitr::knit_global())
+renderVOC(sc2Data)
+```
+
+#### Variants of Interest
+
+```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
+source("sc2_variant_freq.R", local = knitr::knit_global())
+renderVOI(sc2Data)
+```
+
 
 -----------------------------------------------------------------------
 
@@ -32,12 +51,5 @@ renderVariants(sc2Data)
 ```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
 source("sequenceMap.R", local = knitr::knit_global())
 renderMap(sc2Data,dhsdata)
-```
-
-### Number of SARS-CoV-2 Genomes
-
-```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
-source("sc2_variant_freq.R", local = knitr::knit_global())
-renderTotal(sc2Data)
 ```
 
