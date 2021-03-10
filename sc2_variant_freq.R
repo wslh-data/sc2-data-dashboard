@@ -22,7 +22,8 @@ renderTotal <- function(sc2Data){
         type = "date",
         range=c('2020-01-01', format(Sys.Date(),"%Y-%m-%d"))
       ),
-      hovermode = 'compare'
+      hovermode = 'compare',
+      autosize=TRUE
     )
   return(fig)
 }
@@ -113,6 +114,39 @@ renderVOI <- function(sc2Data){
     x = as.Date(data$date, format= "%Y-%m-%d"),
     y = cumsum(data$num),
     name = 'B.1.525',
+    mode = "lines"
+  )
+  
+  # B.1.526
+  data <- data.frame(date="2020-01-01",lineage="B.1.526",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "B.1.526",])
+  fig <- fig %>% add_trace(
+    type = "scatter",
+    x = as.Date(data$date, format= "%Y-%m-%d"),
+    y = cumsum(data$num),
+    name = 'B.1.526',
+    mode = "lines"
+  )
+
+  # A.23.1
+  data <- data.frame(date="2020-01-01",lineage="A.23.1",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "A.23.1",])
+  fig <- fig %>% add_trace(
+    type = "scatter",
+    x = as.Date(data$date, format= "%Y-%m-%d"),
+    y = cumsum(data$num),
+    name = 'A.23.1',
+    mode = "lines"
+  )
+  
+  # B.1.1.318
+  data <- data.frame(date="2020-01-01",lineage="B.1.1.318",num=0)
+  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "B.1.1.318",])
+  fig <- fig %>% add_trace(
+    type = "scatter",
+    x = as.Date(data$date, format= "%Y-%m-%d"),
+    y = cumsum(data$num),
+    name = 'B.1.1.318',
     mode = "lines"
   )
   

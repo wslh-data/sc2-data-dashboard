@@ -4,7 +4,7 @@ runtime: shiny
 output:
   html_document:
     css: "wslh-theme/wslh-style.css"
-    template: "wslh-theme/wslh-r-template.html"
+    template: "wslh-theme/wslh-theme.html"
 ---
 
 ```{r global, include=FALSE}
@@ -12,18 +12,24 @@ output:
 # this helps for faster loading!
 sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
 dhsdata = read.csv("./data/County_Table_data.csv")
+source("sc2_variant_freq.R")
+source("sequenceMap.R")
 ```
-
+<div style="margin-bottom:50px">
 # SARS-CoV-2 Sequencing Report
 
------------------------------------------------------------------------
+The data available in this report was obtained from the <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> database and the Wisconsin Department of Health Services SARS-CoV-2 dashboard. For additional SARS-CoV-2 information in Wisconsin visit the dashboard here [COVID-19: Wisconsin Summary Data](https://www.dhs.wisconsin.gov/covid-19/data.htm).
+</div>
 
+-----------------------------------------------------------------------
+<div style="margin-bottom:50px">
 ### SARS-CoV-2 Genomes from Wisconsin
 
-```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
-source("sc2_variant_freq.R", local = knitr::knit_global())
+```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
 renderTotal(sc2Data)
 ```
+Cumulative number of sequences originating from Wisconsin in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by date of sample collection. 
+</div>
 
 -----------------------------------------------------------------------
 
@@ -31,25 +37,44 @@ renderTotal(sc2Data)
 
 #### Variants of Concern
 
-```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
-source("sc2_variant_freq.R", local = knitr::knit_global())
+```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
 renderVOC(sc2Data)
 ```
+**B.1.1.7** - Also known as 20I/501Y.V1 was initially found in December 2020 and appears to have originated from the United Kingdom. This variant carries 17 defining mutations and has spread globally. Early evidence suggests the variant may be associated with increased transmissibility and risk of death. Notable mutations include Spike: N501Y.
+
+**B.1.351** - Also known as 20H/501Y.V2 was initially found in December 2020 and appears to have originated from South Africa. This variant carries 9 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. Notable mutations include Spike: N501Y, Spike: E484K, and Spike: K417T.
+
+**P.1** - Also known as 20J/501Y.V3 was initially found in January 2021 and appears to have originated from Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. Notable mutations include Spike: N501Y, Spike: E484K, and Spike: K417T.
+
 
 #### Variants of Interest
 
-```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
-source("sc2_variant_freq.R", local = knitr::knit_global())
+```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
 renderVOI(sc2Data)
 ```
 
+**P.2** - Similar to P.1, seems to have originated in Brazil. Carries the Spike: E484K mutation but is missing the Spike: N501Y and Spike: K417T.
 
+**B.1.429 & B.1.427** - Also known as (CAL.20C), originated in Southern California in July 2020. Carries the Spike: L452R mutation which could affect antibody binding [Liu et al. 2020](https://www.biorxiv.org/content/10.1101/2020.11.06.372037v1).
+
+**B.1.525** - Similar to P.1 and P.2 carries the Spike: E484K mutation.
+
+**B.1.526** - First identified in New York.
+
+**A.23.1** - A variant first detected in March 2020 in Uganda. Described here [Bugembe et al. 2021](https://www.medrxiv.org/content/10.1101/2021.02.08.21251393v1)
+
+**B.1.1.318** - A variant first detected in the United Kingdom, carries the Spike: E484K mutation.
+
+###
+
+<div style="margin-bottom:100px; margin-top:50px">
 -----------------------------------------------------------------------
-
 ### SARS-CoV-2 Genomes by County
 
-```{r, echo=FALSE,message=FALSE,fig.align="center", fig.width=9.5}
-source("sequenceMap.R", local = knitr::knit_global())
+```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
 renderMap(sc2Data,dhsdata)
 ```
-
+Total number of sequences in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by County, darker purple represents a larger number of total sequences. Hover over a County to see what percentage of confirmed cases have been sequenced. Confirmed cases by county are available [here](https://www.dhs.wisconsin.gov/covid-19/county.htm).
+  
+  
+</div>
