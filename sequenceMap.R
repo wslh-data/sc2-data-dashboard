@@ -1,12 +1,8 @@
 library(plotly)
-library(rjson)
 library(usmap)
 library(stringr)
 
-renderMap <- function(sc2Data,dhsdata){
-  # get geojson data for counties in the US
-  geojson <- fromJSON(file="./data/geojson-counties-fips.json")
-
+renderMap <- function(sc2Data,dhsdata,geojson){
   # filter out everything but WI
   c = 1
   filteredfeatures <- c()

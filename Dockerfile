@@ -32,6 +32,7 @@ RUN mkdir /app && mkdir /data
 # copy app into container
 COPY *.R /app/
 COPY *.Rmd /app/
+COPY wslh-theme /app/wslh-theme
 
 EXPOSE 3838
 

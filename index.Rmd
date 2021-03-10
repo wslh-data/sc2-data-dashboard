@@ -8,10 +8,14 @@ output:
 ---
 
 ```{r global, include=FALSE}
+library(rjson)
 # load data in 'global' chunk so it can be shared by all users of the dashboard
 # this helps for faster loading!
 sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
 dhsdata = read.csv("./data/County_Table_data.csv")
+# get geojson data for counties in the US
+geojson <- fromJSON(file="./data/geojson-counties-fips.json")
+
 source("sc2_variant_freq.R")
 source("sequenceMap.R")
 ```
@@ -72,7 +76,7 @@ renderVOI(sc2Data)
 ### SARS-CoV-2 Genomes by County
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
-renderMap(sc2Data,dhsdata)
+renderMap(sc2Data,dhsdata,geojson)
 ```
 Total number of sequences in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by County, darker purple represents a larger number of total sequences. Hover over a County to see what percentage of confirmed cases have been sequenced. Confirmed cases by county are available [here](https://www.dhs.wisconsin.gov/covid-19/county.htm).
   
