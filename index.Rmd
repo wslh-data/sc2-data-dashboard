@@ -27,14 +27,64 @@ The data available in this report was obtained from the <a href="https://www.gis
 
 -----------------------------------------------------------------------
 <div style="margin-bottom:50px">
-### SARS-CoV-2 Genomes from Wisconsin
+### SARS-CoV-2 Genomes from Wisconsin {.tabset}
+
+#### Cumulative Total
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
 renderTotal(sc2Data)
 ```
 Cumulative number of sequences originating from Wisconsin in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by date of sample collection. 
-</div>
 
+
+#### Total by Timeframe
+
+```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
+sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
+# load SC2 data
+sc2byDate <- data.frame(table(sc2Data$Collection.date))
+names(sc2byDate) <- c("date","num")
+sc2byDate <- sc2byDate[!(sc2byDate$date=="2020"|sc2byDate$date=="2021"),]
+sc2byDate$date <- as.Date(sc2byDate$date, format= "%Y-%m-%d")
+sc2byDate <- within(sc2byDate, {
+  weeks <- format(date, "%U-%Y")
+  weeks <- factor(weeks, levels = unique(weeks))
+  
+  months <- format(date, "%B-%Y")
+  months <- factor(months, levels = unique(months))
+  
+  quarters <- paste(quarters(date), format(date, "%Y"), sep = "-")
+  quarters <- factor(quarters, levels = unique(quarters))
+})
+sc2byDate <- sc2byDate[!is.na(sc2byDate$date),]
+sc2byDate <- droplevels(sc2byDate)
+
+weekly <- sc2byDate %>% group_by(weeks) %>% summarise(num = sum(num))
+names(weekly) <- c("date","num")
+monthly <- sc2byDate %>% group_by(months) %>% summarise(num = sum(num))
+names(monthly) <- c("date","num")
+quarterly <- sc2byDate %>% group_by(quarters) %>% summarise(num = sum(num))
+names(quarterly) <- c("date","num")
+
+
+renderPlotly({
+  if(input$timeframe == "Monthly"){
+    renderTimeTotal(monthly)
+  }
+  else if(input$timeframe == "Quarterly"){
+    renderTimeTotal(quarterly)
+  }
+  else{
+    renderTimeTotal(weekly)
+  }
+  })
+```
+Cumulative number of sequences originating from Wisconsin patients in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by date of sample collection. 
+
+```{r, echo=FALSE,message=FALSE}
+selectInput(inputId="timeframe",label="Time Period",choices=c("Weekly","Monthly","Quarterly"))
+```
+</div>
 -----------------------------------------------------------------------
 
 ### SARS-CoV-2 Variants {.tabset}
@@ -48,8 +98,9 @@ renderVOC(sc2Data)
 
 **B.1.351** - Also known as 20H/501Y.V2 was initially found in December 2020 and appears to have originated from South Africa. This variant carries 9 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. Notable mutations include Spike: N501Y, Spike: E484K, and Spike: K417T.
 
-**P.1** - Also known as 20J/501Y.V3 was initially found in January 2021 and appears to have originated from Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. Notable mutations include Spike: N501Y, Spike: E484K, and Spike: K417T.
+**B.1.429 & B.1.427** - Also known as (CAL.20C), originated in Southern California in July 2020. Carries the Spike: L452R mutation which could affect antibody binding [Liu et al. 2020](https://www.biorxiv.org/content/10.1101/2020.11.06.372037v1).
 
+**P.1** - Also known as 20J/501Y.V3 was initially found in January 2021 and appears to have originated from Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. Notable mutations include Spike: N501Y, Spike: E484K, and Spike: K417T.
 
 #### Variants of Interest
 
@@ -59,15 +110,9 @@ renderVOI(sc2Data)
 
 **P.2** - Similar to P.1, seems to have originated in Brazil. Carries the Spike: E484K mutation but is missing the Spike: N501Y and Spike: K417T.
 
-**B.1.429 & B.1.427** - Also known as (CAL.20C), originated in Southern California in July 2020. Carries the Spike: L452R mutation which could affect antibody binding [Liu et al. 2020](https://www.biorxiv.org/content/10.1101/2020.11.06.372037v1).
-
 **B.1.525** - Similar to P.1 and P.2 carries the Spike: E484K mutation.
 
 **B.1.526** - First identified in New York.
-
-**A.23.1** - A variant first detected in March 2020 in Uganda. Described here [Bugembe et al. 2021](https://www.medrxiv.org/content/10.1101/2021.02.08.21251393v1)
-
-**B.1.1.318** - A variant first detected in the United Kingdom, carries the Spike: E484K mutation.
 
 ###
 

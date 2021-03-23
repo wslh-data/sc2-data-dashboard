@@ -583,8 +583,10 @@ pre code {
 
 .content-container {
   width: 90%;
+  height:100%;
   padding-right: 5rem;
   padding-left: 5rem;
+  padding-bottom: 10px;
   margin-right:  auto;
   margin-left:  auto;
 }
