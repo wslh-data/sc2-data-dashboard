@@ -1,23 +1,31 @@
 ---
 title: "SARS-CoV-2 Genomic Sequencing Report"
 runtime: shiny
+vertical_layout: fill
 output:
   html_document:
     css: "wslh-theme/wslh-style.css"
     template: "wslh-theme/wslh-theme.html"
+
 ---
 
 ```{r global, include=FALSE}
 library(rjson)
+library(tidyr)
+library(plotly)
+library(shinycssloaders)
+
 # load data in 'global' chunk so it can be shared by all users of the dashboard
 # this helps for faster loading!
 sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
 dhsdata = read.csv("./data/County_Table_data.csv")
 # get geojson data for counties in the US
-geojson <- fromJSON(file="./data/geojson-counties-fips.json")
+WICounty_geojson <- fromJSON(file="./data/geojson-counties-fips.json")
+herc_geojson <- fromJSON(file="./data/Wisconsin_Healthcare_Emergency_Readiness_Coalition_Regions.json")
 
 source("sc2_variant_freq.R")
 source("sequenceMap.R")
+
 ```
 <div style="margin-bottom:50px">
 # SARS-CoV-2 Sequencing Report
@@ -32,7 +40,9 @@ The data available in this report was obtained from the <a href="https://www.gis
 #### Cumulative Total
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
-renderTotal(sc2Data)
+
+renderPlotly(renderTotal(sc2Data))
+
 ```
 Cumulative number of sequences originating from Wisconsin in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by date of sample collection. 
 
@@ -40,7 +50,7 @@ Cumulative number of sequences originating from Wisconsin in <a href="https://ww
 #### Total by Timeframe
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
-sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
+selectInput(inputId="totaltimeframe",label="Time Period",choices=c("Weekly","Monthly","Quarterly"))
 # load SC2 data
 sc2byDate <- data.frame(table(sc2Data$Collection.date))
 names(sc2byDate) <- c("date","num")
@@ -68,10 +78,10 @@ names(quarterly) <- c("date","num")
 
 
 renderPlotly({
-  if(input$timeframe == "Monthly"){
+  if(input$totaltimeframe == "Monthly"){
     renderTimeTotal(monthly)
   }
-  else if(input$timeframe == "Quarterly"){
+  else if(input$totaltimeframe == "Quarterly"){
     renderTimeTotal(quarterly)
   }
   else{
@@ -80,10 +90,6 @@ renderPlotly({
   })
 ```
 Cumulative number of sequences originating from Wisconsin patients in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by date of sample collection. 
-
-```{r, echo=FALSE,message=FALSE}
-selectInput(inputId="timeframe",label="Time Period",choices=c("Weekly","Monthly","Quarterly"))
-```
 </div>
 -----------------------------------------------------------------------
 
@@ -92,7 +98,7 @@ selectInput(inputId="timeframe",label="Time Period",choices=c("Weekly","Monthly"
 #### Variants of Concern
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
-renderVOC(sc2Data)
+renderPlotly(renderVOC(sc2Data))
 ```
 **B.1.1.7** - Also known as 20I/501Y.V1 was initially found in December 2020 and appears to have originated from the United Kingdom. This variant carries 17 defining mutations and has spread globally. Early evidence suggests the variant may be associated with increased transmissibility and risk of death. Notable mutations include Spike: N501Y.
 
@@ -105,7 +111,7 @@ renderVOC(sc2Data)
 #### Variants of Interest
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
-renderVOI(sc2Data)
+renderPlotly(renderVOI(sc2Data))
 ```
 
 **P.2** - Similar to P.1, seems to have originated in Brazil. Carries the Spike: E484K mutation but is missing the Spike: N501Y and Spike: K417T.
@@ -114,16 +120,102 @@ renderVOI(sc2Data)
 
 **B.1.526** - First identified in New York.
 
+#### Proportion of Variants Sequenced
+```{r, echo=FALSE,message=FALSE,warning=FALSE,fig.align="center", out.width="80%"}
+selectInput(inputId="vartimeframe",label="Time Period",choices=c("Weekly","Monthly","Quarterly"))
+sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))
+names(sc2bylineage) <- c("date","lineage","num")
+sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"|sc2bylineage$date=="2021"),]
+sc2bylineage$date <- as.Date(sc2bylineage$date, format= "%Y-%m-%d")
+sc2bylineage <- within(sc2bylineage, {
+  weeks <- format(date, "%U-%Y")
+  weeks <- factor(weeks, levels = unique(weeks))
+  
+  months <- format(date, "%B-%Y")
+  months <- factor(months, levels = unique(months))
+  
+  quarters <- paste(quarters(date), format(date, "%Y"), sep = "-")
+  quarters <- factor(quarters, levels = unique(quarters))
+})
+sc2bylineage <- sc2bylineage[!is.na(sc2bylineage$date),]
+sc2bylineage <- droplevels(sc2bylineage)
+
+varWeekly <- group_by_at(sc2bylineage,vars(weeks,lineage)) %>% summarise(num = sum(num))
+names(varWeekly) <- c("date","lineage","num")
+varMonthly <- group_by_at(sc2bylineage,vars(months,lineage)) %>% summarise(num = sum(num))
+names(varMonthly) <- c("date","lineage","num")
+varQuarterly <- group_by_at(sc2bylineage,vars(quarters,lineage)) %>% summarise(num = sum(num))
+names(varQuarterly) <- c("date","lineage","num")
+
+#keep only top 5 (weekly)
+df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("date","lineage","num")
+colnames(df) <- x
+for(week in unique(varWeekly$date)){
+  dataHolder <- varWeekly[varWeekly$date == week,]
+  dataHolder <- dataHolder[order(dataHolder$num,decreasing = TRUE),]
+  a <- dataHolder[1:5,]
+  b <- data.frame("date"=week,"lineage"="other","num"=sum(dataHolder[6:nrow(dataHolder),]$num))
+  a <- bind_rows(a,b)
+  df <- bind_rows(df,a)
+}
+varWeekly <- df
+
+#keep only top 5 (monthly)
+df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("date","lineage","num")
+colnames(df) <- x
+for(month in unique(varMonthly$date)){
+  dataHolder <- varMonthly[varMonthly$date == month,]
+  dataHolder <- dataHolder[order(dataHolder$num,decreasing = TRUE),]
+  a <- dataHolder[1:5,]
+  b <- data.frame("date"=month,"lineage"="other","num"=sum(dataHolder[6:nrow(dataHolder),]$num))
+  a <- bind_rows(a,b)
+  df <- bind_rows(df,a)
+}
+varMonthly <- df
+
+#keep only top 5 (quarterly)
+df <- data.frame(matrix(ncol = 3, nrow = 0))
+x <- c("date","lineage","num")
+colnames(df) <- x
+for(quarter in unique(varQuarterly$date)){
+  dataHolder <- varQuarterly[varQuarterly$date == quarter,]
+  dataHolder <- dataHolder[order(dataHolder$num,decreasing = TRUE),]
+  a <- dataHolder[1:5,]
+  b <- data.frame("date"=quarter,"lineage"="other","num"=sum(dataHolder[6:nrow(dataHolder),]$num))
+  a <- bind_rows(a,b)
+  df <- bind_rows(df,a)
+}
+varQuarterly <- df
+
+
+renderPlotly({
+  if(input$vartimeframe == "Monthly"){
+    renderTimeLinage(varMonthly)
+  }
+  else if(input$vartimeframe == "Quarterly"){
+    renderTimeLinage(varQuarterly)
+  }
+  else{
+    renderTimeLinage(varWeekly)
+  }
+  })
+```
+
+#### Variants by HERC region
+
+```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
+renderPlotly(renderHERCMap(sc2Data,dhsdata,herc_geojson))
+```
+Total number of sequences in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by County, darker purple represents a larger number of total sequences. Hover over a County to see what percentage of confirmed cases have been sequenced. Confirmed cases by county are available [here](https://www.dhs.wisconsin.gov/covid-19/county.htm).
+  
 ###
 
-<div style="margin-bottom:100px; margin-top:50px">
 -----------------------------------------------------------------------
 ### SARS-CoV-2 Genomes by County
 
 ```{r, echo=FALSE,message=FALSE,fig.align="center", out.width="80%"}
-renderMap(sc2Data,dhsdata,geojson)
+renderPlotly(renderCountyMap(sc2Data,dhsdata,WICounty_geojson))
 ```
 Total number of sequences in <a href="https://www.gisaid.org/"> <img src="https://www.gisaid.org/fileadmin/gisaid/img/schild.png" alt="GISAID" width="50"/></a> by County, darker purple represents a larger number of total sequences. Hover over a County to see what percentage of confirmed cases have been sequenced. Confirmed cases by county are available [here](https://www.dhs.wisconsin.gov/covid-19/county.htm).
-  
-  
-</div>

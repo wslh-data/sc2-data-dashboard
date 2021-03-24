@@ -2,7 +2,7 @@ library(plotly)
 library(usmap)
 library(stringr)
 
-renderMap <- function(sc2Data,dhsdata,geojson){
+renderCountyMap <- function(sc2Data,dhsdata,geojson){
   # filter out everything but WI
   c = 1
   filteredfeatures <- c()
@@ -82,8 +82,6 @@ renderMap <- function(sc2Data,dhsdata,geojson){
 
   # specify some map projection/options
   g <- list(
-    #scope = 'usa',
-
     projection = list(type = 'albers usa'),
     fitbounds = "locations",
     showlakes = FALSE,
@@ -117,6 +115,100 @@ renderMap <- function(sc2Data,dhsdata,geojson){
   )
   fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
   fig <- fig %>% config(scrollZoom=FALSE)
+  return(fig)
+}
 
+renderHERCMap <- function(sc2Data,dhsdata,geojson){
+  source("county_to_herc.R")
+  #get county
+  sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
+  sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
+  sc2Data$County <- tolower(sc2Data$County)
+  sc2Data$HERC <- CountyToHERC(sc2Data$County)
+  
+  # organize data by County
+  HERCCounts <- as.data.frame(table(sc2Data$County), stringsAsFactors=FALSE)
+  names(HERCCounts) <- c("HERC","Freq")
+  
+  #convert county to HERC and combine
+  HERCCounts$HERC <- CountyToHERC(HERCCounts$HERC)
+  HERCCounts <- HERCCounts %>% group_by(HERC) %>% summarise(Freq = sum(Freq))
+
+  # create empty HERCData dataframe
+  c = 1
+  HERCData <- c()
+  for(i in geojson$features){
+    HERCData[c] <- i$properties$NAME[]
+    c = c + 1
+  }
+  HERCData <- as.data.frame(HERCData)
+  names(HERCData) <- c('HERC')
+  HERCData <- merge(HERCData,HERCCounts,by = "HERC", all.x = TRUE)
+  HERCData$Freq[is.na(HERCData$Freq)] <- 0
+  
+  # add variant counts
+  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,Sum=0)
+  
+  for( i in 1:nrow(sc2Data)){
+    data <- c(as.character(sc2Data[i,15]),sc2Data[i,18])
+    if(data[1] == "B.1.1.7"){
+      HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
+      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+    }
+    if(data[1] == "P.1"){
+      HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
+      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+    }
+    if(data[1] == "B.1.351"){
+      HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
+      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+    }
+  }
+  
+  #Hover Format
+  HERCData$hover <- with(HERCData, paste("HERC Region: ",HERC,'<br>',
+                                             "B.1.1.7: ",B.1.1.7,'<br>',
+                                             "P.1:",P.1,'<br>',
+                                             "B.1.351:",B.1.351,'<br>'))
+  
+  # give county boundaries a white border
+  l <- list(color = "#CDCDCD", width = 1)
+  
+  # specify some map projection/options
+  g <- list(
+    projection = list(type = 'albers usa'),
+    fitbounds = "locations",
+    showlakes = FALSE,
+    bgcolor = "#fff",
+    visible = FALSE
+  )
+  #mapbox projection options
+  m <- list(
+    style="white-bg",
+    center=list(
+      lon=-89.9941,
+      lat=44.6243
+    ),
+    zoom=5,
+    bearing=0.8
+  )
+  
+  fig <- plot_ly()
+  fig <- fig %>% add_trace(
+    type="choroplethmapbox",
+    geojson=geojson,
+    z = HERCData$Sum,
+    featureidkey="properties.NAME",
+    locations = HERCData$HERC,
+    text = HERCData$hover,
+    hoverinfo = "text",
+    showlegend = FALSE,
+    showscale = FALSE,
+    color = HERCData$Sum,
+    colors = 'Reds',
+    marker = list(line = l)
+  )
+  fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
+  fig <- fig %>% config(scrollZoom=FALSE)
   return(fig)
 }

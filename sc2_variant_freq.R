@@ -29,7 +29,7 @@ renderTotal <- function(sc2Data){
   return(fig)
 }
 
-#render a plot of the proportion lineages by week
+#render a plot of the proportion samples sequenced by week/month/quarter
 renderTimeTotal <- function(data){
   fig <- plot_ly()
   # total number
@@ -154,5 +154,33 @@ renderVOI <- function(sc2Data){
       ),
       hovermode = 'compare'
     )
+  return(fig)
+}
+
+#render a plot of the lineages sequenced by week/month/quarter
+renderTimeLinage <- function(data){
+  fig <- plot_ly()
+  fig <- fig %>% add_trace(
+      type = "bar",
+      x = data$date,
+      y = data$num,
+      name = data$lineage,
+      color = data$lineage,
+      colors = "Blues",
+      hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+      text = data$num
+  )
+  fig <- fig %>% layout(
+    barmode="stack",
+    barnorm="percent",
+    xaxis = list(
+      categoryorder = "array",
+      categoryarray = data$date
+    ),
+    yaxis = list(
+      categoryorder = "category array",
+      categoryarray = data$lineage
+    )
+  )
   return(fig)
 }
