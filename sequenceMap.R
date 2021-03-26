@@ -110,7 +110,7 @@ renderCountyMap <- function(sc2Data,dhsdata,geojson){
     showlegend = FALSE,
     showscale = FALSE,
     color = CountyData$Freq,
-    colors = 'Purples',
+    colors = "Purples",
     marker = list(line = l)
   )
   fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
@@ -119,7 +119,6 @@ renderCountyMap <- function(sc2Data,dhsdata,geojson){
 }
 
 renderHERCMap <- function(sc2Data,dhsdata,geojson){
-  source("county_to_herc.R")
   #get county
   sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
   sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
@@ -147,29 +146,39 @@ renderHERCMap <- function(sc2Data,dhsdata,geojson){
   HERCData$Freq[is.na(HERCData$Freq)] <- 0
   
   # add variant counts
-  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,Sum=0)
+  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,Sum=0)
   
   for( i in 1:nrow(sc2Data)){
-    data <- c(as.character(sc2Data[i,15]),sc2Data[i,18])
+    data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
     if(data[1] == "B.1.1.7"){
       HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
-      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
     }
     if(data[1] == "P.1"){
       HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
-      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
     }
     if(data[1] == "B.1.351"){
       HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
+      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+    }
+    if(data[1] == "B.1.429"){
       HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+    }
+    if(data[1] == "B.1.427"){
+      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
     }
   }
   
   #Hover Format
   HERCData$hover <- with(HERCData, paste("HERC Region: ",HERC,'<br>',
-                                             "B.1.1.7: ",B.1.1.7,'<br>',
-                                             "P.1:",P.1,'<br>',
-                                             "B.1.351:",B.1.351,'<br>'))
+                                         "B.1.1.7: ",B.1.1.7,'<br>',
+                                         "B.1.351:",B.1.351,'<br>',
+                                         "B.1.427 / B.1.429:",B.1.427and429,'<br>',
+                                         "P.1:",P.1,'<br>'))
+                                             
   
   # give county boundaries a white border
   l <- list(color = "#CDCDCD", width = 1)
@@ -205,7 +214,7 @@ renderHERCMap <- function(sc2Data,dhsdata,geojson){
     showlegend = FALSE,
     showscale = FALSE,
     color = HERCData$Sum,
-    colors = 'Reds',
+    colors = "Reds",
     marker = list(line = l)
   )
   fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)

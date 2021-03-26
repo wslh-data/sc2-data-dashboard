@@ -24,8 +24,10 @@ RUN R -e "install.packages(c(\
   'stringr',\
   'dplyr',\
   'rmarkdown',\
+  'tidyr',\
+  'viridis',\
   'flexdashboard',\
-  'shinythemes'), repos = 'http://cran.us.r-project.org')"
+  'shiny'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data
 

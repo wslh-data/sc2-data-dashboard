@@ -166,13 +166,18 @@ renderTimeLinage <- function(data){
       y = data$num,
       name = data$lineage,
       color = data$lineage,
-      colors = "Blues",
+      colors = viridis_pal(option = "B")(20),
       hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
       text = data$num
   )
   fig <- fig %>% layout(
     barmode="stack",
     barnorm="percent",
+    hoverlabel= list(
+      font = list(
+        size = 14
+      )
+    ),
     xaxis = list(
       categoryorder = "array",
       categoryarray = data$date
