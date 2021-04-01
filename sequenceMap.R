@@ -2,7 +2,9 @@ library(plotly)
 library(usmap)
 library(stringr)
 
-renderCountyMap <- function(sc2Data,dhsdata,geojson){
+source("county_to_herc.R")
+
+plotCountyMap <- function(sc2Data,dhsdata,geojson){
   # filter out everything but WI
   c = 1
   filteredfeatures <- c()
@@ -84,9 +86,9 @@ renderCountyMap <- function(sc2Data,dhsdata,geojson){
   g <- list(
     projection = list(type = 'albers usa'),
     fitbounds = "locations",
-    showlakes = FALSE,
+    showlakes = TRUE,
     bgcolor = "#fff",
-    visible = FALSE
+    visible = TRUE
   )
   #mapbox projection options
   m <- list(
@@ -118,7 +120,7 @@ renderCountyMap <- function(sc2Data,dhsdata,geojson){
   return(fig)
 }
 
-renderHERCMap <- function(sc2Data,dhsdata,geojson){
+plotHERCMap <- function(sc2Data,dhsdata,geojson){
   #get county
   sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
   sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
@@ -187,9 +189,9 @@ renderHERCMap <- function(sc2Data,dhsdata,geojson){
   g <- list(
     projection = list(type = 'albers usa'),
     fitbounds = "locations",
-    showlakes = FALSE,
+    showlakes = TRUE,
     bgcolor = "#fff",
-    visible = FALSE
+    visible = TRUE
   )
   #mapbox projection options
   m <- list(
