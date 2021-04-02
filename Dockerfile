@@ -23,19 +23,15 @@ RUN R -e "install.packages(c(\
   'usmap',\
   'stringr',\
   'dplyr',\
-  'rmarkdown',\
-  'tidyr',\
-  'viridis',\
-  'flexdashboard',\
-  'shiny'), repos = 'http://cran.us.r-project.org')"
+  'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data
 
 # copy app into container
 COPY *.R /app/
 COPY *.Rmd /app/
-COPY wslh-theme /app/wslh-theme
+COPY www/ /app/www/
 
 EXPOSE 3838
 
-CMD ["R", "-e", "rmarkdown::run('/app/index.Rmd', shiny_args = list(port = 3838, host = '0.0.0.0'))"]
+CMD ["R", "-e", "shiny::runApp('/app',port=3838,host='0.0.0.0')"]

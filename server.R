@@ -2,6 +2,7 @@ library(shiny)
 library(plotly)
 library(rjson)
 library(dplyr)
+library(shinydashboard)
 
 source("cumulativeSequences.R")
 source("plotVOC.R")
@@ -20,7 +21,7 @@ WICounty_geojson <- fromJSON(file="./data/geojson-counties-fips.json")
 herc_geojson <- fromJSON(file="./data/Wisconsin_Healthcare_Emergency_Readiness_Coalition_Regions.json")
 
 ############################
-##### Pre-analize Data #####
+##### Pre-analyze Data #####
 ############################
 
 #### Sequence Frequency by Time Period
@@ -40,19 +41,19 @@ sequenceFreqTimeframe <- function(choice){
 
 #### Proportion of Lineages Sequenced by Time Period
 
-# lineagePropData <- prepareLineagePropData(sc2Data)
-# 
-# sequenceLineageTimeframe <- function(choice){
-#   if(choice == "Weekly"){
-#     return(lineagePropData$weekly)
-#   }
-#   else if(choice == "Quarterly"){
-#     return(lineagePropData$quarterly)
-#   }
-#   else{
-#     return(lineagePropData$monthly)
-#   }
-# }
+lineagePropData <- prepareLineagePropData(sc2Data)
+
+sequenceLineageTimeframe <- function(choice){
+  if(choice == "Weekly"){
+    return(lineagePropData$weekly)
+  }
+  else if(choice == "Quarterly"){
+    return(lineagePropData$quarterly)
+  }
+  else{
+    return(lineagePropData$monthly)
+  }
+}
 
 #### Proportion of Variants Sequenced by Time Period
 
@@ -78,21 +79,60 @@ countyMapPlot <- plotCountyMap(sc2Data,dhsdata,WICounty_geojson)
 hercMapPlot <- plotHERCMap(sc2Data,dhsdata,herc_geojson)
 
 
+#### Variant Value Box
+b117 <- valueBox(
+  value = nrow(sc2Data[sc2Data$Lineage == "B.1.1.7",]),
+  subtitle = "B.1.1.7s",
+  icon = icon("virus"),
+  width = NULL,
+  color = "red",
+  href = NULL
+)
+
+b1351 <- valueBox(
+  value = nrow(sc2Data[sc2Data$Lineage == "B.1.351",]),
+  subtitle = "B.1.351s",
+  icon = icon("virus"),
+  width = NULL,
+  color = "red",
+  href = NULL
+)
+
+p1 <- valueBox(
+  value = nrow(sc2Data[sc2Data$Lineage == "P.1",]),
+  subtitle = "P.1s",
+  icon = icon("virus"),
+  width = NULL,
+  color = "red",
+  href = NULL
+)
+
 ############################
 ############################
 ############################
+
+
+
 
 
 
 function(input,output,session) { 
+  
+  #### Value Box
+  output$b117vb <- renderValueBox(b117)
+  output$b1351vb <- renderValueBox(b1351)
+  output$p1vb <- renderValueBox(p1)
     
   ### Plot Outputs
   output$totalSequences <- renderPlotly(totalseqplot)
   output$sequenceByTimeframe <- renderPlotly(seqFreqPlot(sequenceFreqTimeframe(input$timefreqchoice)))
   output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice)))
+  output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
   output$VOC <- renderPlotly(vocplot)
   output$VOI <- renderPlotly(voiplot)
   output$hercVariant <- renderPlotly(hercMapPlot)
   output$countyMap <- renderPlotly(countyMapPlot)
+  
+
 
 }
