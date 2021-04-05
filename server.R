@@ -13,12 +13,12 @@ source("proportionVariantData.R")
 source("sequenceMap.R")
 
 ### Load data
-sc2Data = read.csv(Sys.glob(file.path('./data/gisaid_*tsv')),sep="\t")
-dhsdata = read.csv("./data/County_Table_data.csv")
+sc2Data = read.csv(Sys.glob(file.path('/data/gisaid_*tsv')),sep="\t")
+dhsdata = read.csv("/data/County_Table_data.csv")
 
 ### GeoJSON Files
-WICounty_geojson <- fromJSON(file="./data/geojson-counties-fips.json")
-herc_geojson <- fromJSON(file="./data/Wisconsin_Healthcare_Emergency_Readiness_Coalition_Regions.json")
+WICounty_geojson <- fromJSON(file="/data/geojson-counties-fips.json")
+herc_geojson <- fromJSON(file="/data/Wisconsin_Healthcare_Emergency_Readiness_Coalition_Regions.json")
 
 ############################
 ##### Pre-analyze Data #####
@@ -85,7 +85,7 @@ b117 <- valueBox(
   subtitle = "B.1.1.7s",
   icon = icon("virus"),
   width = NULL,
-  color = "red",
+  color = "orange",
   href = NULL
 )
 
@@ -94,7 +94,7 @@ b1351 <- valueBox(
   subtitle = "B.1.351s",
   icon = icon("virus"),
   width = NULL,
-  color = "red",
+  color = "orange",
   href = NULL
 )
 
@@ -103,7 +103,7 @@ p1 <- valueBox(
   subtitle = "P.1s",
   icon = icon("virus"),
   width = NULL,
-  color = "red",
+  color = "orange",
   href = NULL
 )
 
@@ -119,9 +119,15 @@ p1 <- valueBox(
 function(input,output,session) { 
   
   #### Value Box
-  output$b117vb <- renderValueBox(b117)
-  output$b1351vb <- renderValueBox(b1351)
-  output$p1vb <- renderValueBox(p1)
+  output$b117vb.a <- renderValueBox(b117)
+  output$b1351vb.a <- renderValueBox(b1351)
+  output$p1vb.a <- renderValueBox(p1)
+  output$b117vb.b <- renderValueBox(b117)
+  output$b1351vb.b <- renderValueBox(b1351)
+  output$p1vb.b <- renderValueBox(p1)
+  output$b117vb.c <- renderValueBox(b117)
+  output$b1351vb.c <- renderValueBox(b1351)
+  output$p1vb.c <- renderValueBox(p1)
     
   ### Plot Outputs
   output$totalSequences <- renderPlotly(totalseqplot)

@@ -23,6 +23,8 @@ RUN R -e "install.packages(c(\
   'usmap',\
   'stringr',\
   'dplyr',\
+  'shinydashboard',\
+  'shinyWidgets',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data
