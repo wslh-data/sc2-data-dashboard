@@ -82,29 +82,29 @@ hercMapPlot <- plotHERCMap(sc2Data,dhsdata,herc_geojson)
 #### Variant Value Box
 b117 <- valueBox(
   value = nrow(sc2Data[sc2Data$Lineage == "B.1.1.7",]),
-  subtitle = "B.1.1.7s",
+  subtitle = "B.1.1.7",
   icon = icon("virus"),
   width = NULL,
   color = "orange",
-  href = NULL
+  href = "https://outbreak.info/situation-reports?pango=B.1.1.7"
 )
 
 b1351 <- valueBox(
   value = nrow(sc2Data[sc2Data$Lineage == "B.1.351",]),
-  subtitle = "B.1.351s",
+  subtitle = "B.1.351",
   icon = icon("virus"),
   width = NULL,
   color = "orange",
-  href = NULL
+  href = "https://outbreak.info/situation-reports?pango=B.1.351"
 )
 
 p1 <- valueBox(
   value = nrow(sc2Data[sc2Data$Lineage == "P.1",]),
-  subtitle = "P.1s",
+  subtitle = "P.1",
   icon = icon("virus"),
   width = NULL,
   color = "orange",
-  href = NULL
+  href = "https://outbreak.info/situation-reports?pango=P.1"
 )
 
 ############################
@@ -119,15 +119,9 @@ p1 <- valueBox(
 function(input,output,session) { 
   
   #### Value Box
-  output$b117vb.a <- renderValueBox(b117)
-  output$b1351vb.a <- renderValueBox(b1351)
-  output$p1vb.a <- renderValueBox(p1)
-  output$b117vb.b <- renderValueBox(b117)
-  output$b1351vb.b <- renderValueBox(b1351)
-  output$p1vb.b <- renderValueBox(p1)
-  output$b117vb.c <- renderValueBox(b117)
-  output$b1351vb.c <- renderValueBox(b1351)
-  output$p1vb.c <- renderValueBox(p1)
+  output$b117vb.c <- output$b117vb.b <-output$b117vb.a <- renderValueBox(b117)
+  output$b1351vb.c <- output$b1351vb.b <- output$b1351vb.a <- renderValueBox(b1351)
+  output$p1vb.c <- output$p1vb.b <- output$p1vb.a <- renderValueBox(p1)
     
   ### Plot Outputs
   output$totalSequences <- renderPlotly(totalseqplot)
@@ -139,6 +133,16 @@ function(input,output,session) {
   output$hercVariant <- renderPlotly(hercMapPlot)
   output$countyMap <- renderPlotly(countyMapPlot)
   
-
+  ### Modal about the data
+  # shinyjs::disable("about_data")
+  # observe({
+  #   if (input$navtabs == "About the Data")  {
+  #     showModal(modalDialog(
+  #       title = "Important message",
+  #       div(id = "aa", style = "width: 1100px; height: 100px;", HTML("<b>This is </b>an important message!")),
+  #       easyClose = TRUE
+  #     ))
+  #   }
+  # })
 
 }
