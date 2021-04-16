@@ -25,6 +25,8 @@ RUN R -e "install.packages(c(\
   'dplyr',\
   'shinydashboard',\
   'shinyWidgets',\
+  'shinyBS',\
+  'viridis',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data
