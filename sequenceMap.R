@@ -55,15 +55,17 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   CountyData <- cbind(CountyData,B.1.1.7 = 0,P.1=0,B.1.351=0)
 
   for( i in 1:nrow(sc2Data)){
-    data <- c(as.character(sc2Data[i,13]),sc2Data[i,15])
-    if(data[1] == "B.1.1.7"){
-      CountyData[CountyData$County==data[2],4] = CountyData[CountyData$County==data[2],4] + 1
-    }
-    if(data[1] == "P.1"){
-      CountyData[CountyData$County==data[2],5] = CountyData[CountyData$County==data[2],5] + 1
-    }
-    if(data[1] == "B.1.351"){
-      CountyData[CountyData$County==data[2],6] = CountyData[CountyData$County==data[2],6] + 1
+    data <- c(as.character(sc2Data[i,15]),sc2Data[i,18])
+    if(!any(is.na(data))){
+      if(data[1] == "B.1.1.7"){
+        CountyData[CountyData$County==data[2],4] = CountyData[CountyData$County==data[2],4] + 1
+      }
+      if(data[1] == "P.1"){
+        CountyData[CountyData$County==data[2],5] = CountyData[CountyData$County==data[2],5] + 1
+      }
+      if(data[1] == "B.1.351"){
+        CountyData[CountyData$County==data[2],6] = CountyData[CountyData$County==data[2],6] + 1
+      }
     }
   }
 
@@ -152,25 +154,27 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson){
   
   for( i in 1:nrow(sc2Data)){
     data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
-    if(data[1] == "B.1.1.7"){
-      HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
-      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
-    }
-    if(data[1] == "P.1"){
-      HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
-      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
-    }
-    if(data[1] == "B.1.351"){
-      HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
-      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
-    }
-    if(data[1] == "B.1.429"){
-      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
-      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
-    }
-    if(data[1] == "B.1.427"){
-      HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
-      HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+    if(!any(is.na(data))){
+      if(data[1] == "B.1.1.7"){
+        HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
+        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+      }
+      if(data[1] == "P.1"){
+        HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
+        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+      }
+      if(data[1] == "B.1.351"){
+        HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
+        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+      }
+      if(data[1] == "B.1.429"){
+        HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+      }
+      if(data[1] == "B.1.427"){
+        HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+      }
     }
   }
   

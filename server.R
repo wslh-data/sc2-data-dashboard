@@ -15,6 +15,7 @@ source("sequenceMap.R")
 ### Load data
 sc2Data = read.csv(Sys.glob(file.path('/data/gisaid_*tsv')),sep="\t")
 dhsdata = read.csv("/data/County_Table_data.csv")
+ackfile = Sys.glob(file.path("/data/gisaid_hcov-19_acknowledgement_table_*.pdf"))
 
 ### GeoJSON Files
 WICounty_geojson <- fromJSON(file="/data/geojson-counties-fips.json")
@@ -23,6 +24,10 @@ herc_geojson <- fromJSON(file="/data/Wisconsin_Healthcare_Emergency_Readiness_Co
 ############################
 ##### Pre-analyze Data #####
 ############################
+
+#### Remove last 2 weeks of data from sc2Data
+date_filter <- as.Date(sc2Data$Collection.date) < (Sys.Date() - 21)
+sc2Data <- sc2Data[date_filter,]
 
 #### Sequence Frequency by Time Period
 timeFrameData <- prepareTimeFrameData(sc2Data)
@@ -47,11 +52,11 @@ sequenceLineageTimeframe <- function(choice){
   if(choice == "Weekly"){
     return(lineagePropData$weekly)
   }
-  else if(choice == "Quarterly"){
-    return(lineagePropData$quarterly)
+  else if(choice == "Monthly"){
+    return(lineagePropData$monthly)
   }
   else{
-    return(lineagePropData$monthly)
+    return(lineagePropData$quarterly)
   }
 }
 
@@ -144,5 +149,12 @@ function(input,output,session) {
   #     ))
   #   }
   # })
+  
+  output$downloadAck <- downloadHandler(
+    filename = "gisaid_acknowledgements.pdf",
+    content = function(file) {
+      file.copy(ackfile, file)
+    }
+  )
 
 }

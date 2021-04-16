@@ -4,9 +4,9 @@ library(shinycssloaders)
 library(shinydashboard)
 library(shinyWidgets)
 
-sideBarText <- HTML("<p>The sequencing data results in this dashboard were obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. Note: data may not match the DHS webpage due to different update frequencies and data sources.</p>")
+sideBarText <- HTML("<p>The data in this dashboard is obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. It includes results generated for Wisconsin residents by WSLH and other labs. Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p>")
 
-aboutthedataText <- HTML("<h2 style='margin-top: 10px;margin-bottom: 10px'>About the data</h2><p>The sequencing data results in this dashboard were obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p><p>The data summarized in this report was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: <a href='https://www.dhs.wisconsin.gov/'>DHS</a>, <a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a>, <a href='https://www.gundersenhealth.org/foundation/>Gundersen Medical Foundation</a>, <a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a>, and the <a href='https://www.cdc.gov/'>CDC</a>.<p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p><p>Data is updated daily at 3 pm. Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p>")
+aboutthedataText <- HTML("<h2 style='margin-top: 10px;margin-bottom: 10px'>About the data</h2><p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p><p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p><p>Data is updated daily at 3 pm. Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p><p>The data summarized in this report was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: <a href='https://www.dhs.wisconsin.gov/'>DHS</a>, <a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a>, <a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a>, <a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a>, and the <a href='https://www.cdc.gov/'>CDC</a>. A full list of the laboratories contributing to this data is available here:</p>")
 
 voctext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
@@ -45,7 +45,7 @@ fluidPage(
   useShinydashboard(),
   tags$link(rel = "stylesheet",type = "text/css", href = "wslh-theme/wslh.css"),
   titlePanel(
-    title=tags$div(class="titlePanel",tags$a(href='https://slhportaltest.ad.slh.wisc.edu/',tags$img(src='wslh-theme/wslh-logo.png', height = 90))),
+    title=tags$div(class="titlePanel",tags$a(href='https://dataportal-test.slh.wisc.edu/',tags$img(src='wslh-theme/wslh-logo.png', height = 90))),
     tags$head(tags$link(rel = "icon", type = "image/png", href = "wslh-theme/w-logo.png"), windowTitle="WI SARS-CoV-2 Genomic Report")
   ),
   navbarPage(id='navtabs',tags$h3("Wisconsin SARS-CoV-2 Genomic Dashboard",style="margin:0px"),
@@ -62,7 +62,7 @@ fluidPage(
             tabPanel("Sequences by Time Period",
               plotlyOutput("sequenceByTimeframe")%>% withSpinner(color="#c5050c"),
               tags$h3('Number of sequences by selected time period of sample collection.'),
-              selectInput("timefreqchoice", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Monthly")
+              selectInput("timefreqchoice", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Quarterly")
             ),
             tabPanel("Cumulative Sequences", 
               plotlyOutput("totalSequences")%>% withSpinner(color="#c5050c"),
@@ -87,17 +87,17 @@ fluidPage(
       mainPanel(
        fluidRow(
          tabsetPanel(
+           tabPanel("Proportion of Variants",
+                    plotlyOutput("sequenceVariantByTimeframe")%>% withSpinner(color="#c5050c"),
+                    tags$h3("Proportion of sequenced strains that are variants, over time by sample collection date."),
+                    selectInput("timevarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly")
+           ),
            tabPanel("Variants of Concern", 
                     plotlyOutput("VOC")%>% withSpinner(color="#c5050c"),
                     voctext),
            tabPanel("Variants of Interest", 
                     plotlyOutput("VOI")%>% withSpinner(color="#c5050c"),
-                    voitext),
-           tabPanel("Proportion of Variants",
-                  plotlyOutput("sequenceVariantByTimeframe")%>% withSpinner(color="#c5050c"),
-                  tags$h3("Proportion of sequenced strains that are variants, over time by sample collection date."),
-                  selectInput("timevarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Monthly")
-            )
+                    voitext)
           )
        )
      )
@@ -122,7 +122,7 @@ fluidPage(
         )
       )
     ),
-    tabPanel("About the Data",aboutthedataText
+    tabPanel("About the Data",aboutthedataText,downloadLink("downloadAck", "Download GISAID Acknowledgements")
     )
   )
 )
