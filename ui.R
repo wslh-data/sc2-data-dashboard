@@ -3,10 +3,12 @@ library(plotly)
 library(shinycssloaders)
 library(shinydashboard)
 library(shinyWidgets)
+library(shinyBS)
+
 
 sideBarText <- HTML("<p>The data in this dashboard is obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. It includes results generated for Wisconsin residents by WSLH and other labs. Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p>")
 
-aboutthedataText <- HTML("<h2 style='margin-top: 10px;margin-bottom: 10px'>About the data</h2><p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p><p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p><p>Data is updated daily at 3 pm. Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p><p>The data summarized in this report was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: <a href='https://www.dhs.wisconsin.gov/'>DHS</a>, <a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a>, <a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a>, <a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a>, and the <a href='https://www.cdc.gov/'>CDC</a>. A full list of the laboratories contributing to this data is available here:</p>")
+aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p><p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p><p>Data is updated daily at 3 pm. Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p><p>The data summarized in this report was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: <a href='https://www.dhs.wisconsin.gov/'>DHS</a>, <a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a>, <a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a>, <a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a>, and the <a href='https://www.cdc.gov/'>CDC</a>. A full list of the laboratories contributing to this data is available here:</p>")
 
 voctext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
@@ -40,8 +42,17 @@ voitext <- HTML('<h3>Cumulative number of variants sequences identified over tim
 </ul>
 For more information on these variants of interest visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html#Interest">CDC\'s Variant Surveillance</a>. ')
 
+jsStr <- '$(document).ready(function(){
+  $("a[data-value=\'About the Data\']").attr({
+    "href":"#", 
+    "data-toggle":"modal",
+    "data-target":"#modalABD"
+  });
+})' 
+
 fluidPage(
   tags$style("@import url(https://use.fontawesome.com/releases/v5.15.3/css/all.css);"),
+  tags$head(tags$script(HTML(jsStr))),
   useShinydashboard(),
   tags$link(rel = "stylesheet",type = "text/css", href = "wslh-theme/wslh.css"),
   titlePanel(
@@ -51,7 +62,9 @@ fluidPage(
   navbarPage(id='navtabs',tags$h3("Wisconsin SARS-CoV-2 Genomic Dashboard",style="margin:0px"),
     tabPanel("Sequencing Report",
       sidebarPanel(
+        tags$style(".small-box.bg-yellow { background-color: #F1605D !important; color: #FFFFFF !important; }"),
         valueBoxOutput("b117vb.a",width=NULL),
+        valueBoxOutput("b1429b1427.a",width=NULL),
         valueBoxOutput("b1351vb.a",width=NULL),
         valueBoxOutput("p1vb.a",width=NULL),
         sideBarText
@@ -80,6 +93,7 @@ fluidPage(
     tabPanel("Variant Report",
       sidebarPanel(
         valueBoxOutput("b117vb.b",width=NULL),
+        valueBoxOutput("b1429b1427.b",width=NULL),
         valueBoxOutput("b1351vb.b",width=NULL),
         valueBoxOutput("p1vb.b",width=NULL),
         sideBarText
@@ -105,6 +119,7 @@ fluidPage(
     tabPanel("Regional/County Report",
     sidebarPanel(
       valueBoxOutput("b117vb.c",width=NULL),
+      valueBoxOutput("b1429b1427.c",width=NULL),
       valueBoxOutput("b1351vb.c",width=NULL),
       valueBoxOutput("p1vb.c",width=NULL),
       sideBarText
@@ -112,17 +127,20 @@ fluidPage(
       mainPanel(
         fluidRow(
           tabsetPanel(
-            tabPanel("Sequences by County",
-                     plotlyOutput("countyMap")%>% withSpinner(color="#c5050c"),
-                     HTML('Number of confirmed cases sequenced by county, darker colors represent a larger proportion of cases sequenced. Hover over the map to see what percentage of confirmed cases have been sequenced and the total number of sequences from a particular county. Confirmed cases by county are also available <a href="https://www.dhs.wisconsin.gov/covid-19/county.htm">here</a>.')),
             tabPanel("Variants by HERC Region",
                      plotlyOutput("hercVariant")%>% withSpinner(color="#c5050c"),
-                     HTML('Variants of concern by <a href="https://www.dhs.wisconsin.gov/preparedness/healthcare/index.htm">Healthcare Emergency Readiness Coalition (HERC)</a> region, darker colors represent a larger number of total variants identified. Hover over a region to see a breakdown of the variants of concern.'))
+                     HTML('Variants of concern by <a href="https://www.dhs.wisconsin.gov/preparedness/healthcare/index.htm">Healthcare Emergency Readiness Coalition (HERC)</a> region, lighter colors represent a greater proportion of variants identified. Hover over a region to see a breakdown of the variants of concern.'),
+                     dateRangeInput("herctimechoice", "Date Range:",start=(Sys.Date()-51),end=(Sys.Date()-21))
+            ),
+            tabPanel("Sequences by County",
+                     plotlyOutput("countyMap")%>% withSpinner(color="#c5050c"),
+                     HTML('Number of confirmed cases sequenced by county, darker colors represent a larger proportion of cases sequenced. Hover over the map to see what percentage of confirmed cases have been sequenced and the total number of sequences from a particular county. Confirmed cases by county are also available <a href="https://www.dhs.wisconsin.gov/covid-19/county.htm">here</a>.')
+            )
           )
         )
       )
     ),
-    tabPanel("About the Data",aboutthedataText,downloadLink("downloadAck", "Download GISAID Acknowledgements")
-    )
-  )
+    tabPanel("About the Data",id="modal")
+    ),
+  bsModal("modalABD",HTML("<h2>About the Data</h2>"),"modal",aboutthedataText,downloadLink("downloadAck", "Download GISAID Acknowledgements"),HTML("<hr><p><i class='fab fa-github'></i><a href='https://github.com/wslh-data/sc2-data-dashboard'> Dashboard Source Code</a></p>"))
 )

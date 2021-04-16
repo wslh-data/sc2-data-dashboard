@@ -1,5 +1,6 @@
 library(plotly)
 library(dplyr)
+library(viridis)
 
 variantList <- c(
   "B.1.1.7",
@@ -71,16 +72,37 @@ prepareVariantPropData <- function(data){
 
 #render a plot of the lineages sequenced by week/month/quarter
 plotVariantTimeLineage <- function(data){
+  data_other <- data[data$lineage =="Other",]
+  data_voc <- data[data$lineage =="P.1" | data$lineage =="B.1.351" | data$lineage =="B.1.1.7" | data$lineage =="B.1.429" | data$lineage =="B.1.427",]
+  data_voi <- data[data$lineage =="P.2" | data$lineage =="B.1.526" | data$lineage =="B.1.525",]
+  data <- data[data$lineage !="Other",]
   fig <- plot_ly()
   fig <- fig %>% add_trace(
     type = "bar",
-    x = data$date,
-    y = data$num,
-    name = data$lineage,
-    color = data$lineage,
-    colors = "Reds",
+    x = data_voc$date,
+    y = data_voc$num,
+    name = data_voc$lineage,
+    marker= list(color="#F1605D"),
     hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-    text = data$num
+    text = data_voc$num
+  )
+  fig <- fig %>% add_trace(
+    type = "bar",
+    x = data_voi$date,
+    y = data_voi$num,
+    name = data_voi$lineage,
+    marker= list(color="#451077"),
+    hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+    text = data_voi$num
+  )
+  fig <- fig %>% add_trace(
+    type = "bar",
+    x = data_other$date,
+    y = data_other$num,
+    name = data_other$lineage,
+    marker= list(color="#CCCCCC"),
+    hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+    text = data_other$num
   )
   fig <- fig %>% layout(
     barmode="stack",

@@ -81,7 +81,7 @@ voiplot <- plotVOI(sc2Data)
 vocplot <- plotVOC(sc2Data)
 totalseqplot <- cumulativeSequences(sc2Data)
 countyMapPlot <- plotCountyMap(sc2Data,dhsdata,WICounty_geojson)
-hercMapPlot <- plotHERCMap(sc2Data,dhsdata,herc_geojson)
+
 
 
 #### Variant Value Box
@@ -90,7 +90,7 @@ b117 <- valueBox(
   subtitle = "B.1.1.7",
   icon = icon("virus"),
   width = NULL,
-  color = "orange",
+  color = "yellow",
   href = "https://outbreak.info/situation-reports?pango=B.1.1.7"
 )
 
@@ -99,7 +99,7 @@ b1351 <- valueBox(
   subtitle = "B.1.351",
   icon = icon("virus"),
   width = NULL,
-  color = "orange",
+  color = "yellow",
   href = "https://outbreak.info/situation-reports?pango=B.1.351"
 )
 
@@ -108,8 +108,17 @@ p1 <- valueBox(
   subtitle = "P.1",
   icon = icon("virus"),
   width = NULL,
-  color = "orange",
+  color = "yellow",
   href = "https://outbreak.info/situation-reports?pango=P.1"
+)
+
+b1429b1427 <- valueBox(
+  value = nrow(sc2Data[sc2Data$Lineage == "B.1.427"|sc2Data$Lineage == "B.1.429",]),
+  subtitle = "B.1.427 & B.1.429",
+  icon = icon("virus"),
+  width = NULL,
+  color = "yellow",
+  href = "https://outbreak.info/situation-reports"
 )
 
 ############################
@@ -127,6 +136,7 @@ function(input,output,session) {
   output$b117vb.c <- output$b117vb.b <-output$b117vb.a <- renderValueBox(b117)
   output$b1351vb.c <- output$b1351vb.b <- output$b1351vb.a <- renderValueBox(b1351)
   output$p1vb.c <- output$p1vb.b <- output$p1vb.a <- renderValueBox(p1)
+  output$b1429b1427.c <- output$b1429b1427.b <- output$b1429b1427.a <- renderValueBox(b1429b1427)
     
   ### Plot Outputs
   output$totalSequences <- renderPlotly(totalseqplot)
@@ -135,20 +145,8 @@ function(input,output,session) {
   output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
   output$VOC <- renderPlotly(vocplot)
   output$VOI <- renderPlotly(voiplot)
-  output$hercVariant <- renderPlotly(hercMapPlot)
+  output$hercVariant <- renderPlotly(plotHERCMap(sc2Data,dhsdata,herc_geojson,input$herctimechoice))
   output$countyMap <- renderPlotly(countyMapPlot)
-  
-  ### Modal about the data
-  # shinyjs::disable("about_data")
-  # observe({
-  #   if (input$navtabs == "About the Data")  {
-  #     showModal(modalDialog(
-  #       title = "Important message",
-  #       div(id = "aa", style = "width: 1100px; height: 100px;", HTML("<b>This is </b>an important message!")),
-  #       easyClose = TRUE
-  #     ))
-  #   }
-  # })
   
   output$downloadAck <- downloadHandler(
     filename = "gisaid_acknowledgements.pdf",

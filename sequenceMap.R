@@ -1,6 +1,7 @@
 library(plotly)
 library(usmap)
 library(stringr)
+library(viridis)
 
 source("county_to_herc.R")
 
@@ -122,7 +123,9 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   return(fig)
 }
 
-plotHERCMap <- function(sc2Data,dhsdata,geojson){
+plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
+  date_filter <- as.Date(sc2Data$Collection.date) >= min(timerange) & as.Date(sc2Data$Collection.date) <= max(timerange)
+  sc2Data <- sc2Data[date_filter,]
   #get county
   sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
   sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
@@ -150,7 +153,7 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson){
   HERCData$Freq[is.na(HERCData$Freq)] <- 0
   
   # add variant counts
-  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,Sum=0)
+  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,Sum=0,Total=0)
   
   for( i in 1:nrow(sc2Data)){
     data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
@@ -158,22 +161,30 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson){
       if(data[1] == "B.1.1.7"){
         HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
         HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
       }
       if(data[1] == "P.1"){
         HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
         HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
       }
       if(data[1] == "B.1.351"){
         HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
         HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
       }
       if(data[1] == "B.1.429"){
         HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
         HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
       }
       if(data[1] == "B.1.427"){
         HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
         HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+      }
+      else{
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
       }
     }
   }
@@ -183,7 +194,9 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson){
                                          "B.1.1.7: ",B.1.1.7,'<br>',
                                          "B.1.351:",B.1.351,'<br>',
                                          "B.1.427 / B.1.429:",B.1.427and429,'<br>',
-                                         "P.1:",P.1,'<br>'))
+                                         "P.1:",P.1,'<br>',
+                                         "Percentage of Variants:",signif((Sum/Total)*100,2),'%<br>',
+                                         "Total Sequences:",Total,'<br>'))
                                              
   
   # give county boundaries a white border
@@ -212,15 +225,15 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson){
   fig <- fig %>% add_trace(
     type="choroplethmapbox",
     geojson=geojson,
-    z = HERCData$Sum,
+    z = (HERCData$Sum/HERCData$Total)*100,
     featureidkey="properties.NAME",
     locations = HERCData$HERC,
     text = HERCData$hover,
     hoverinfo = "text",
     showlegend = FALSE,
-    showscale = FALSE,
     color = HERCData$Sum,
-    colors = "Reds",
+    colors = plasma(50),
+    colorbar = list(ypad=100,ticksuffix="%",title=list(text="Percentage of Variants")),
     marker = list(line = l)
   )
   fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
