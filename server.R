@@ -3,6 +3,7 @@ library(plotly)
 library(rjson)
 library(dplyr)
 library(shinydashboard)
+library(pdftools)
 
 source("cumulativeSequences.R")
 source("plotVOC.R")
@@ -12,14 +13,24 @@ source("proportionLineageData.R")
 source("proportionVariantData.R")
 source("sequenceMap.R")
 
+### Root Data Path
+
+rootPath <- '/data'
+
 ### Load data
-sc2Data = read.csv(Sys.glob(file.path('/data/gisaid_*tsv')),sep="\t")
-dhsdata = read.csv("/data/County_Table_data.csv")
-ackfile = Sys.glob(file.path("/data/gisaid_hcov-19_acknowledgement_table_*.pdf"))
+sc2Data_2020 <- read.csv(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2020*.tsv')),sep="\t")
+sc2Data_2021 <- read.csv(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2021*.tsv')),sep="\t")
+sc2Data <- merge(sc2Data_2020,sc2Data_2021,all=TRUE)
+  
+dhsdata <- read.csv(file.path(rootPath,"County_Table_data.csv"))
+ack_2020 <- Sys.glob(file.path(rootPath,"gisaid_hcov-19_acknowledgement_table_2020*.pdf"))
+ack_2021 <- Sys.glob(file.path(rootPath,"gisaid_hcov-19_acknowledgement_table_2021*.pdf"))
+pdf_combine(c(ack_2020, ack_2021), output = file.path(rootPath,"gisaid_acknowledgements.pdf"))
+ackfile = file.path(rootPath,"gisaid_acknowledgements.pdf")
 
 ### GeoJSON Files
-WICounty_geojson <- fromJSON(file="/data/geojson-counties-fips.json")
-herc_geojson <- fromJSON(file="/data/Wisconsin_Healthcare_Emergency_Readiness_Coalition_Regions.json")
+WICounty_geojson <- fromJSON(file=file.path(rootPath,"geojson-counties-fips.json"))
+herc_geojson <- fromJSON(file=file.path(rootPath,"Wisconsin_Healthcare_Emergency_Readiness_Coalition_Regions.json"))
 
 ############################
 ##### Pre-analyze Data #####

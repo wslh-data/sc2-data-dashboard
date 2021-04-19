@@ -16,6 +16,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 
+RUN apt-get update && apt-get install -y \
+  build-essential \
+  libpoppler-cpp-dev \
+  pkg-config \
+  python-dev \
+  libjpeg-dev
+
 # install R packages
 RUN R -e "install.packages(c(\
   'plotly',\
@@ -27,6 +34,7 @@ RUN R -e "install.packages(c(\
   'shinyWidgets',\
   'shinyBS',\
   'viridis',\
+  'pdftools',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data

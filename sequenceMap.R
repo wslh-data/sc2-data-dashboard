@@ -80,7 +80,7 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   #Hover Format
   CountyData$hover <- with(CountyData, paste(County,"County", '<br>',
                                              "Total Sequences:", Freq,'<br>',
-                                             "Percentage of Cases Sequenced:\t", percentseq))
+                                             "Cases Sequenced:\t", percentseq,"%"))
 
   # give county boundaries a white border
   l <- list(color = "#CDCDCD", width = 1)
@@ -118,7 +118,7 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
     colors = "Purples",
     marker = list(line = l)
   )
-  fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
+  fig <- fig %>% layout(title="\nTotal sequences by County",mapbox=m,margin = list(l=0,r=0,t=75,b=0),autosize=TRUE)
   fig <- fig %>% config(scrollZoom=FALSE)
   return(fig)
 }
@@ -195,7 +195,7 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
                                          "B.1.351:",B.1.351,'<br>',
                                          "B.1.427 / B.1.429:",B.1.427and429,'<br>',
                                          "P.1:",P.1,'<br>',
-                                         "Percentage of Variants:",signif((Sum/Total)*100,2),'%<br>',
+                                         "Variants Sequenced:",signif((Sum/Total)*100,2),'%<br>',
                                          "Total Sequences:",Total,'<br>'))
                                              
   
@@ -232,11 +232,12 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
     hoverinfo = "text",
     showlegend = FALSE,
     color = HERCData$Sum,
-    colors = plasma(50),
-    colorbar = list(ypad=100,ticksuffix="%",title=list(text="Percentage of Variants")),
+    colors = "Blues",
+    colorbar = list(ticksuffix="%",title=list(text="Percentage of Variants")),
     marker = list(line = l)
   )
-  fig <- fig %>% layout(mapbox=m,margin = list(l=0,r=0,t=0,b=0),autosize=TRUE)
-  fig <- fig %>% config(scrollZoom=FALSE)
+  figureTitle <- paste("\nVariants sequenced by HERC region between",format(min(timerange),"%m/%d/%y"),"and", format(max(timerange),"%m/%d/%y"))
+  fig <- fig %>% layout(title=figureTitle,mapbox=m,margin = list(l=0,r=0,t=75,b=0),autosize=TRUE)
+  fig <- fig %>% config(scrollZoom=FALSE,displayModeBar='hover')
   return(fig)
 }
