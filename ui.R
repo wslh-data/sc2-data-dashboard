@@ -4,8 +4,12 @@ library(shinycssloaders)
 library(shinydashboard)
 library(shinyWidgets)
 library(shinyBS)
+library(stringr)
 
-update_time <- format(file.info(Sys.glob(file.path('./data/gisaid_hcov-19_2021*.tsv')))$ctime, "%m/%d/%y")
+### Get Update Date
+rootPath <- '/data'
+fileName <- str_split(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2021*.tsv')),"_")[[1]]
+update_time <- paste(fileName[4],fileName[5],fileName[3],sep="/")
 
 sideBarText <- HTML("<p>The data in this dashboard is obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. It includes results generated for Wisconsin residents by WSLH and other labs. Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p><p>Data Updated: ",update_time)
 
