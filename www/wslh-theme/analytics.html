@@ -1,0 +1,21 @@
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HDZ5KM1LT1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HDZ5KM1LT1');
+  
+  $(document).on('change', 'select', function() {
+  gtag('event', 'change_selection', {'event_category' : this.id,
+    'choice' : this.value});
+  });
+  
+  $('#herctimechoice > div > input:nth-child(1)').on('changeDate', function(e) {
+  gtag('event', 'herc_time_selection', {'start_time' : e.date});
+  });
+  $('#herctimechoice > div > input:nth-child(3)').on('changeDate', function(e) {
+  gtag('event', 'herc_time_selection', {'end_time' : e.date});
+  });
+</script>
