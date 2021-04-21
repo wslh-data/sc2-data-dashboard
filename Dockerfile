@@ -16,7 +16,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
   build-essential \
   libpoppler-cpp-dev \
   pkg-config \
