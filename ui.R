@@ -6,12 +6,8 @@ library(shinyWidgets)
 library(shinyBS)
 library(stringr)
 
-### Get Update Date
-rootPath <- '/data'
-fileName <- str_split(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2021*.tsv')),"_")[[1]]
-update_time <- paste(fileName[4],fileName[5],fileName[3],sep="/")
 
-sideBarText <- HTML("<p>The data in this dashboard is obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. It includes results generated for Wisconsin residents by WSLH and other labs. Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p><p>Data Updated: ",update_time)
+sideBarText <- HTML("<p>The data in this dashboard is obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. It includes results generated for Wisconsin residents by WSLH and other labs. Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p><p>Data Updated: ")
 
 aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p><p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p><p>Data is updated weekly, Wednesdays at 12am. Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p><p>The data summarized in this report was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: <a href='https://www.dhs.wisconsin.gov/'>DHS</a>, <a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a>, <a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a>, <a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a>, and the <a href='https://www.cdc.gov/'>CDC</a>. A full list of the laboratories contributing to this data is available here:</p>")
 
@@ -73,7 +69,8 @@ fluidPage(
         valueBoxOutput("b1429b1427.a",width=NULL),
         valueBoxOutput("b1351vb.a",width=NULL),
         valueBoxOutput("p1vb.a",width=NULL),
-        sideBarText
+        sideBarText,
+        textOutput('update_time.a')
       ),
       mainPanel(
         fluidRow(
@@ -102,7 +99,8 @@ fluidPage(
         valueBoxOutput("b1429b1427.b",width=NULL),
         valueBoxOutput("b1351vb.b",width=NULL),
         valueBoxOutput("p1vb.b",width=NULL),
-        sideBarText
+        sideBarText,
+        textOutput('update_time.b')
       ),
       mainPanel(
        fluidRow(
@@ -128,7 +126,8 @@ fluidPage(
       valueBoxOutput("b1429b1427.c",width=NULL),
       valueBoxOutput("b1351vb.c",width=NULL),
       valueBoxOutput("p1vb.c",width=NULL),
-      sideBarText
+      sideBarText,
+      textOutput('update_time.c')
     ),
       mainPanel(
         fluidRow(
