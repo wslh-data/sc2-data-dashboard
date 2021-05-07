@@ -37,11 +37,15 @@ function(input,output,session) {
   output$b1351vb.c <- output$b1351vb.b <- output$b1351vb.a <- renderValueBox(b1351)
   output$p1vb.c <- output$p1vb.b <- output$p1vb.a <- renderValueBox(p1)
   output$b1429b1427.c <- output$b1429b1427.b <- output$b1429b1427.a <- renderValueBox(b1429b1427)
+  
+  ### Selectable lineage plot
+  updateSelectizeInput(session,"selectVariant",choices=sort(unique(sc2Data$Lineage)),server=TRUE)
     
   ### Plot Outputs
   output$totalSequences <- renderPlotly(totalseqplot)
   output$sequenceByTimeframe <- renderPlotly(seqFreqPlot(sequenceFreqTimeframe(input$timefreqchoice)))
   output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice)))
+  output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timevarchoice),input$selectVariant))
   output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
   output$VOC <- renderPlotly(vocplot)
   output$VOI <- renderPlotly(voiplot)

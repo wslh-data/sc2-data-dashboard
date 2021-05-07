@@ -149,3 +149,63 @@ plotVariantTimeLineage <- function(data){
   )
   return(fig)
 }
+
+#selectable lineage by week/month/quarter
+plotSelectedLineage <- function(data,lineages){
+  fig <- plot_ly()
+  
+  #add selected lineages
+  if(!is.null(lineages)){
+    data_other <- data[data$lineage != lineages,]
+    data_other$lineage <- "Other"
+    data_other <- group_by_at(data_other,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
+    c = 1
+    pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(lineages))
+    for(lineage in lineages){
+      data_holder <- data[data$lineage == lineage,]
+      fig <- fig %>% add_trace(
+        type = "bar",
+        x = data_holder$date,
+        y = data_holder$num,
+        name = lineage,
+        marker= list(color=pallet[c]),
+        hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+        text = data_holder$num
+      )
+      c = c + 1
+    }
+  }
+  else{
+    data_other <- data
+    data_other$lineage <- "Other"
+    data_other <- group_by_at(data_other,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
+  }
+  fig <- fig %>% add_trace(
+    type = "bar",
+    x = data_other$date,
+    y = data_other$num,
+    name = "Other",
+    marker= list(color="#CCCCCC"),
+    hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+    text = data_other$num
+  )
+  
+  fig <- fig %>% layout(
+    barmode="stack",
+    barnorm="percent",
+    hoverlabel= list(
+      font = list(
+        size = 14
+      )
+    ),
+    xaxis = list(
+      categoryorder = "array",
+      categoryarray = data$date
+    ),
+    yaxis = list(
+      categoryorder = "category array",
+      categoryarray = data$lineage
+    )
+  )
+  return(fig)
+}

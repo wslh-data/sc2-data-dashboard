@@ -115,8 +115,14 @@ fluidPage(
                     voctext),
            tabPanel("Variants of Interest",
                     plotlyOutput("VOI")%>% withSpinner(color="#c5050c"),
-                    voitext)
-          )
+                    voitext),
+           tabPanel("Search Variants",
+                    plotlyOutput("selectVariantByTimeframe")%>% withSpinner(color="#c5050c"),
+                    tags$h3("Proportion of sequenced strains matching the selected variant, over time by sample collection date."),
+                    selectInput("timeselectvarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly"),
+                    selectizeInput("selectVariant","Select Variants",choices=NULL,multiple=TRUE)
+           )
+         )
        )
      )
     ),
