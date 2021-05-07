@@ -121,8 +121,10 @@ fluidPage(
            tabPanel("Search Variants",
                     plotlyOutput("selectVariantByTimeframe")%>% withSpinner(color="#c5050c"),
                     tags$h3("Proportion of sequenced strains matching the selected variant, over time by sample collection date."),
-                    selectInput("timeselectvarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly"),
-                    selectizeInput("selectVariant","Variant Search",choices=NULL,multiple=TRUE)
+                    fluidRow(
+                      column(6,selectInput("timeselectvarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly")),
+                      column(6,selectizeInput("selectVariant","Variant Search",choices=NULL,multiple=TRUE))
+                    )
            )
          )
        )
