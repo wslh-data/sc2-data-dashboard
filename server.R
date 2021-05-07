@@ -45,7 +45,7 @@ function(input,output,session) {
   output$totalSequences <- renderPlotly(totalseqplot)
   output$sequenceByTimeframe <- renderPlotly(seqFreqPlot(sequenceFreqTimeframe(input$timefreqchoice)))
   output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice)))
-  output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timevarchoice),input$selectVariant))
+  output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timeselectvarchoice),input$selectVariant))
   output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
   output$VOC <- renderPlotly(vocplot)
   output$VOI <- renderPlotly(voiplot)
