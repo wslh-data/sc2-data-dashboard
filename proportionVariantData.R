@@ -154,9 +154,16 @@ plotVariantTimeLineage <- function(data){
 plotSelectedLineage <- function(data,lineages){
   fig <- plot_ly()
   
-  #add selected lineages
-  if(!is.null(lineages)){
-    data_other <- data[data$lineage != lineages,]
+  #no lineages selected show all as other
+  if(is.null(lineages)){
+    data_other <- data
+    data_other$lineage <- "Other"
+    data_other <- group_by_at(data_other,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
+  }
+  #select lineages
+  else{
+    data_other <- data[!(data$lineage %in% lineages),]
+    print(data_other[data_other$lineage == "B.1.1.7",])
     data_other$lineage <- "Other"
     data_other <- group_by_at(data_other,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
     c = 1
@@ -174,11 +181,6 @@ plotSelectedLineage <- function(data,lineages){
       )
       c = c + 1
     }
-  }
-  else{
-    data_other <- data
-    data_other$lineage <- "Other"
-    data_other <- group_by_at(data_other,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
   }
   fig <- fig %>% add_trace(
     type = "bar",
