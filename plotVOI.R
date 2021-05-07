@@ -1,5 +1,16 @@
 library(plotly)
 
+VOI_list = c(
+  "B.1.525",
+  "B.1.526",
+  "B.1.526.1",
+  "B.1.617",
+  "B.1.617.1",
+  "B.1.617.2",
+  "B.1.617.3",
+  "P.2"
+)
+
 #render a plot of the variants of interest
 plotVOI <- function(sc2Data){
   sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))
@@ -7,38 +18,17 @@ plotVOI <- function(sc2Data){
   sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"|sc2bylineage$date=="2021"),]
   
   fig <- plot_ly()
-  # P.2
-  data <- data.frame(date="2020-01-01",lineage="P.2",num=0)
-  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "P.2",])
-  fig <- fig %>% add_trace(
-    type = "scatter",
-    x = as.Date(data$date, format= "%Y-%m-%d"),
-    y = cumsum(data$num),
-    name = 'P.2',
-    mode = "lines"
-  )
-  
-  # B.1.525
-  data <- data.frame(date="2020-01-01",lineage="B.1.525",num=0)
-  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "B.1.525",])
-  fig <- fig %>% add_trace(
-    type = "scatter",
-    x = as.Date(data$date, format= "%Y-%m-%d"),
-    y = cumsum(data$num),
-    name = 'B.1.525',
-    mode = "lines"
-  )
-  
-  # B.1.526
-  data <- data.frame(date="2020-01-01",lineage="B.1.526",num=0)
-  data <- rbind(data,sc2bylineage[sc2bylineage$lineage == "B.1.526",])
-  fig <- fig %>% add_trace(
-    type = "scatter",
-    x = as.Date(data$date, format= "%Y-%m-%d"),
-    y = cumsum(data$num),
-    name = 'B.1.526',
-    mode = "lines"
-  )
+  for(voi in VOI_list){
+    data <- data.frame(date="2020-01-01",lineage=voi,num=0)
+    data <- rbind(data,sc2bylineage[sc2bylineage$lineage == voi,])
+    fig <- fig %>% add_trace(
+      type = "scatter",
+      x = as.Date(data$date, format= "%Y-%m-%d"),
+      y = cumsum(data$num),
+      name = voi,
+      mode = "lines"
+    )
+  }
   
   fig <- fig %>%
     layout(

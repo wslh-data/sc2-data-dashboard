@@ -2,18 +2,33 @@ library(plotly)
 library(dplyr)
 library(viridis)
 
-variantList <- c(
+VOI_list = c(
+  "B.1.525",
+  "B.1.526",
+  "B.1.526.1",
+  "B.1.617",
+  "B.1.617.1",
+  "B.1.617.2",
+  "B.1.617.3",
+  "P.2"
+)
+
+VOC_list = c(
   "B.1.1.7",
   "B.1.351",
+  "B.1.351.1",
+  "B.1.351.2",
+  "B.1.351.3",
   "P.1",
-  "B.1.429",
+  "P.1.1",
+  "P.1.2",
   "B.1.427",
-  "P.2",
-  "B.1.525",
-  "B.1.526"
+  "B.1.429",
+  "B.1.429.1"
 )
 
 prepareVariantPropData <- function(data){
+  variantList <- c(VOI_list,VOC_list)
   #### Sequence Lineage Top List
   sc2bylineage <- data.frame(table(data$Collection.date,data$Lineage))
   names(sc2bylineage) <- c("date","lineage","num")
@@ -73,28 +88,38 @@ prepareVariantPropData <- function(data){
 #render a plot of the lineages sequenced by week/month/quarter
 plotVariantTimeLineage <- function(data){
   data_other <- data[data$lineage =="Other",]
-  data_voc <- data[data$lineage =="P.1" | data$lineage =="B.1.351" | data$lineage =="B.1.1.7" | data$lineage =="B.1.429" | data$lineage =="B.1.427",]
-  data_voi <- data[data$lineage =="P.2" | data$lineage =="B.1.526" | data$lineage =="B.1.525",]
-  data <- data[data$lineage !="Other",]
+  data <- data[data$lineage != "Other",]
   fig <- plot_ly()
-  fig <- fig %>% add_trace(
-    type = "bar",
-    x = data_voc$date,
-    y = data_voc$num,
-    name = data_voc$lineage,
-    marker= list(color="#F1605D"),
-    hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-    text = data_voc$num
-  )
-  fig <- fig %>% add_trace(
-    type = "bar",
-    x = data_voi$date,
-    y = data_voi$num,
-    name = data_voi$lineage,
-    marker= list(color="#451077"),
-    hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-    text = data_voi$num
-  )
+  c = 1
+  pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VOI_list))
+  for(voi in VOI_list){
+    data_holder <- data[data$lineage == voi,]
+    fig <- fig %>% add_trace(
+      type = "bar",
+      x = data_holder$date,
+      y = data_holder$num,
+      name = voi,
+      marker= list(color=pallet[c]),
+      hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+      text = data_holder$num
+    )
+    c = c + 1
+  }
+  c = 1
+  pallet = colorRampPalette(c("#880e0c","#f69593"))(length(VOC_list))
+  for(voc in VOC_list){
+    data_holder <- data[data$lineage == voc,]
+    fig <- fig %>% add_trace(
+      type = "bar",
+      x = data_holder$date,
+      y = data_holder$num,
+      name = voc,
+      marker= list(color=pallet[c]),
+      hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+      text = data_holder$num
+    )
+    c = c + 1
+  }
   fig <- fig %>% add_trace(
     type = "bar",
     x = data_other$date,
@@ -104,6 +129,7 @@ plotVariantTimeLineage <- function(data){
     hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
     text = data_other$num
   )
+  
   fig <- fig %>% layout(
     barmode="stack",
     barnorm="percent",
