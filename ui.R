@@ -39,6 +39,8 @@ voitext <- HTML('<h3>Cumulative number of variants sequences identified over tim
 
   <li><b>B.1.526:</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a>
   </li>
+  <li><b>B.1.617:</b> First identified in India, February 2021. <a href="https://outbreak.info/situation-reports?pango=B.1.617">More Information</a>
+  </li>
 
 </ul>
 For more information on these variants of interest visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html#Interest">CDC\'s Variant Surveillance</a>. ')
