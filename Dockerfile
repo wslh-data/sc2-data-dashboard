@@ -41,7 +41,6 @@ RUN mkdir /app && mkdir /data
 
 # copy app into container
 COPY *.R /app/
-COPY *.Rmd /app/
 COPY www/ /app/www/
 
 EXPOSE 3838
