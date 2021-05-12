@@ -29,6 +29,9 @@ loadGlobalData <- function(rootPath) {
   date_filter <<- as.Date(sc2Data$Collection.date) < (Sys.Date() - 21)
   sc2Data <<- sc2Data[date_filter,]
   
+  #### Remove Samples with Blank Lineage
+  sc2Data <- sc2Data[sc2Data$Lineage != "",]
+  
   #### Sequence Frequency by Time Period
   timeFrameData <<- prepareTimeFrameData(sc2Data)
   
