@@ -7,9 +7,27 @@ library(shinyBS)
 library(stringr)
 
 
-sideBarText <- HTML("<p>The data in this dashboard is obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>. It includes results generated for Wisconsin residents by WSLH and other labs. Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p><p>Data Updated: ")
+sideBarText <- HTML("<p><p>The data summarized in this Dashboard was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: 
+  <ul>
+    <li><a href='https://www.dhs.wisconsin.gov/'>DHS</a></li>
+    <li><a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a></li>
+    <li><a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a></li>
+    <li><a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a></li>
+    <li><a href='https://www.cdc.gov/'>CDC</a></li>
+  </ul>
+</p> Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p><p>Data Updated: ")
 
-aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p><p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p><p> Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p><p>The data summarized in this report was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: <a href='https://www.dhs.wisconsin.gov/'>DHS</a>, <a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a>, <a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a>, <a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a>, and the <a href='https://www.cdc.gov/'>CDC</a>. A full list of the laboratories contributing to this data is available here:</p>")
+aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p>
+<p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p>
+<p> Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p>
+<p>We are grateful to the data contributors who shared the data used in this Web Application via the GISAID Initiative*: the Authors, the Originating Laboratories responsible for obtaining the specimens, and the Submitting Laboratories that generated the genetic sequences and metadata.</p>
+<p>
+(a) Elbe, S., and Buckland-Merrett, G. (2017) Data, disease and diplomacy: GISAID’s innovative contribution to global health. Global Challenges, 1:33-46. DOI: <a href='https://doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</a> PMCID: <a href='https://pubmed.ncbi.nlm.nih.gov/31565258/'>31565258</a>
+</p>
+<p>
+(b) Shu, Y., McCauley, J. (2017) GISAID: From vision to reality. EuroSurveillance, 22(13)
+DOI: <a href='https://doi.org/10.2807/1560-7917.es.2017.22.13.30494'>10.2807/1560-7917.ES.2017.22.13.30494</a>  PMCID: <a href='https://pubmed.ncbi.nlm.nih.gov/28382917/'>PMC5388101</a>
+</p>A full list of the laboratories contributing to this data is available here:</p>")
 
 voctext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
@@ -45,6 +63,9 @@ voitext <- HTML('<h3>Cumulative number of variants sequences identified over tim
 </ul>
 For more information on these variants of interest visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html#Interest">CDC\'s Variant Surveillance</a>. ')
 
+acknowledgement_text <- HTML('
+')
+
 jsStr <- '$(document).ready(function(){
   $("a[data-value=\'About the Data\']").attr({
     "href":"#",
@@ -53,7 +74,7 @@ jsStr <- '$(document).ready(function(){
   });
 })'
 
-fluidPage(
+fluidPage(title="WI SARS-CoV-2 Genomic Report",
   tags$style("@import url(https://use.fontawesome.com/releases/v5.15.3/css/all.css);"),
   tags$head(tags$script(HTML(jsStr))),
   tags$head(includeHTML("www/wslh-theme/analytics.html")),
@@ -61,9 +82,10 @@ fluidPage(
   tags$link(rel = "stylesheet",type = "text/css", href = "wslh-theme/wslh.css"),
   titlePanel(
     title=tags$div(class="titlePanel",tags$a(href='https://dataportal.slh.wisc.edu/',tags$img(src='wslh-theme/wslh-logo.png', height = 90))),
-    tags$head(tags$link(rel = "icon", href = "wslh-theme/w-favicon.ico"), windowTitle="WI SARS-CoV-2 Genomic Report")
+    tags$head(tags$link(rel = "icon", href = "wslh-theme/w-favicon.ico"), windowTitle="WI SARS-CoV-2 Genomic Report",tags$style(type='text/css','.navbar-brand{display:none;}'))
   ),
-  navbarPage(id='navtabs',tags$h3("Wisconsin SARS-CoV-2 Genomic Dashboard",style="margin:0px"),
+  fluidRow(HTML("<h2 style='margin-top:10px'>Wisconsin SARS-CoV-2 (hCoV-19) Genomic Dashboard</h2><h4>enabled by data from <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a></h4>")),
+  navbarPage(id='navtabs',"",footer=HTML("<h5 style='font-weight:200'>GISAID data provided on this website are subject to GISAID’s <a href='https://www.gisaid.org/DAA/'>Terms and Conditions</a></h5>"),
     tabPanel("Sequencing Report",
       sidebarPanel(
         tags$style(".small-box.bg-yellow { background-color: #F1605D !important; color: #FFFFFF !important; }"),
