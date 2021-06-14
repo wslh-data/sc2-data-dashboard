@@ -90,7 +90,7 @@ loadGlobalData <- function(rootPath) {
   #### Variant Value Box
   b117 <<- valueBox(
     value = nrow(sc2Data[sc2Data$Lineage == "B.1.1.7",]),
-    subtitle = "B.1.1.7",
+    subtitle = "B.1.1.7 (Alpha)",
     icon = icon("virus"),
     width = NULL,
     color = "yellow",
@@ -99,7 +99,7 @@ loadGlobalData <- function(rootPath) {
   
   b1351 <<- valueBox(
     value = nrow(sc2Data[sc2Data$Lineage == "B.1.351",]),
-    subtitle = "B.1.351",
+    subtitle = "B.1.351 (Beta)",
     icon = icon("virus"),
     width = NULL,
     color = "yellow",
@@ -108,7 +108,7 @@ loadGlobalData <- function(rootPath) {
   
   p1 <<- valueBox(
     value = nrow(sc2Data[sc2Data$Lineage == "P.1",]),
-    subtitle = "P.1",
+    subtitle = "P.1 (Gamma)",
     icon = icon("virus"),
     width = NULL,
     color = "yellow",
@@ -117,11 +117,20 @@ loadGlobalData <- function(rootPath) {
   
   b1429b1427 <<- valueBox(
     value = nrow(sc2Data[sc2Data$Lineage == "B.1.427"|sc2Data$Lineage == "B.1.429",]),
-    subtitle = "B.1.427 & B.1.429",
+    subtitle = "B.1.427 & B.1.429 (Epsilon)",
     icon = icon("virus"),
     width = NULL,
     color = "yellow",
     href = "https://outbreak.info/situation-reports"
+  )
+  
+  b16172 <<- valueBox(
+    value = nrow(sc2Data[sc2Data$Lineage == "B.1.617.2",]),
+    subtitle = "B.1.617.2 (Delta)",
+    icon = icon("virus"),
+    width = NULL,
+    color = "yellow",
+    href = "https://outbreak.info/situation-reports?pango=B.1.617.2"
   )
   
   ############################

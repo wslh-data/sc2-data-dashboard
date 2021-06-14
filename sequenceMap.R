@@ -153,38 +153,43 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
   HERCData$Freq[is.na(HERCData$Freq)] <- 0
   
   # add variant counts
-  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,Sum=0,Total=0)
+  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,B.1.617.2=0,Sum=0,Total=0)
   
   for( i in 1:nrow(sc2Data)){
     data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
     if(!any(is.na(data))){
       if(data[1] == "B.1.1.7"){
         HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
-        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
-      if(data[1] == "P.1"){
+      else if(data[1] == "P.1"){
         HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
-        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
-      if(data[1] == "B.1.351"){
+      else if(data[1] == "B.1.351"){
         HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
-        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
-      if(data[1] == "B.1.429"){
+      else if(data[1] == "B.1.429"){
         HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
-        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
-      if(data[1] == "B.1.427"){
+      else if(data[1] == "B.1.427"){
         HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
+        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
+      }
+      else if(data[1] == "B.1.617.2"){
         HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
       else{
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
+        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
     }
   }
@@ -195,6 +200,7 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
                                          "B.1.351:",B.1.351,'<br>',
                                          "B.1.427 / B.1.429:",B.1.427and429,'<br>',
                                          "P.1:",P.1,'<br>',
+                                         "B.1.617.2:",B.1.617.2,'<br>',
                                          "Variants Sequenced:",signif((Sum/Total)*100,2),'%<br>',
                                          "Total Sequences:",Total,'<br>'))
                                              

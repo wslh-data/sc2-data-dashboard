@@ -32,30 +32,34 @@ DOI: <a href='https://doi.org/10.2807/1560-7917.es.2017.22.13.30494'>10.2807/156
 voctext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
 <ul>
-  <li><b>B.1.1.7:</b> Also known as 20I/501Y.V1 was initially found in December 2020 and first identified in the United Kingdom. This variant carries 17 defining mutations and has spread globally. Early evidence suggests the variant may be associated with increased transmissibility and risk of death. <a href="https://outbreak.info/situation-reports?pango=B.1.1.7">More Information</a>
+  <li><b>B.1.1.7 (Alpha):</b> Also known as 20I/501Y.V1 was initially found in December 2020 and first identified in the United Kingdom. This variant carries 17 defining mutations and has spread globally. Early evidence suggests the variant may be associated with increased transmissibility and risk of death. <a href="https://outbreak.info/situation-reports?pango=B.1.1.7">More Information</a>
   </li>
 
-  <li><b>B.1.351:</b> Also known as 20H/501Y.V2 was initially found in December 2020 and first identified in South Africa. This variant carries 9 defining mutations. Preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a>
+  <li><b>B.1.351 (Beta):</b> Also known as 20H/501Y.V2 was initially found in December 2020 and first identified in South Africa. This variant carries 9 defining mutations. Preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a>
   </li>
 
-  <li><b>B.1.429 & B.1.427:</b> Also known as (CAL.20C) and first identified in Southern California in July 2020. Preliminary studies suggest this variant could affect antibody binding. More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a>
+  <li><b>B.1.429 & B.1.427 (Epsilon):</b> Also known as (CAL.20C) and first identified in Southern California in July 2020. Preliminary studies suggest this variant could affect antibody binding. More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a>
   </li>
 
-  <li><b>P.1:</b> Also known as 20J/501Y.V3 was initially found in January 2021 and first identified in Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a>
+  <li><b>P.1 (Gamma):</b> Also known as 20J/501Y.V3 was initially found in January 2021 and first identified in Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a>
   </li>
+  
+  <li><b>B.1.617.2 (Delta):</b> Also known as 20A/S:478K was initially found in March 2021 and first identified in Brazil. This variant carries 18 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant carries increased transmissibility, and a potential reduction of neutralization by post-vaccination sera. <a href="https://outbreak.info/situation-reports?pango=B.1.617.2">More Information</a>
+  </li>
+  
 </ul>
 For more information on these variants of concern visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html#Concern">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.')
 
 voitext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of Interest contain specific mutations that have been associated with changes to receptor binding, reduced neutralization by antibodies generated against previous infection or vaccination, reduced efficacy of treatments, potential diagnostic impact, or predicted increase in transmissibility or disease severity. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
 <ul>
-  <li><b>P.2:</b> First identified in Brazil in January 2021. <a href="https://outbreak.info/situation-reports?pango=P.2">More Information</a>
+  <li><b>P.2 (Zeta):</b> First identified in Brazil in January 2021. <a href="https://outbreak.info/situation-reports?pango=P.2">More Information</a>
   </li>
 
-  <li><b>B.1.525:</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.525">More Information</a>
+  <li><b>B.1.525 (Eta):</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.525">More Information</a>
   </li>
 
-  <li><b>B.1.526:</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a>
+  <li><b>B.1.526 (Iota):</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a>
   </li>
   <li><b>B.1.617:</b> First identified in India, February 2021. <a href="https://outbreak.info/situation-reports?pango=B.1.617">More Information</a>
   </li>
@@ -90,9 +94,10 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
       sidebarPanel(
         tags$style(".small-box.bg-yellow { background-color: #F1605D !important; color: #FFFFFF !important; }"),
         valueBoxOutput("b117vb.a",width=NULL),
-        valueBoxOutput("b1429b1427.a",width=NULL),
         valueBoxOutput("b1351vb.a",width=NULL),
         valueBoxOutput("p1vb.a",width=NULL),
+        valueBoxOutput("b16172.a",width=NULL),
+        valueBoxOutput("b1429b1427.a",width=NULL),
         sideBarText,
         textOutput('update_time.a')
       ),
@@ -120,9 +125,10 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
     tabPanel("Variant Report",
       sidebarPanel(
         valueBoxOutput("b117vb.b",width=NULL),
-        valueBoxOutput("b1429b1427.b",width=NULL),
         valueBoxOutput("b1351vb.b",width=NULL),
         valueBoxOutput("p1vb.b",width=NULL),
+        valueBoxOutput("b16172.b",width=NULL),
+        valueBoxOutput("b1429b1427.b",width=NULL),
         sideBarText,
         textOutput('update_time.b')
       ),
@@ -155,9 +161,10 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
     tabPanel("Regional/County Report",
     sidebarPanel(
       valueBoxOutput("b117vb.c",width=NULL),
-      valueBoxOutput("b1429b1427.c",width=NULL),
       valueBoxOutput("b1351vb.c",width=NULL),
       valueBoxOutput("p1vb.c",width=NULL),
+      valueBoxOutput("b16172.c",width=NULL),
+      valueBoxOutput("b1429b1427.c",width=NULL),
       sideBarText,
       textOutput('update_time.c')
     ),
