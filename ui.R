@@ -173,7 +173,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
           tabsetPanel(
             tabPanel("Variants by HERC Region",
                      plotlyOutput("hercVariant")%>% withSpinner(color="#c5050c"),
-                     HTML('Percentage of Variants of Concern sequenced by <a href="https://www.dhs.wisconsin.gov/preparedness/healthcare/index.htm">Healthcare Emergency Readiness Coalition (HERC)</a> region, darker colors represent a greater proportion of variants identified. Hover over a region to see a breakdown of the variants of concern. Percentage is based on the number of sequences generated between: '),
+                     HTML('Percentage of sequences identified as variants of concern by <a href="https://www.dhs.wisconsin.gov/preparedness/healthcare/index.htm">Healthcare Emergency Readiness Coalition (HERC)</a> region, darker colors represent a greater proportion of variants identified. Hover over a region to see a breakdown of the variants of concern. Percentage is based on the number of sequences generated between: '),
                      dateRangeInput("herctimechoice", "",start=(Sys.Date()-51),end=(Sys.Date()-21))
             ),
             tabPanel("Sequences by County",
