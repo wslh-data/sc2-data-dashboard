@@ -41,34 +41,13 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   CountyData$FIPS <- lapply(CountyData$County, fips, state="WI")
 
   #load DHS data
-  dhsdata <- dhsdata[dhsdata$Measure.Names == "Number of confirmed cases",]
-  dhsdata <- dhsdata[,c(1,4)]
-  names(dhsdata) <- c("County","ConfirmedCases")
-  dhsdata$County <- tolower(dhsdata$County)
-  CountyData <- merge(CountyData,dhsdata,by="County")
+  dhsdata_cc <- dhsdata[dhsdata$Measure.Names == "Number of confirmed cases",]
+  dhsdata_cc <- dhsdata_cc[,c(1,4)]
+  names(dhsdata_cc) <- c("County","ConfirmedCases")
+  dhsdata_cc$County <- tolower(dhsdata_cc$County)
+  CountyData <- merge(CountyData,dhsdata_cc,by="County")
   CountyData$percentseq <- (CountyData$Freq / CountyData$ConfirmedCases) * 100
   CountyData$percentseq <- round(CountyData$percentseq,digits = 1)
-
-
-
-
-  # add variant counts
-  CountyData <- cbind(CountyData,B.1.1.7 = 0,P.1=0,B.1.351=0)
-
-  for( i in 1:nrow(sc2Data)){
-    data <- c(as.character(sc2Data[i,15]),sc2Data[i,18])
-    if(!any(is.na(data))){
-      if(data[1] == "B.1.1.7"){
-        CountyData[CountyData$County==data[2],4] = CountyData[CountyData$County==data[2],4] + 1
-      }
-      if(data[1] == "P.1"){
-        CountyData[CountyData$County==data[2],5] = CountyData[CountyData$County==data[2],5] + 1
-      }
-      if(data[1] == "B.1.351"){
-        CountyData[CountyData$County==data[2],6] = CountyData[CountyData$County==data[2],6] + 1
-      }
-    }
-  }
 
   # format county names
   CountyData$County <- str_to_title(CountyData$County)
@@ -131,11 +110,11 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
   sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
   sc2Data$County <- tolower(sc2Data$County)
   sc2Data$HERC <- CountyToHERC(sc2Data$County)
-  
+
   # organize data by County
   HERCCounts <- as.data.frame(table(sc2Data$County), stringsAsFactors=FALSE)
   names(HERCCounts) <- c("HERC","Freq")
-  
+
   #convert county to HERC and combine
   HERCCounts$HERC <- CountyToHERC(HERCCounts$HERC)
   HERCCounts <- HERCCounts %>% group_by(HERC) %>% summarise(Freq = sum(Freq))
@@ -151,10 +130,10 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
   names(HERCData) <- c('HERC')
   HERCData <- merge(HERCData,HERCCounts,by = "HERC", all.x = TRUE)
   HERCData$Freq[is.na(HERCData$Freq)] <- 0
-  
+
   # add variant counts
   HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,B.1.617.2=0,Sum=0,Total=0)
-  
+
   for( i in 1:nrow(sc2Data)){
     data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
     if(!any(is.na(data))){
@@ -193,7 +172,7 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
       }
     }
   }
-  
+
   #Hover Format
   HERCData$hover <- with(HERCData, paste("HERC Region: ",HERC,'<br>',
                                          "B.1.1.7: ",B.1.1.7,'<br>',
@@ -203,11 +182,11 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
                                          "B.1.617.2:",B.1.617.2,'<br>',
                                          "Variants Sequenced:",signif((Sum/Total)*100,2),'%<br>',
                                          "Total Sequences:",Total,'<br>'))
-                                             
-  
+
+
   # give county boundaries a white border
   l <- list(color = "#CDCDCD", width = 1)
-  
+
   # specify some map projection/options
   g <- list(
     projection = list(type = 'albers usa'),
@@ -226,7 +205,7 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
     zoom=5,
     bearing=0.8
   )
-  
+
   fig <- plot_ly()
   fig <- fig %>% add_trace(
     type="choroplethmapbox",
