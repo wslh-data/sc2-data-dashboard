@@ -1,10 +1,10 @@
 
-FROM rocker/shiny-verse:3.6.3
+FROM rocker/shiny-verse:4.1.0
 
 LABEL base.image="rocker/shiny-verse"
 LABEL dockerfile.version="2"
 LABEL software="R Shiny Server"
-LABEL software.version="3.6.3"
+LABEL software.version="4.1.0"
 LABEL description="R Shiny Server for hosting Data Dashboards"
 LABEL website=""
 LABEL license=""
