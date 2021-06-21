@@ -2,20 +2,22 @@ library(pdftools)
 
 loadGlobalData <- function(rootPath) {
   
-  ### Update Time
-  fileName <- str_split(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2021*.tsv')),"_")[[1]]
-  update_time <<- paste(fileName[4],fileName[5],fileName[3],sep="/")
-  
   ### Load data
-  sc2Data_2020 <<- read.csv(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2020*.tsv')),sep="\t")
-  sc2Data_2021 <<- read.csv(Sys.glob(file.path(rootPath,'gisaid_hcov-19_2021*.tsv')),sep="\t")
-  sc2Data <<- merge(sc2Data_2020,sc2Data_2021,all=TRUE)
+  sc2Data <- do.call(rbind,lapply(list.files(path = rootPath, pattern ='gisaid_hcov-19_.*tsv', full.names = TRUE), read.csv, sep="\t"))
+  sc2Data <- unique(sc2Data,by="Accession.ID")
+  sc2Data <- sc2Data[!is.na(sc2Data$Accession.ID),]
+  # fix 427/429
+  sc2Data$Lineage[sc2Data$Lineage=="B.1.427"] <- "B.1.427/429"
+  sc2Data$Lineage[sc2Data$Lineage=="B.1.429"] <- "B.1.427/429"
+  sc2Data <<- sc2Data
   
   dhsdata <<- read.csv(file.path(rootPath,"County_Table_data.csv"))
-  ack_2020 <<- Sys.glob(file.path(rootPath,"gisaid_hcov-19_acknowledgement_table_2020*.pdf"))
-  ack_2021 <<- Sys.glob(file.path(rootPath,"gisaid_hcov-19_acknowledgement_table_2021*.pdf"))
-  pdf_combine(c(ack_2020, ack_2021), output = file.path(rootPath,"gisaid_acknowledgements.pdf"))
+  pdf_combine(input = list.files(path = rootPath, pattern ='gisaid_hcov-19_acknowledgement_table.*pdf', full.names = TRUE), output = file.path(rootPath,"gisaid_acknowledgements.pdf"))
   ackfile <<- file.path(rootPath,"gisaid_acknowledgements.pdf")
+  
+  ### Update Time
+  fileName <- str_split(tail(sort(list.files(path = rootPath, pattern ='gisaid_hcov-19_.*tsv')),n=1),"_")[[1]]
+  update_time <<- paste(fileName[4],fileName[5],fileName[3],sep="/")
   
   ### GeoJSON Files
   WICounty_geojson <<- fromJSON(file=file.path(rootPath,"geojson-counties-fips.json"))
@@ -116,7 +118,7 @@ loadGlobalData <- function(rootPath) {
   )
   
   b1429b1427 <<- valueBox(
-    value = nrow(sc2Data[sc2Data$Lineage == "B.1.427"|sc2Data$Lineage == "B.1.429",]),
+    value = nrow(sc2Data[sc2Data$Lineage == "B.1.427/429",]),
     subtitle = "B.1.427 & B.1.429 (Epsilon)",
     icon = icon("virus"),
     width = NULL,
