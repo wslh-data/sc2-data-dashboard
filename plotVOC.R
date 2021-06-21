@@ -9,9 +9,8 @@ VOC_list = c(
   "P.1",
   "P.1.1",
   "P.1.2",
-  "B.1.427",
-  "B.1.429",
-  "B.1.429.1"
+  "B.1.427/429",
+  "B.1.617.2"
 )
 
 #render a plot of the variants of concern
@@ -32,7 +31,6 @@ plotVOC <- function(sc2Data){
       mode = "lines"
     )
   }
-  
   fig <- fig %>%
     layout(
       xaxis = list(
@@ -41,5 +39,6 @@ plotVOC <- function(sc2Data){
       ),
       hovermode = 'compare'
     )
+  fig
   return(fig)
 }

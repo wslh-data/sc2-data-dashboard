@@ -152,12 +152,7 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
         HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
       }
-      else if(data[1] == "B.1.429"){
-        HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
-      }
-      else if(data[1] == "B.1.427"){
+      else if(data[1] == "B.1.427/429"){
         HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
         HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
         HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
