@@ -132,38 +132,21 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
   HERCData$Freq[is.na(HERCData$Freq)] <- 0
 
   # add variant counts
-  HERCData <- cbind(HERCData,B.1.1.7 = 0,P.1=0,B.1.351=0,B.1.427and429=0,B.1.617.2=0,Sum=0,Total=0)
+  emptyFrame <- data.frame(matrix(ncol=length(VOC_list)+2,nrow = nrow(HERCData)))
+  colnames(emptyFrame) <- c(VOC_list,"VarSum","Total")
+  emptyFrame[is.na(emptyFrame)] <- 0
+  HERCData <- cbind(HERCData,emptyFrame)
 
   for( i in 1:nrow(sc2Data)){
     data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
     if(!any(is.na(data))){
-      if(data[1] == "B.1.1.7"){
-        HERCData[HERCData$HERC==data[2],3] = HERCData[HERCData$HERC==data[2],3] + 1
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
-      }
-      else if(data[1] == "P.1"){
-        HERCData[HERCData$HERC==data[2],4] = HERCData[HERCData$HERC==data[2],4] + 1
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
-      }
-      else if(data[1] == "B.1.351"){
-        HERCData[HERCData$HERC==data[2],5] = HERCData[HERCData$HERC==data[2],5] + 1
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
-      }
-      else if(data[1] == "B.1.427/429"){
-        HERCData[HERCData$HERC==data[2],6] = HERCData[HERCData$HERC==data[2],6] + 1
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
-      }
-      else if(data[1] == "B.1.617.2"){
-        HERCData[HERCData$HERC==data[2],7] = HERCData[HERCData$HERC==data[2],7] + 1
-        HERCData[HERCData$HERC==data[2],8] = HERCData[HERCData$HERC==data[2],8] + 1
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
+      if(data[1] %in% VOC_list){
+        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)==data[1])] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)==data[1])] + 1
+        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='VarSum')] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='VarSum')] + 1
+        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] + 1
       }
       else{
-        HERCData[HERCData$HERC==data[2],9] = HERCData[HERCData$HERC==data[2],9] + 1
+        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] + 1
       }
     }
   }
@@ -172,10 +155,9 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
   HERCData$hover <- with(HERCData, paste("HERC Region: ",HERC,'<br>',
                                          "B.1.1.7: ",B.1.1.7,'<br>',
                                          "B.1.351:",B.1.351,'<br>',
-                                         "B.1.427 / B.1.429:",B.1.427and429,'<br>',
                                          "P.1:",P.1,'<br>',
                                          "B.1.617.2:",B.1.617.2,'<br>',
-                                         "Variants Sequenced:",signif((Sum/Total)*100,2),'%<br>',
+                                         "Variants Sequenced:",signif((VarSum/Total)*100,2),'%<br>',
                                          "Total Sequences:",Total,'<br>'))
 
 
@@ -205,13 +187,13 @@ plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
   fig <- fig %>% add_trace(
     type="choroplethmapbox",
     geojson=geojson,
-    z = (HERCData$Sum/HERCData$Total)*100,
+    z = (HERCData$VarSum/HERCData$Total)*100,
     featureidkey="properties.NAME",
     locations = HERCData$HERC,
     text = HERCData$hover,
     hoverinfo = "text",
     showlegend = FALSE,
-    color = HERCData$Sum,
+    color = HERCData$VarSum,
     colors = "Blues",
     colorbar = list(ticksuffix="%",title=list(text="Percentage of Variants")),
     marker = list(line = l)
