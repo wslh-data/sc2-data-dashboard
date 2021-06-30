@@ -1,18 +1,5 @@
 library(plotly)
 
-VOC_list = c(
-  "B.1.1.7",
-  "B.1.351",
-  "B.1.351.1",
-  "B.1.351.2",
-  "B.1.351.3",
-  "P.1",
-  "P.1.1",
-  "P.1.2",
-  "B.1.427/429",
-  "B.1.617.2"
-)
-
 #render a plot of the variants of concern
 plotVOC <- function(sc2Data){
   sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))

@@ -2,29 +2,6 @@ library(plotly)
 library(dplyr)
 library(viridis)
 
-VOI_list = c(
-  "B.1.525",
-  "B.1.526",
-  "B.1.526.1",
-  "B.1.617",
-  "B.1.617.1",
-  "B.1.617.3",
-  "P.2"
-)
-
-VOC_list = c(
-  "B.1.1.7",
-  "B.1.351",
-  "B.1.351.1",
-  "B.1.351.2",
-  "B.1.351.3",
-  "P.1",
-  "P.1.1",
-  "P.1.2",
-  "B.1.427/429",
-  "B.1.617.2"
-)
-
 prepareVariantPropData <- function(data){
   variantList <- c(VOI_list,VOC_list)
   #### Sequence Lineage Top List

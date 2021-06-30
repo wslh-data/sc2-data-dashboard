@@ -38,9 +38,6 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
   <li><b>B.1.351 (Beta):</b> Also known as 20H/501Y.V2 was initially found in December 2020 and first identified in South Africa. This variant carries 9 defining mutations. Preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a>
   </li>
 
-  <li><b>B.1.429 & B.1.427 (Epsilon):</b> Also known as (CAL.20C) and first identified in Southern California in July 2020. Preliminary studies suggest this variant could affect antibody binding. More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a>
-  </li>
-
   <li><b>P.1 (Gamma):</b> Also known as 20J/501Y.V3 was initially found in January 2021 and first identified in Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a>
   </li>
   
@@ -62,6 +59,9 @@ voitext <- HTML('<h3>Cumulative number of variants sequences identified over tim
   <li><b>B.1.526 (Iota):</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a>
   </li>
   <li><b>B.1.617:</b> First identified in India, February 2021. <a href="https://outbreak.info/situation-reports?pango=B.1.617">More Information</a>
+  </li>
+  
+  <li><b>B.1.429 & B.1.427 (Epsilon):</b> Also known as (CAL.20C) and first identified in Southern California in July 2020. Preliminary studies suggest this variant could affect antibody binding. More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a>
   </li>
 
 </ul>
@@ -97,7 +97,6 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
         valueBoxOutput("b1351vb.a",width=NULL),
         valueBoxOutput("p1vb.a",width=NULL),
         valueBoxOutput("b16172.a",width=NULL),
-        valueBoxOutput("b1429b1427.a",width=NULL),
         sideBarText,
         textOutput('update_time.a')
       ),
@@ -128,7 +127,6 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
         valueBoxOutput("b1351vb.b",width=NULL),
         valueBoxOutput("p1vb.b",width=NULL),
         valueBoxOutput("b16172.b",width=NULL),
-        valueBoxOutput("b1429b1427.b",width=NULL),
         sideBarText,
         textOutput('update_time.b')
       ),
@@ -164,7 +162,6 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
       valueBoxOutput("b1351vb.c",width=NULL),
       valueBoxOutput("p1vb.c",width=NULL),
       valueBoxOutput("b16172.c",width=NULL),
-      valueBoxOutput("b1429b1427.c",width=NULL),
       sideBarText,
       textOutput('update_time.c')
     ),

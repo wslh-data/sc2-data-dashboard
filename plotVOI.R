@@ -1,16 +1,5 @@
 library(plotly)
 
-VOI_list = c(
-  "B.1.525",
-  "B.1.526",
-  "B.1.526.1",
-  "B.1.617",
-  "B.1.617.1",
-  "B.1.617.2",
-  "B.1.617.3",
-  "P.2"
-)
-
 #render a plot of the variants of interest
 plotVOI <- function(sc2Data){
   sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))

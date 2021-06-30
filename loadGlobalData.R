@@ -2,6 +2,30 @@ library(pdftools)
 
 loadGlobalData <- function(rootPath) {
   
+  VOI_list <<- c(
+    "B.1.525",
+    "B.1.526",
+    "B.1.526.1",
+    "B.1.617",
+    "B.1.617.1",
+    "B.1.617.3",
+    "P.2",
+    "B.1.427/429"
+  )
+  
+  VOC_list <<- c(
+    "B.1.1.7",
+    "B.1.351",
+    "B.1.351.1",
+    "B.1.351.2",
+    "B.1.351.3",
+    "P.1",
+    "P.1.1",
+    "P.1.2",
+    "B.1.617.2"
+  )
+  
+  
   ### Load data
   sc2Data <- do.call(rbind,lapply(list.files(path = rootPath, pattern ='gisaid_hcov-19_.*tsv', full.names = TRUE), read.csv, sep="\t"))
   sc2Data <- unique(sc2Data,by="Accession.ID")
@@ -32,7 +56,7 @@ loadGlobalData <- function(rootPath) {
   sc2Data <<- sc2Data[date_filter,]
   
   #### Remove Samples with Blank Lineage
-  sc2Data <- sc2Data[sc2Data$Lineage != "",]
+  sc2Data <<- sc2Data[sc2Data$Lineage != "",]
   
   #### Sequence Frequency by Time Period
   timeFrameData <<- prepareTimeFrameData(sc2Data)
@@ -115,15 +139,6 @@ loadGlobalData <- function(rootPath) {
     width = NULL,
     color = "yellow",
     href = "https://outbreak.info/situation-reports?pango=P.1"
-  )
-  
-  b1429b1427 <<- valueBox(
-    value = nrow(sc2Data[sc2Data$Lineage == "B.1.427/429",]),
-    subtitle = "B.1.427 & B.1.429 (Epsilon)",
-    icon = icon("virus"),
-    width = NULL,
-    color = "yellow",
-    href = "https://outbreak.info/situation-reports"
   )
   
   b16172 <<- valueBox(
