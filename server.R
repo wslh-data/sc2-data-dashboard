@@ -18,16 +18,23 @@ source("loadGlobalData.R")
 rootPath <- '/data'
 
 loadGlobalData(rootPath)
+files <- list.files(rootPath,full.names=TRUE)
+info <- file.info(files)
+lastFileMod <- max(info$mtime)
 
 
 function(input,output,session) { 
   
-  ### refresh data every hour
-  autoInvalidate <- reactiveTimer(3600000)
-  observe({
-    autoInvalidate()
+  ### reload data on change
+  files <- list.files(rootPath,full.names=TRUE)
+  info <- file.info(files)
+  currentFileMod <- max(info$mtime)
+  if(lastFileMod != currentFileMod){
     loadGlobalData(rootPath)
-  })
+    files <- list.files(rootPath,full.names=TRUE)
+    info <- file.info(files)
+    lastFileMod <<- max(info$mtime)
+  }
 
   ### Data update date
   output$update_time.c <- output$update_time.b <- output$update_time.a <- renderText({update_time})
@@ -36,7 +43,6 @@ function(input,output,session) {
   output$b117vb.c <- output$b117vb.b <-output$b117vb.a <- renderValueBox(b117)
   output$b1351vb.c <- output$b1351vb.b <- output$b1351vb.a <- renderValueBox(b1351)
   output$p1vb.c <- output$p1vb.b <- output$p1vb.a <- renderValueBox(p1)
-  output$b1429b1427.c <- output$b1429b1427.b <- output$b1429b1427.a <- renderValueBox(b1429b1427)
   output$b16172.c <- output$b16172.b <- output$b16172.a <- renderValueBox(b16172)
   
   ### Selectable lineage plot
