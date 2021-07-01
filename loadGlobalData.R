@@ -1,5 +1,7 @@
 library(pdftools)
 
+source("retrieve_data.R")
+
 loadGlobalData <- function(rootPath) {
   
   VOI_list <<- c(
@@ -35,7 +37,7 @@ loadGlobalData <- function(rootPath) {
   sc2Data$Lineage[sc2Data$Lineage=="B.1.429"] <- "B.1.427/429"
   sc2Data <<- sc2Data
   
-  dhsdata <<- read.csv(file.path(rootPath,"County_Table_data.csv"))
+  dhsdata <<- get_DHS_county_data()
   pdf_combine(input = list.files(path = rootPath, pattern ='gisaid_hcov-19_acknowledgement_table.*pdf', full.names = TRUE), output = file.path(rootPath,"gisaid_acknowledgements.pdf"))
   ackfile <<- file.path(rootPath,"gisaid_acknowledgements.pdf")
   

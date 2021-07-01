@@ -20,7 +20,7 @@ rootPath <- '/data'
 loadGlobalData(rootPath)
 files <- list.files(rootPath,full.names=TRUE)
 info <- file.info(files)
-lastFileMod <- max(info$mtime)
+lastFileMod <<- max(info$mtime)
 
 
 function(input,output,session) { 
@@ -56,7 +56,7 @@ function(input,output,session) {
   output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
   output$VOC <- renderPlotly(vocplot)
   output$VOI <- renderPlotly(voiplot)
-  output$hercVariant <- renderPlotly(plotHERCMap(sc2Data,dhsdata,herc_geojson,input$herctimechoice))
+  output$hercVariant <- renderPlotly(plotHERCMap(sc2Data,herc_geojson,input$herctimechoice))
   output$countyMap <- renderPlotly(countyMapPlot)
   
   output$downloadAck <- downloadHandler(

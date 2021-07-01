@@ -35,6 +35,7 @@ RUN R -e "install.packages(c(\
   'shinyBS',\
   'viridis',\
   'pdftools',\
+  'paws',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data

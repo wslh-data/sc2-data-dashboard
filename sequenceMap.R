@@ -41,11 +41,9 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   CountyData$FIPS <- lapply(CountyData$County, fips, state="WI")
 
   #load DHS data
-  dhsdata_cc <- dhsdata[dhsdata$Measure.Names == "Number of confirmed cases",]
-  dhsdata_cc <- dhsdata_cc[,c(1,4)]
-  names(dhsdata_cc) <- c("County","ConfirmedCases")
-  dhsdata_cc$County <- tolower(dhsdata_cc$County)
-  CountyData <- merge(CountyData,dhsdata_cc,by="County")
+  names(dhsdata) <- c("County","ConfirmedCases")
+  dhsdata$County <- tolower(dhsdata$County)
+  CountyData <- merge(CountyData,dhsdata,by="County")
   CountyData$percentseq <- (CountyData$Freq / CountyData$ConfirmedCases) * 100
   CountyData$percentseq <- round(CountyData$percentseq,digits = 1)
 
@@ -58,8 +56,9 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
 
   #Hover Format
   CountyData$hover <- with(CountyData, paste(County,"County", '<br>',
-                                             "Total Sequences:", Freq,'<br>',
-                                             "Cases Sequenced:\t", percentseq,"%"))
+                                             "Confirmed Cases:", ConfirmedCases,'<br>',
+                                             "Number of Sequences:", Freq,'<br>',
+                                             "Percent Cases Sequenced:\t", percentseq,"%"))
 
   # give county boundaries a white border
   l <- list(color = "#CDCDCD", width = 1)
@@ -102,7 +101,7 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   return(fig)
 }
 
-plotHERCMap <- function(sc2Data,dhsdata,geojson,timerange){
+plotHERCMap <- function(sc2Data,geojson,timerange){
   date_filter <- as.Date(sc2Data$Collection.date) >= min(timerange) & as.Date(sc2Data$Collection.date) <= max(timerange)
   sc2Data <- sc2Data[date_filter,]
   #get county
