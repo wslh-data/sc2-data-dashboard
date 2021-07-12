@@ -13,8 +13,23 @@ get_DHS_county_data <- function(){
     "Washington","Waukesha","Waupaca","Waushara","Winnebago","Wood")
   
   data = list()
+  
+  # get last date of data
+  last_date = NA
+  c = 0
+  while(is.na(last_date)){
+    key = paste(Sys.Date()-c,"Dane",sep="_")
+    hit <- svc$query("DHS-SC2-County-Data",
+                     KeyConditionExpression = "date_county = :value",
+                     ExpressionAttributeValues = list(':value' = list('S' = key)))
+    if(hit$Count > 0){
+      last_date = Sys.Date()-c
+    }
+    c = c + 1
+  }
+  
   for(item in wi_counties){
-    key = paste(Sys.Date()-1,item,sep="_")
+    key = paste(last_date,item,sep="_")
     hit <- svc$query("DHS-SC2-County-Data",
                      KeyConditionExpression = "date_county = :value",
                      ExpressionAttributeValues = list(':value' = list('S' = key))
