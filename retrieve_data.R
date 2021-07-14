@@ -48,3 +48,32 @@ get_DHS_county_data <- function(){
   
   return(df)
 }
+
+get_GISAID_Metadata_data <- function(){
+  svc <- dynamodb()
+  projexp = "covv_accession_id,covv_collection_date,covv_lineage,covv_location,covv_subm_date,covv_subm_lab,pangolin_lineages_version"
+  data <- svc$scan("SC2-Dashboard-GISAID",ProjectionExpression=projexp)
+  gisaid_data <- list()
+  while(TRUE){
+    gisaid_data <- c(gisaid_data,data$Items)
+    if(is.null(data$LastEvaluatedKey$`GISAID-ID`$S)){
+      break
+    }
+    data <- svc$scan("SC2-Dashboard-GISAID",ExclusiveStartKey = data$LastEvaluatedKey,ProjectionExpression = projexp)
+  }
+  
+  df <- data.frame(matrix(ncol=7))
+  colnames(df) <- c('GISAID_ID','DOC','Location','Pangolin','PangoVersion','DOS','SubLAB')
+  for(i in gisaid_data){
+    lineage <- i$covv_lineage$S
+    location <- i$covv_location$S
+    doc <- i$covv_collection_date$S
+    dos <- i$covv_subm_date$S
+    id <- i$covv_accession_id$S
+    sublab <- i$covv_subm_lab$S
+    pangover <- i$pangolin_lineages_version$S
+    df[nrow(df)+1,] <- c(id,doc,location,lineage,pangover,dos,sublab)
+  }
+  df <- na.omit(df)
+  return(df)
+}
