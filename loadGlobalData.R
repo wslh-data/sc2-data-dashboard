@@ -1,5 +1,4 @@
-library(pdftools)
-
+library(dplyr)
 source("retrieve_data.R")
 
 loadGlobalData <- function(rootPath) {
@@ -29,17 +28,21 @@ loadGlobalData <- function(rootPath) {
   
   
   ### Load data
-  sc2Data <- do.call(rbind,lapply(list.files(path = rootPath, pattern ='gisaid_hcov-19_.*tsv', full.names = TRUE), read.csv, sep="\t"))
-  sc2Data <- unique(sc2Data,by="Accession.ID")
-  sc2Data <- sc2Data[!is.na(sc2Data$Accession.ID),]
+  sc2Data <- get_GISAID_Metadata_data()
+  sc2Data <- unique(sc2Data,by="GISAID_ID")
+  sc2Data <- sc2Data[!is.na(sc2Data$GISAID_ID),]
   # fix 427/429
   sc2Data$Lineage[sc2Data$Lineage=="B.1.427"] <- "B.1.427/429"
   sc2Data$Lineage[sc2Data$Lineage=="B.1.429"] <- "B.1.427/429"
   sc2Data <<- sc2Data
   
   dhsdata <<- get_DHS_county_data()
-  pdf_combine(input = list.files(path = rootPath, pattern ='gisaid_hcov-19_acknowledgement_table.*pdf', full.names = TRUE), output = file.path(rootPath,"gisaid_acknowledgements.pdf"))
-  ackfile <<- file.path(rootPath,"gisaid_acknowledgements.pdf")
+  
+  ### Acknowledgements
+  ackdf <- aggregate(x=sc2Data[,c(1,7)],by=list(sc2Data$SubLAB),toString)[,c(1,2)]
+  colnames(ackdf) <- c("Submitting_Lab","GISAID_Acc_IDs")
+  ### TODO: ADD printout function
+  write.csv(ackdf,"test.csv")
   
   ### Update Time
   fileName <- str_split(tail(sort(list.files(path = rootPath, pattern ='gisaid_hcov-19_.*tsv')),n=1),"_")[[1]]
@@ -54,7 +57,7 @@ loadGlobalData <- function(rootPath) {
   ############################
   
   #### Remove last 2 weeks of data from sc2Data
-  date_filter <<- as.Date(sc2Data$Collection.date) < (Sys.Date() - 21)
+  date_filter <<- as.Date(sc2Data$DOC) < (Sys.Date() - 21)
   sc2Data <<- sc2Data[date_filter,]
   
   #### Remove Samples with Blank Lineage

@@ -63,7 +63,7 @@ get_GISAID_Metadata_data <- function(){
   }
   
   df <- data.frame(matrix(ncol=7))
-  colnames(df) <- c('GISAID_ID','DOC','Location','Pangolin','PangoVersion','DOS','SubLAB')
+  colnames(df) <- c('GISAID_ID','DOC','Location','Lineage','PangoVersion','DOS','SubLAB')
   for(i in gisaid_data){
     lineage <- i$covv_lineage$S
     location <- i$covv_location$S
