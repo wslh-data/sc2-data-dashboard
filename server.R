@@ -1,8 +1,7 @@
 
 function(input,output,session) { 
   
-  ### update data each morning at 3AM
-  updateTime <- paste("3",sample(1:59,1),sample(1:59,1),sep =":")
+  # Check current date and time and see if we need to update
   observe({
     if (lastUpdate != format(Sys.Date(),"%Y-%m-%d") & format(Sys.time(),"%H:%M:%S") > updateTime){
       loadGlobalData(rootPath)
@@ -34,9 +33,9 @@ function(input,output,session) {
   output$countyMap <- renderPlotly(countyMapPlot)
   
   output$downloadAck <- downloadHandler(
-    filename = "gisaid_acknowledgements.csv",
+    filename = paste(lastUpdate,"_acknowledgements.csv",sep=''),
     content = function(file) {
-      write.csv(ackdf,file)
+      write.csv(ackdf,file,row.names = FALSE)
     }
   )
 
