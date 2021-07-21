@@ -2,7 +2,7 @@ library(plotly)
 
 prepareTimeFrameData <- function(data){
   ### Sequence Frequencies by Timeframe
-  sc2byDate <- data.frame(table(data$Collection.date))
+  sc2byDate <- data.frame(table(data$DOC))
   names(sc2byDate) <- c("date","num")
   sc2byDate <- sc2byDate[!(sc2byDate$date=="2020"|sc2byDate$date=="2021"),]
   sc2byDate$date <- as.Date(sc2byDate$date, format= "%Y-%m-%d")

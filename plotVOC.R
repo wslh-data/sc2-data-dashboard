@@ -2,7 +2,7 @@ library(plotly)
 
 #render a plot of the variants of concern
 plotVOC <- function(sc2Data){
-  sc2bylineage <- data.frame(table(sc2Data$Collection.date,sc2Data$Lineage))
+  sc2bylineage <- data.frame(table(sc2Data$DOC,sc2Data$Lineage))
   names(sc2bylineage) <- c("date","lineage","num")
   sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"|sc2bylineage$date=="2021"),]
   

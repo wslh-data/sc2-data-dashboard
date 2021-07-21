@@ -16,6 +16,4 @@ source("loadGlobalData.R")
 rootPath <- '/data'
 
 loadGlobalData(rootPath)
-files <- list.files(rootPath,full.names=TRUE)
-info <- file.info(files)
-lastFileMod <<- max(info$mtime)
+lastUpdate <<- format(Sys.Date(),"%Y-%m-%d")

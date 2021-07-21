@@ -39,14 +39,8 @@ loadGlobalData <- function(rootPath) {
   dhsdata <<- get_DHS_county_data()
   
   ### Acknowledgements
-  ackdf <- aggregate(x=sc2Data[,c(1,7)],by=list(sc2Data$SubLAB),toString)[,c(1,2)]
-  colnames(ackdf) <- c("Submitting_Lab","GISAID_Acc_IDs")
-  ### TODO: ADD printout function
-  write.csv(ackdf,"test.csv")
-  
-  ### Update Time
-  fileName <- str_split(tail(sort(list.files(path = rootPath, pattern ='gisaid_hcov-19_.*tsv')),n=1),"_")[[1]]
-  update_time <<- paste(fileName[4],fileName[5],fileName[3],sep="/")
+  ackdf <<- sc2Data[,c(1,6,7)]
+  colnames(ackdf) <<- c("GISAID_Acc_IDs","Date_of_Submission","Submitting_Lab")
   
   ### GeoJSON Files
   WICounty_geojson <<- fromJSON(file=file.path(rootPath,"geojson-counties-fips.json"))

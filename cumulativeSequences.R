@@ -2,7 +2,7 @@ library(plotly)
 #render a plot of the cumulative total of sequences in GISAID
 cumulativeSequences <- function(sc2Data){
   # load SC2 data
-  sc2byDate <- data.frame(table(sc2Data$Collection.date))
+  sc2byDate <- data.frame(table(sc2Data$DOC))
   names(sc2byDate) <- c("date","num")
   sc2byDate <- sc2byDate[!(sc2byDate$date=="2020"|sc2byDate$date=="2021"),]
   

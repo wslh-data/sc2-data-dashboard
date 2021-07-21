@@ -5,7 +5,7 @@ library(viridis)
 prepareVariantPropData <- function(data){
   variantList <- c(VOI_list,VOC_list)
   #### Sequence Lineage Top List
-  sc2bylineage <- data.frame(table(data$Collection.date,data$Lineage))
+  sc2bylineage <- data.frame(table(data$DOC,data$Lineage))
   names(sc2bylineage) <- c("date","lineage","num")
   sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"|sc2bylineage$date=="2021"),]
   sc2bylineage$date <- as.Date(sc2bylineage$date, format= "%Y-%m-%d")
