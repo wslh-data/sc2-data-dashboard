@@ -102,7 +102,7 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
 }
 
 plotHERCMap <- function(sc2Data,geojson,timerange){
-  date_filter <- as.Date(sc2Data$Collection.date) >= min(timerange) & as.Date(sc2Data$Collection.date) <= max(timerange)
+  date_filter <- as.Date(sc2Data$DOC) >= min(timerange) & as.Date(sc2Data$DOC) <= max(timerange)
   sc2Data <- sc2Data[date_filter,]
   #get county
   sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
@@ -137,7 +137,7 @@ plotHERCMap <- function(sc2Data,geojson,timerange){
   HERCData <- cbind(HERCData,emptyFrame)
 
   for( i in 1:nrow(sc2Data)){
-    data <- c(as.character(sc2Data[i,15]),sc2Data[i,19])
+    data <- c(as.character(sc2Data$Lineage[i]),sc2Data$HERC[i])
     if(!any(is.na(data))){
       if(data[1] %in% VOC_list){
         HERCData[HERCData$HERC==data[2],which(colnames(HERCData)==data[1])] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)==data[1])] + 1
