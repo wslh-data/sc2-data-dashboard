@@ -1,14 +1,5 @@
 
 function(input,output,session) { 
-  
-  # Check current date and time and see if we need to update
-  observe({
-    if (lastUpdate != format(Sys.Date(),"%Y-%m-%d") & format(Sys.time(),"%H:%M:%S") > updateTime){
-      loadGlobalData(rootPath)
-      lastUpdate <<- format(Sys.Date(),"%Y-%m-%d")
-    }
-  })
-
   ### Data update date
   output$update_time.c <- output$update_time.b <- output$update_time.a <- renderText({lastUpdate})
   

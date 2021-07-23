@@ -16,12 +16,9 @@ source("loadGlobalData.R")
 ### Set timezone so our update clock makes sense
 Sys.setenv(TZ='America/Chicago')
 
-### update data each morning at 3AM
-updateTime <<- paste("03",sample(1:59,1),sample(1:59,1),sep =":")
-
 ### path for geojsons
 rootPath <<- '/data'
 
-### load data and set laste update date
+### load data and set last update date
 loadGlobalData(rootPath)
-lastUpdate <<- format(Sys.Date(),"%Y-%m-%d")
+lastUpdate <<- format(Sys.time(),"%Y-%m-%d")
