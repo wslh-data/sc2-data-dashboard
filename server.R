@@ -13,15 +13,15 @@ function(input,output,session) {
   updateSelectizeInput(session,"selectVariant",choices=sort(unique(sc2Data$Lineage)),server=TRUE)
     
   ### Plot Outputs
-  output$totalSequences <- renderPlotly(totalseqplot)
+  output$totalSequences <- renderPlotly(cumulativeSequences(sc2Data))
   output$sequenceByTimeframe <- renderPlotly(seqFreqPlot(sequenceFreqTimeframe(input$timefreqchoice)))
   output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice)))
   output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timeselectvarchoice),input$selectVariant))
   output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
-  output$VOC <- renderPlotly(vocplot)
-  output$VOI <- renderPlotly(voiplot)
-  output$hercVariant <- renderPlotly(plotHERCMap(sc2Data,herc_geojson,input$herctimechoice))
-  output$countyMap <- renderPlotly(countyMapPlot)
+  output$VOC <- renderPlotly(plotVOC(sc2Data))
+  output$VOI <- renderPlotly(plotVOI(sc2Data))
+  output$hercVariant <- renderPlotly(plotHERCMap(subsetDataByTime(sc2Data,timerange=input$hercTimeChoice)))
+  output$countyMap <- renderPlotly(plotCountyMap(sc2Data,dhsdata))
   
   output$downloadAck <- downloadHandler(
     filename = paste(lastUpdate,"_acknowledgements.csv",sep=''),
