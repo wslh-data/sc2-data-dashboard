@@ -5,30 +5,30 @@ library(viridis)
 
 source("county_to_herc.R")
 
-plotCountyMap <- function(sc2Data,dhsdata,geojson){
+plotCountyMap <- function(gData,eData){
   # filter out everything but WI
   c = 1
   filteredfeatures <- c()
-  for(f in geojson$features){
+  for(f in WICounty_geojson$features){
     if(f$properties$STATE == "55"){
       filteredfeatures[[c]] <- f
       c <- c + 1
     }
   }
-  geojson$features <- filteredfeatures
+  WICounty_geojson$features <- filteredfeatures
   #get county
-  sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
-  sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
-  sc2Data$County <- tolower(sc2Data$County)
+  gData$County <- sapply(gData$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
+  gData$County <- sapply(gData$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
+  gData$County <- tolower(gData$County)
 
   # organize data by county
-  countyCounts <- as.data.frame(table(sc2Data$County))
+  countyCounts <- as.data.frame(table(gData$County))
   names(countyCounts) <- c("County","Freq")
 
   # create empty CountyData dataframe
   c = 1
   CountyData <- c()
-  for(i in geojson$features){
+  for(i in WICounty_geojson$features){
     CountyData[c] <- tolower(i$properties$NAME[])
     c = c + 1
   }
@@ -41,9 +41,9 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   CountyData$FIPS <- lapply(CountyData$County, fips, state="WI")
 
   #load DHS data
-  names(dhsdata) <- c("County","ConfirmedCases")
-  dhsdata$County <- tolower(dhsdata$County)
-  CountyData <- merge(CountyData,dhsdata,by="County")
+  names(eData) <- c("County","ConfirmedCases")
+  eData$County <- tolower(eData$County)
+  CountyData <- merge(CountyData,eData,by="County")
   CountyData$percentseq <- (CountyData$Freq / CountyData$ConfirmedCases) * 100
   CountyData$percentseq <- round(CountyData$percentseq,digits = 1)
 
@@ -85,7 +85,7 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   fig <- plot_ly()
   fig <- fig %>% add_trace(
     type="choroplethmapbox",
-    geojson=geojson,
+    geojson=WICounty_geojson,
     z = CountyData$Log,
     locations = CountyData$FIPS,
     text = CountyData$hover,
@@ -101,17 +101,17 @@ plotCountyMap <- function(sc2Data,dhsdata,geojson){
   return(fig)
 }
 
-plotHERCMap <- function(sc2Data,geojson,timerange){
-  date_filter <- as.Date(sc2Data$DOC) >= min(timerange) & as.Date(sc2Data$DOC) <= max(timerange)
-  sc2Data <- sc2Data[date_filter,]
+plotHERCMap <- function(data){
   #get county
-  sc2Data$County <- sapply(sc2Data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
-  sc2Data$County <- sapply(sc2Data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
-  sc2Data$County <- tolower(sc2Data$County)
-  sc2Data$HERC <- CountyToHERC(sc2Data$County)
+  data$County <- sapply(data$Location,function(x) gsub("North America / USA / Wisconsin ?/? ?","",as.character(x)))
+  data$County <- sapply(data$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
+  data <- data[data$County != "",]
+  data$County <- tolower(data$County)
+  data$HERC <- CountyToHERC(data$County)
+  data <- data[! is.na(data$HERC),]
 
   # organize data by County
-  HERCCounts <- as.data.frame(table(sc2Data$County), stringsAsFactors=FALSE)
+  HERCCounts <- as.data.frame(table(data$County), stringsAsFactors=FALSE)
   names(HERCCounts) <- c("HERC","Freq")
 
   #convert county to HERC and combine
@@ -121,7 +121,7 @@ plotHERCMap <- function(sc2Data,geojson,timerange){
   # create empty HERCData dataframe
   c = 1
   HERCData <- c()
-  for(i in geojson$features){
+  for(i in HERC_geojson$features){
     HERCData[c] <- i$properties$NAME[]
     c = c + 1
   }
@@ -135,17 +135,17 @@ plotHERCMap <- function(sc2Data,geojson,timerange){
   colnames(emptyFrame) <- c(VOC_list,"VarSum","Total")
   emptyFrame[is.na(emptyFrame)] <- 0
   HERCData <- cbind(HERCData,emptyFrame)
-
-  for( i in 1:nrow(sc2Data)){
-    data <- c(as.character(sc2Data$Lineage[i]),sc2Data$HERC[i])
+  
+  for( i in 1:nrow(data)){
+    v <- c(data$Lineage[i],data$HERC[i])
     if(!any(is.na(data))){
-      if(data[1] %in% VOC_list){
-        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)==data[1])] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)==data[1])] + 1
-        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='VarSum')] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='VarSum')] + 1
-        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] + 1
+      if(v[1] %in% VOC_list){
+        HERCData[HERCData$HERC==v[2],which(colnames(HERCData)==v[1])] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)==v[1])] + 1
+        HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='VarSum')] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='VarSum')] + 1
+        HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='Total')] + 1
       }
       else{
-        HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==data[2],which(colnames(HERCData)=='Total')] + 1
+        HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='Total')] + 1
       }
     }
   }
@@ -185,7 +185,7 @@ plotHERCMap <- function(sc2Data,geojson,timerange){
   fig <- plot_ly()
   fig <- fig %>% add_trace(
     type="choroplethmapbox",
-    geojson=geojson,
+    geojson=HERC_geojson,
     z = (HERCData$VarSum/HERCData$Total)*100,
     featureidkey="properties.NAME",
     locations = HERCData$HERC,
@@ -197,7 +197,7 @@ plotHERCMap <- function(sc2Data,geojson,timerange){
     colorbar = list(ticksuffix="%",title=list(text="Percentage of Variants")),
     marker = list(line = l)
   )
-  figureTitle <- paste("\nVariants sequenced by HERC region between",format(min(timerange),"%m/%d/%y"),"and", format(max(timerange),"%m/%d/%y"))
+  figureTitle <- paste("\nVariants sequenced by HERC region between",format(min(as.Date(data$DOC)),"%m/%d/%y"),"and", format(max(as.Date(data$DOC)),"%m/%d/%y"))
   fig <- fig %>% layout(title=figureTitle,mapbox=m,margin = list(l=0,r=0,t=75,b=0),autosize=TRUE)
   fig <- fig %>% config(scrollZoom=FALSE,displayModeBar='hover')
   return(fig)
