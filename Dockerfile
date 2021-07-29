@@ -36,6 +36,7 @@ RUN R -e "install.packages(c(\
   'viridis',\
   'pdftools',\
   'paws',\
+  'highcharter',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data
@@ -43,6 +44,7 @@ RUN mkdir /app && mkdir /data
 # copy app into container
 COPY *.R /app/
 COPY www/ /app/www/
+COPY geojsons/ /app/geojsons/
 
 EXPOSE 3838
 
