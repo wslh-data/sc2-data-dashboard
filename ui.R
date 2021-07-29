@@ -1,21 +1,3 @@
-library(shiny)
-library(plotly)
-library(shinycssloaders)
-library(shinydashboard)
-library(shinyWidgets)
-library(shinyBS)
-library(stringr)
-
-
-sideBarText <- HTML("<p><p>The data summarized in this Dashboard was the result of a combined effort between <a href='http://www.slh.wisc.edu/'>WSLH</a> and its academic, clinical, and public health partners including: 
-  <ul>
-    <li><a href='https://www.dhs.wisconsin.gov/'>DHS</a></li>
-    <li><a href='https://dholk.primate.wisc.edu/wiki/home/page.view?name=home_index'>UW-Madison AIDS Vaccine Research Laboratory</a></li>
-    <li><a href='https://www.gundersenhealth.org/foundation/'>Gundersen Medical Foundation</a></li>
-    <li><a href='https://city.milwaukee.gov/Health/Services-and-Programs/healthlab'>City of Milwaukee Health Department Laboratory</a></li>
-    <li><a href='https://www.cdc.gov/'>CDC</a></li>
-  </ul>
-</p> Note: Sequencing data may not match the DHS website due to different update frequencies and data sources.</p><p>Data Updated: ")
 
 aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are obtained from the <a href='https://www.gisaid.org/'><img src='https://www.gisaid.org/fileadmin/gisaid/img/schild.png' alt='GISAID' style='width:50px'></a> database and the COVID-19 case numbers from the Wisconsin Department of Health Services (DHS) <a href='https://www.dhs.wisconsin.gov/covid-19/data.htm'>SARS-CoV-2 dashboard</a>.</p>
 <p>Only residual positive viral transport media with sufficient viral load from molecular tests can produce reliable sequence data. All sequences are from samples collected from Wisconsin residents.</p>
@@ -30,42 +12,56 @@ DOI: <a href='https://doi.org/10.2807/1560-7917.es.2017.22.13.30494'>10.2807/156
 </p>A full list of the laboratories contributing to this data is available here:</p>")
 
 voctext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
-<p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
+<p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures.</p><p>For more information on these variants of concern visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
 <ul>
-  <li><b>B.1.1.7 (Alpha):</b> Also known as 20I/501Y.V1 was initially found in December 2020 and first identified in the United Kingdom. This variant carries 17 defining mutations and has spread globally. Early evidence suggests the variant may be associated with increased transmissibility and risk of death. <a href="https://outbreak.info/situation-reports?pango=B.1.1.7">More Information</a>
+  <li><b>B.1.1.7 (Alpha)</b>:
+    <ul>
+      <li>Alias: 20I/501Y.V1</li>
+      <li>First Identified: United Kingdom</li>
+      <li>Sublineages: N/A</li>
+      <li><a href="https://outbreak.info/situation-reports?pango=B.1.1.7">More Information</a></li>
+    </ul>
   </li>
 
-  <li><b>B.1.351 (Beta):</b> Also known as 20H/501Y.V2 was initially found in December 2020 and first identified in South Africa. This variant carries 9 defining mutations. Preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a>
+  <li><b>B.1.351 (Beta)</b>:
+    <ul>
+      <li>Alias: 20H/501Y.V2</li>
+      <li>First Identified: South Africa</li>
+      <li>Sublineages: B.1.351.2,B.1.351.3</li>
+      <li><a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a></li>
+    </ul>
   </li>
 
-  <li><b>P.1 (Gamma):</b> Also known as 20J/501Y.V3 was initially found in January 2021 and first identified in Brazil. This variant carries 16 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant could affect vaccine effectiveness. <a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a>
+  <li><b>P.1 (Gamma)</b>:
+    <ul>
+      <li>Alias: 20J/501Y.V3</li>
+      <li>First Identified: Brazil</li>
+      <li>Sublineages: P.1.1,P.1.2</li>
+      <li><a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a></li>
+    </ul>
   </li>
-  
-  <li><b>B.1.617.2 (Delta):</b> Also known as 20A/S:478K was initially found in March 2021 and first identified in Brazil. This variant carries 18 defining mutations. Some preliminary evidence from non-peer reviewed studies suggest this variant carries increased transmissibility, and a potential reduction of neutralization by post-vaccination sera. <a href="https://outbreak.info/situation-reports?pango=B.1.617.2">More Information</a>
+
+  <li><b>B.1.617.2 (Delta)</b>:
+    <ul>
+      <li>Alias: 20A/S:478K</li>
+      <li>First Identified: India</li>
+      <li>Sublineages: AY.1,AY.2,AY.3</li>
+      <li><a href="https://outbreak.info/situation-reports?pango=B.1.617.2">More Information</a></li>
+    </ul>
   </li>
-  
+
 </ul>
-For more information on these variants of concern visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html#Concern">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.')
+')
 
 voitext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
-<p>Variants of Interest contain specific mutations that have been associated with changes to receptor binding, reduced neutralization by antibodies generated against previous infection or vaccination, reduced efficacy of treatments, potential diagnostic impact, or predicted increase in transmissibility or disease severity. <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">More information</a></p>
+<p>Variants of Interest contain specific mutations that have been associated with changes to receptor binding, reduced neutralization by antibodies generated against previous infection or vaccination, reduced efficacy of treatments, potential diagnostic impact, or predicted increase in transmissibility or disease severity.</p><p>For more information on these variants of concern visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
 <ul>
-  <li><b>P.2 (Zeta):</b> First identified in Brazil in January 2021. <a href="https://outbreak.info/situation-reports?pango=P.2">More Information</a>
-  </li>
-
-  <li><b>B.1.525 (Eta):</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.525">More Information</a>
-  </li>
-
-  <li><b>B.1.526 (Iota):</b> First identified in New York, November 2020. <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a>
-  </li>
-  <li><b>B.1.617:</b> First identified in India, February 2021. <a href="https://outbreak.info/situation-reports?pango=B.1.617">More Information</a>
-  </li>
-  
-  <li><b>B.1.429 & B.1.427 (Epsilon):</b> Also known as (CAL.20C) and first identified in Southern California in July 2020. Preliminary studies suggest this variant could affect antibody binding. More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a>
-  </li>
-
+  <li><b>B.1.525 (Eta)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.525">More Information</a></li>
+  <li><b>B.1.526 (Iota)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a></li>
+  <li><b>B.1.617.1 (Kappa)</b>:</b> <a href="https://outbreak.info/situation-reports?pango=B.1.617.1">More Information</a></li>
+  <li><b>B.1.429 & B.1.427 (Epsilon)</b>: More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a></li>
 </ul>
-For more information on these variants of interest visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html#Interest">CDC\'s Variant Surveillance</a>. ')
+')
 
 acknowledgement_text <- HTML('
 ')
@@ -92,12 +88,11 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
   navbarPage(id='navtabs',"",footer=HTML("<h5 style='font-weight:200'>GISAID data provided on this website are subject to GISAID’s <a href='https://www.gisaid.org/DAA/'>Terms and Conditions</a></h5>"),
     tabPanel("Sequencing Report",
       sidebarPanel(
-        tags$style(".small-box.bg-yellow { background-color: #F1605D !important; color: #FFFFFF !important; }"),
         valueBoxOutput("b117vb.a",width=NULL),
         valueBoxOutput("b1351vb.a",width=NULL),
         valueBoxOutput("p1vb.a",width=NULL),
         valueBoxOutput("b16172.a",width=NULL),
-        sideBarText,
+        HTML('<b>Data Updated</b>: '),
         textOutput('update_time.a')
       ),
       mainPanel(
@@ -127,7 +122,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
         valueBoxOutput("b1351vb.b",width=NULL),
         valueBoxOutput("p1vb.b",width=NULL),
         valueBoxOutput("b16172.b",width=NULL),
-        sideBarText,
+        HTML('<b>Data Updated</b>: '),
         textOutput('update_time.b')
       ),
       mainPanel(
@@ -156,13 +151,13 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
        )
      )
     ),
-    tabPanel("Regional/County Report",
+    tabPanel("Geographical Report",
     sidebarPanel(
       valueBoxOutput("b117vb.c",width=NULL),
       valueBoxOutput("b1351vb.c",width=NULL),
       valueBoxOutput("p1vb.c",width=NULL),
       valueBoxOutput("b16172.c",width=NULL),
-      sideBarText,
+      HTML('<b>Data Updated</b>: '),
       textOutput('update_time.c')
     ),
       mainPanel(
@@ -171,7 +166,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
             tabPanel("Variants by HERC Region",
                      plotlyOutput("hercVariant")%>% withSpinner(color="#c5050c"),
                      HTML('Percentage of sequences identified as variants of concern by <a href="https://www.dhs.wisconsin.gov/preparedness/healthcare/index.htm">Healthcare Emergency Readiness Coalition (HERC)</a> region, darker colors represent a greater proportion of variants identified. Hover over a region to see a breakdown of the variants of concern. Percentage is based on the number of sequences generated between: '),
-                     dateRangeInput("herctimechoice", "",start=(Sys.Date()-51),end=(Sys.Date()-21))
+                     dateRangeInput("hercTimeChoice", "",start=(Sys.Date()-51),end=(Sys.Date()-21))
             ),
             tabPanel("Sequences by County",
                      plotlyOutput("countyMap")%>% withSpinner(color="#c5050c"),
