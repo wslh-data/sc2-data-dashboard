@@ -189,7 +189,7 @@ generateValueBoxPlots <- function() {
   
   b16172 <<- valueBoxSpark(
     title = "Delta",
-    value = nrow(sc2Data[sc2Data$Lineage %in% b16172_sub_lineages,]),
+    value = nrow(sc2Data[sc2Data$Lineage %in% c("B.1.617.2","AY.1","AY.2","AY.3"),]),
     subtitle = "B.1.617.2, AY.1, AY.2, AY.3",
     sparkobj = b16172hc,
     icon = icon("virus"),
