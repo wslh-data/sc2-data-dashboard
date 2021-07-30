@@ -156,7 +156,10 @@ plotHERCMap <- function(data){
                                          "B.1.351:",B.1.351,'<br>',
                                          "P.1:",P.1,'<br>',
                                          "B.1.617.2:",B.1.617.2,'<br>',
-                                         "Variants Sequenced:",signif((VarSum/Total)*100,2),'%<br>',
+                                         "AY.1:",AY.1,'<br>',
+                                         "AY.2:",AY.2,'<br>',
+                                         "AY.3:",AY.3,'<br>',
+                                         "Variants of Concern:",signif((VarSum/Total)*100,2),'%<br>',
                                          "Total Sequences:",Total,'<br>'))
 
 
@@ -194,7 +197,7 @@ plotHERCMap <- function(data){
     showlegend = FALSE,
     color = HERCData$VarSum,
     colors = "Blues",
-    colorbar = list(ticksuffix="%",title=list(text="Percentage of Variants")),
+    colorbar = list(ticksuffix="%",title=list(text="Variants of Concern")),
     marker = list(line = l)
   )
   figureTitle <- paste("\nVariants sequenced by HERC region between",format(min(as.Date(data$DOC)),"%m/%d/%y"),"and", format(max(as.Date(data$DOC)),"%m/%d/%y"))
