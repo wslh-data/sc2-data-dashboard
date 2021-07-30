@@ -111,30 +111,48 @@ hc_theme_sparkline_vb <- function(...) {
 
 ### Generate the Value Boxes
 generateValueBoxPlots <- function() {
-  b16172_sub_lineages <- c("B.1.617.2","AY.1","AY.2","AY.3")
-  # Sparkline 
-  b117_spark_data <- as.data.frame(table(sc2Data[sc2Data$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2] & sc2Data$Lineage == "B.1.1.7",c("DOC")]))
-  b117hc <- hchart(b117_spark_data,"line",hcaes(Var1,Freq))%>% 
+  ### Convert all B.1.617.2 sub-lineages to B.1.617.2
+  vbdata <- sc2Data
+  b16172_sub_lineages <- c("AY.1","AY.2","AY.3")
+  vbdata$Lineage[vbdata$Lineage%in%b16172_sub_lineages] <- "B.1.617.2"
+  
+  ### Subset data to get last 2 months
+  vbdata <- vbdata[vbdata$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2],]
+  
+  ### Get summary data
+  vbdata <- data.frame(table(vbdata$DOC,vbdata$Lineage))
+  names(vbdata) <- c("date","lineage","num")
+  vbdata <- group_by_at(vbdata,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
+  vbdata[,c("proportion")] <- 0
+  
+  for(date in vbdata$date){
+    total <- sum(vbdata[vbdata$date == date,c("num")])
+    vbdata[vbdata$date == date,c("proportion")] <- round((vbdata[vbdata$date == date,c("num")] / total) * 100,digits=0)
+  }
+  
+  ### Create Line Plots 
+  b117hc <- hchart(vbdata[vbdata$lineage == "B.1.1.7",],"line",hcaes(date,proportion)) %>% 
     hc_size(height = 50) %>% 
     hc_credits(enabled = FALSE) %>%
+    hc_yAxis(min=-5,max = 105) %>%
+    hc_add_theme(hc_theme_sparkline_vb()) 
+
+  b1351hc <- hchart(vbdata[vbdata$lineage == "B.1.351",],"line",hcaes(date,proportion)) %>% 
+    hc_size(height = 50) %>% 
+    hc_credits(enabled = FALSE) %>%
+    hc_yAxis(min=-5,max = 105) %>%
+    hc_add_theme(hc_theme_sparkline_vb()) 
+
+  p1hc <- hchart(vbdata[vbdata$lineage == "P.1",],"line",hcaes(date,proportion)) %>%  
+    hc_size(height = 50) %>% 
+    hc_credits(enabled = FALSE) %>%
+    hc_yAxis(min=-5,max = 105) %>%
     hc_add_theme(hc_theme_sparkline_vb()) 
   
-  b1351_spark_data <- as.data.frame(table(sc2Data[sc2Data$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2] & sc2Data$Lineage == "B.1.351",c("DOC")]))
-  b1351hc <- hchart(b1351_spark_data,"line",hcaes(Var1,Freq))%>% 
+  b16172hc <- hchart(vbdata[vbdata$lineage == "B.1.617.2",],"line",hcaes(date,proportion)) %>%
     hc_size(height = 50) %>% 
     hc_credits(enabled = FALSE) %>%
-    hc_add_theme(hc_theme_sparkline_vb()) 
-  
-  p1_spark_data <- as.data.frame(table(sc2Data[sc2Data$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2] & sc2Data$Lineage == "P.1",c("DOC")]))
-  p1hc <- hchart(p1_spark_data,"line",hcaes(Var1,Freq))%>% 
-    hc_size(height = 50) %>% 
-    hc_credits(enabled = FALSE) %>%
-    hc_add_theme(hc_theme_sparkline_vb()) 
-  
-  b16172_spark_data <- as.data.frame(table(sc2Data[sc2Data$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2] & sc2Data$Lineage %in% b16172_sub_lineages,c("DOC")]))
-  b16172hc <- hchart(b16172_spark_data,"line",hcaes(Var1,Freq))%>% 
-    hc_size(height = 50) %>% 
-    hc_credits(enabled = FALSE) %>%
+    hc_yAxis(min=-5,max = 105) %>%
     hc_add_theme(hc_theme_sparkline_vb()) 
   
   

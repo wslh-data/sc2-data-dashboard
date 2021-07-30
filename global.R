@@ -58,8 +58,8 @@ HERC_geojson <<- fromJSON(file=file.path("geojsons","WI_HERC.json"))
 sc2Data <<- get_GISAID_Metadata_data()
 sc2Data <<- unique(sc2Data,by="GISAID_ID")
 sc2Data <<- sc2Data[!is.na(sc2Data$GISAID_ID),]
-# 
-# # DHS Data
+
+# DHS Data
 dhsdata <<- get_DHS_county_data()
 
 ### load data and set last update date
