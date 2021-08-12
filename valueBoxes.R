@@ -11,6 +11,8 @@ valueBoxSpark <- function(value, title=NULL, sparkobj = NULL, subtitle, info = N
   boxContent <- div(
     class = "small-box",
     style = paste0("background-color: ", bgcolor,";color: ",textcolor),
+    # bs4 icon
+    if (!is.null(icon)) div(class = "icon-large", icon, style = "z-index; 0"),
     div(
       class = "inner",
       div(class="row",
@@ -23,10 +25,8 @@ valueBoxSpark <- function(value, title=NULL, sparkobj = NULL, subtitle, info = N
         )
       ),
       p(subtitle)
-    ),
+    )
     # bs3 icon-large
-    # bs4 icon
-    if (!is.null(icon)) div(class = "icon-large", icon, style = "z-index; 0")
   )
   
   if (!is.null(href)) 
@@ -69,7 +69,7 @@ hc_theme_sparkline_vb <- function(...) {
       borderColor = "transparent",
       botderWidth = 0,
       backgroundColor = "transparent",
-      style = list(textOutline = "5px white")
+      style = list(color="#FFF",textOutline = "1px #c5050c")
     ),
     plotOptions = list(
       series = list(
@@ -77,7 +77,9 @@ hc_theme_sparkline_vb <- function(...) {
         lineWidth = 2,
         shadow = FALSE,
         fillOpacity = 0.25,
+        connectNulls=TRUE,
         color = "#FFFFFFBF",
+        enableMouseTracking = FALSE,
         fillColor = list(
           linearGradient = list(x1 = 0, y1 = 1, x2 = 0, y2 = 0),
           stops = list(
@@ -119,40 +121,59 @@ generateValueBoxPlots <- function() {
   ### Subset data to get last 2 months
   vbdata <- vbdata[vbdata$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2],]
   
+  ### Drop NAs
+  vbdata <- na.omit(vbdata)
+  
   ### Get summary data
   vbdata <- data.frame(table(vbdata$DOC,vbdata$Lineage))
   names(vbdata) <- c("date","lineage","num")
   vbdata <- group_by_at(vbdata,vars(date,lineage)) %>% summarise(.groups="keep",num = sum(num))
-  vbdata[,c("proportion")] <- 0
   
+  ### Set missing variants to 0
+  for( variant in VOC_list){
+    if(! variant %in% vbdata$lineage){
+      date_set <- unique(vbdata$date)
+      for(d in date_set){
+        df <- as.data.frame(t(c(
+          date = d,
+          lineage = variant,
+          num = 0)))
+        df$num <- as.numeric(df$num)
+        vbdata <- rbind(vbdata,df)
+      }
+    }
+  }
+  
+  ### Determine Proportions
+  vbdata[,c("proportion")] <- 0
   for(date in vbdata$date){
     total <- sum(vbdata[vbdata$date == date,c("num")])
     vbdata[vbdata$date == date,c("proportion")] <- round((vbdata[vbdata$date == date,c("num")] / total) * 100,digits=0)
   }
   
   ### Create Line Plots 
-  b117hc <- hchart(vbdata[vbdata$lineage == "B.1.1.7",],"line",hcaes(date,proportion)) %>% 
+  b117hc <- hchart(vbdata[vbdata$lineage == "B.1.1.7",],"spline",hcaes(date,proportion)) %>% 
     hc_size(height = 50) %>% 
     hc_credits(enabled = FALSE) %>%
-    hc_yAxis(min=-5,max = 105) %>%
+    hc_yAxis(min=-15,max = 115) %>%
     hc_add_theme(hc_theme_sparkline_vb()) 
 
-  b1351hc <- hchart(vbdata[vbdata$lineage == "B.1.351",],"line",hcaes(date,proportion)) %>% 
-    hc_size(height = 50) %>% 
+  b1351hc <- hchart(vbdata[vbdata$lineage == "B.1.351",],"spline",hcaes(date,proportion)) %>% 
+    hc_size(height = 50) %>%
     hc_credits(enabled = FALSE) %>%
-    hc_yAxis(min=-5,max = 105) %>%
+    hc_yAxis(min=-15,max = 115) %>%
     hc_add_theme(hc_theme_sparkline_vb()) 
 
-  p1hc <- hchart(vbdata[vbdata$lineage == "P.1",],"line",hcaes(date,proportion)) %>%  
+  p1hc <- hchart(vbdata[vbdata$lineage == "P.1",],"spline",hcaes(date,proportion)) %>%  
     hc_size(height = 50) %>% 
     hc_credits(enabled = FALSE) %>%
-    hc_yAxis(min=-5,max = 105) %>%
+    hc_yAxis(min=-15,max = 115) %>%
     hc_add_theme(hc_theme_sparkline_vb()) 
   
-  b16172hc <- hchart(vbdata[vbdata$lineage == "B.1.617.2",],"line",hcaes(date,proportion)) %>%
+  b16172hc <- hchart(vbdata[vbdata$lineage == "B.1.617.2",],"spline",hcaes(date,proportion)) %>%
     hc_size(height = 50) %>% 
     hc_credits(enabled = FALSE) %>%
-    hc_yAxis(min=-5,max = 105) %>%
+    hc_yAxis(min=-15,max = 115) %>%
     hc_add_theme(hc_theme_sparkline_vb()) 
   
   
