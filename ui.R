@@ -27,7 +27,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
     <ul>
       <li>Alias: 20H/501Y.V2</li>
       <li>First Identified: South Africa</li>
-      <li>Sublineages: B.1.351.2,B.1.351.3</li>
+      <li>Sublineages: B.1.351.2, B.1.351.3</li>
       <li><a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a></li>
     </ul>
   </li>
@@ -36,7 +36,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
     <ul>
       <li>Alias: 20J/501Y.V3</li>
       <li>First Identified: Brazil</li>
-      <li>Sublineages: P.1.1,P.1.2</li>
+      <li>Sublineages: P.1.1, P.1.2</li>
       <li><a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a></li>
     </ul>
   </li>
@@ -45,7 +45,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
     <ul>
       <li>Alias: 20A/S:478K</li>
       <li>First Identified: India</li>
-      <li>Sublineages: AY.1,AY.2,AY.3</li>
+      <li>Sublineages: AY.1, AY.2, AY.3, AY.3.1, AY.4, AY.5, AY.6, AY.7, AY.8, AY.9, AY.10, AY.11, AY.12</li>
       <li><a href="https://outbreak.info/situation-reports?pango=B.1.617.2">More Information</a></li>
     </ul>
   </li>
@@ -58,8 +58,9 @@ voitext <- HTML('<h3>Cumulative number of variants sequences identified over tim
 <ul>
   <li><b>B.1.525 (Eta)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.525">More Information</a></li>
   <li><b>B.1.526 (Iota)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a></li>
-  <li><b>B.1.617.1 (Kappa)</b>:</b> <a href="https://outbreak.info/situation-reports?pango=B.1.617.1">More Information</a></li>
-  <li><b>B.1.429 & B.1.427 (Epsilon)</b>: More Information: <a href="https://outbreak.info/situation-reports?pango=B.1.427">B.1.427</a>, <a href="https://outbreak.info/situation-reports?pango=B.1.429">B.1.429</a></li>
+  <li><b>B.1.617.1 (Kappa)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.617.1">More Information</a></li>
+  <li><b>B.1.617.3 </b>: <a href="https://outbreak.info/situation-reports?pango=B.1.617.3">More Information</a></li>
+  <li><b>C.37 (Lambda)</b>: <a href="https://outbreak.info/situation-reports?pango=C.37">More Information</a></li>
 </ul>
 ')
 

@@ -113,10 +113,25 @@ hc_theme_sparkline_vb <- function(...) {
 
 ### Generate the Value Boxes
 generateValueBoxPlots <- function() {
-  ### Convert all B.1.617.2 sub-lineages to B.1.617.2
   vbdata <- sc2Data
-  b16172_sub_lineages <- c("AY.1","AY.2","AY.3")
-  vbdata$Lineage[vbdata$Lineage%in%b16172_sub_lineages] <- "B.1.617.2"
+  
+  ### Group all sub-lineages into parents
+  b16172_sl <- c("AY.1","AY.2","AY.3","AY.3.1",
+                 "AY.4","AY.5","AY.6","AY.7",
+                 "AY.8","AY.9","AY.10","AY.11",
+                 "AY.12")
+  b1351_sl <- c("B.1.351.2","B.1.351.3")
+  p1_sl <- c("P.1.1","P.1.2")
+  
+  vbdata$Lineage[vbdata$Lineage%in%b16172_sl] <- "B.1.617.2"
+  vbdata$Lineage[vbdata$Lineage%in%b1351_sl] <- "B.1.351"
+  vbdata$Lineage[vbdata$Lineage%in%p1_sl] <- "P.1"
+  
+  ### Get counts
+  alpha_counts <- nrow(vbdata[vbdata$Lineage == "B.1.1.7",])
+  beta_counts <- nrow(vbdata[vbdata$Lineage == "B.1.351",])
+  gamma_counts <- nrow(vbdata[vbdata$Lineage == "P.1",])
+  delta_counts <- nrow(vbdata[vbdata$Lineage == "B.1.617.2",])
   
   ### Subset data to get last 2 months
   vbdata <- vbdata[vbdata$DOC > seq(as.Date(lastUpdate),length =2, by ="-2 months")[2],]
@@ -180,7 +195,7 @@ generateValueBoxPlots <- function() {
   #### Variant Value Boxes
   b117 <<- valueBoxSpark(
     title = "Alpha",
-    value = nrow(sc2Data[sc2Data$Lineage == "B.1.1.7",]),
+    value = alpha_counts,
     subtitle = "B.1.1.7",
     icon = icon("virus"),
     sparkobj = b117hc,
@@ -190,8 +205,8 @@ generateValueBoxPlots <- function() {
   
   b1351 <<- valueBoxSpark(
     title = "Beta",
-    value = nrow(sc2Data[sc2Data$Lineage == "B.1.351",]),
-    subtitle = "B.1.351",
+    value = beta_counts,
+    subtitle = "B.1.351, B.1.351.2, B.1.351.3",
     sparkobj = b1351hc,
     icon = icon("virus"),
     width = NULL,
@@ -200,8 +215,8 @@ generateValueBoxPlots <- function() {
   
   p1 <<- valueBoxSpark(
     title = "Gamma",
-    value = nrow(sc2Data[sc2Data$Lineage == "P.1",]),
-    subtitle = "P.1",
+    value = gamma_counts,
+    subtitle = "P.1, P.1.1, P.1.2",
     sparkobj = p1hc,
     icon = icon("virus"),
     width = NULL,
@@ -210,8 +225,8 @@ generateValueBoxPlots <- function() {
   
   b16172 <<- valueBoxSpark(
     title = "Delta",
-    value = nrow(sc2Data[sc2Data$Lineage %in% c("B.1.617.2","AY.1","AY.2","AY.3"),]),
-    subtitle = "B.1.617.2, AY.1, AY.2, AY.3",
+    value = delta_counts,
+    subtitle = "B.1.617.2, AY.1 - AY.12",
     sparkobj = b16172hc,
     icon = icon("virus"),
     width = NULL,
