@@ -45,7 +45,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
     <ul>
       <li>Alias: 20A/S:478K</li>
       <li>First Identified: India</li>
-      <li>Sublineages: AY.1, AY.2, AY.3, AY.3.1, AY.4, AY.5, AY.6, AY.7, AY.8, AY.9, AY.10, AY.11, AY.12</li>
+      <li>Sublineages: AY.1 - AY.25</li>
       <li><a href="https://outbreak.info/situation-reports?pango=B.1.617.2">More Information</a></li>
     </ul>
   </li>
@@ -132,7 +132,11 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
            tabPanel("Proportion of Variants",
                     plotlyOutput("sequenceVariantByTimeframe")%>% withSpinner(color="#c5050c"),
                     tags$h3("Proportion of sequenced strains that are variants, over time by sample collection date."),
-                    selectInput("timevarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly")
+                    fluidRow(
+                      column(6,selectInput("timevarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly")),
+                      column(6,selectInput("labelchoice", "Variant Label", choices = c("WHO","Pangolin"), selected = "WHO"))
+                    ),
+                    
            ),
            tabPanel("Variants of Concern",
                     plotlyOutput("VOC")%>% withSpinner(color="#c5050c"),

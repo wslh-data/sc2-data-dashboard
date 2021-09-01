@@ -13,14 +13,28 @@ function(input,output,session) {
   updateSelectizeInput(session,"selectVariant",choices=sort(unique(sc2Data$Lineage)),server=TRUE)
     
   ### Plot Outputs
-  output$totalSequences <- renderPlotly(cumulativeSequences(sc2Data))
+  ## Sequencing Report Plots
+  #plot number of sequences by time period
   output$sequenceByTimeframe <- renderPlotly(seqFreqPlot(sequenceFreqTimeframe(input$timefreqchoice)))
-  output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice)))
-  output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timeselectvarchoice),input$selectVariant))
+  #plot cumulative sequence number
+  output$totalSequences <- renderPlotly(cumulativeSequences(sc2Data))
+  #plot proportion of lineages
   output$lineageByTimeFrame <- renderPlotly(plotTimeLineage(sequenceLineageTimeframe(input$timelinchoice)))
+  
+  ## Variant Report Plots
+  #plot proportion of variants
+  output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice),input$labelchoice))
+  #plot variants of concern
   output$VOC <- renderPlotly(plotVOC(sc2Data))
+  #plot variants of interest
   output$VOI <- renderPlotly(plotVOI(sc2Data))
+  #plot variants searched
+  output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timeselectvarchoice),input$selectVariant))
+  
+  ## Geographical Report
+  #plot variants by herc region
   output$hercVariant <- renderPlotly(plotHERCMap(subsetDataByTime(sc2Data,timerange=input$hercTimeChoice)))
+  #plot total sequences by county
   output$countyMap <- renderPlotly(plotCountyMap(sc2Data,dhsdata))
   
   output$downloadAck <- downloadHandler(
