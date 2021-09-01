@@ -116,10 +116,12 @@ generateValueBoxPlots <- function() {
   vbdata <- sc2Data
   
   ### Group all sub-lineages into parents
-  b16172_sl <- c("AY.1","AY.2","AY.3","AY.3.1",
-                 "AY.4","AY.5","AY.6","AY.7",
-                 "AY.8","AY.9","AY.10","AY.11",
-                 "AY.12")
+  b16172_sl <- c("B.1.617.2","AY.1","AY.2","AY.3","AY.3.1","AY.4",
+                 "AY.5","AY.5.1","AY.5.2","AY.6","AY.7","AY.7.1",
+                 "AY.7.2","AY.8","AY.9","AY.10","AY.11","AY.12",
+                 "AY.13","AY.14","AY.15","AY.16","AY.17","AY.18",
+                 "AY.19","AY.20","AY.21","AY.22","AY.23","AY.24",
+                 "AY.25")
   b1351_sl <- c("B.1.351.2","B.1.351.3")
   p1_sl <- c("P.1.1","P.1.2")
   
@@ -226,7 +228,7 @@ generateValueBoxPlots <- function() {
   b16172 <<- valueBoxSpark(
     title = "Delta",
     value = delta_counts,
-    subtitle = "B.1.617.2, AY.1 - AY.12",
+    subtitle = "B.1.617.2, AY.1 - AY.25",
     sparkobj = b16172hc,
     icon = icon("virus"),
     width = NULL,
