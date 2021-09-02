@@ -130,9 +130,26 @@ plotVariantTimeLineage <- function(data,label){
     data_other <- data[data$who == "Other",]
     data <- data[data$who != "Other",]
     fig <- plot_ly()
+    #VOI
+    pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(WHO_VOI))
     c = 1
-    pallet =  wes_palette("Darjeeling1",length(names(WHO_list)),type = "continuous")
-    for(w in rev(names(WHO_list))){
+    for(voi in rev(WHO_VOI)){
+      data_holder <- data[data$who == voi,]
+      fig <- fig %>% add_trace(
+        type = "bar",
+        x = data_holder$date,
+        y = data_holder$num,
+        name = voi,
+        marker= list(color=pallet[c]),
+        hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+        text = data_holder$num
+      )
+      c = c + 1
+    }
+    #VOC
+    c = 1
+    pallet = colorRampPalette(c("#880e0c","#f69593"))(length(WHO_VOC))
+    for(w in rev(WHO_VOC)){
       data_holder <- data[data$who == w,]
       fig <- fig %>% add_trace(
         type = "bar",
@@ -172,8 +189,7 @@ plotVariantTimeLineage <- function(data,label){
         categoryarray = data$lineage
       )
     )
-    fig
-    # return(fig)
+    return(fig)
   }
 }
 
