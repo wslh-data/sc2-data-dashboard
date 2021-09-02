@@ -71,22 +71,37 @@ VOC_list <<- c(
   "P.1.2"
 )
 
+WHO_VOC <<- c(
+  'Alpha',
+  'Beta',
+  'Gamma',
+  'Delta'
+)
+
+WHO_VOI <<- c(
+  'Eta',
+  'Iota',
+  'Kappa',
+  'Lambda',
+  'Mu'
+)
+
 WHO_list <<- list(
-       'Alpha' = c('B.1.1.7'),
-       'Beta' = c("B.1.351","B.1.351.2","B.1.351.3"),
-       'Gamma' = c("P.1","P.1.1","P.1.2"),
-       'Delta' = c("B.1.617.2","AY.1","AY.2","AY.3","AY.3.1","AY.4",
-                   "AY.5","AY.5.1","AY.5.2","AY.6","AY.7","AY.7.1",
-                   "AY.7.2","AY.8","AY.9","AY.10","AY.11","AY.12",
-                   "AY.13","AY.14","AY.15","AY.16","AY.17","AY.18",
-                   "AY.19","AY.20","AY.21","AY.22","AY.23","AY.24",
-                   "AY.25"),
-       'Eta' = c("B.1.525"),
-       'Iota' = c("B.1.526"),
-       'Kappa' = c("B.1.617.1"),
-       'Lambda' = c("C.37"),
-       'Mu' = c("B.1.621")
-        )
+  'Alpha' = c('B.1.1.7'),
+  'Beta' = c("B.1.351","B.1.351.2","B.1.351.3"),
+  'Gamma' = c("P.1","P.1.1","P.1.2"),
+  'Delta' = c("B.1.617.2","AY.1","AY.2","AY.3","AY.3.1","AY.4",
+             "AY.5","AY.5.1","AY.5.2","AY.6","AY.7","AY.7.1",
+             "AY.7.2","AY.8","AY.9","AY.10","AY.11","AY.12",
+             "AY.13","AY.14","AY.15","AY.16","AY.17","AY.18",
+             "AY.19","AY.20","AY.21","AY.22","AY.23","AY.24",
+             "AY.25"),
+  'Eta' = c("B.1.525"),
+  'Iota' = c("B.1.526"),
+  'Kappa' = c("B.1.617.1"),
+  'Lambda' = c("C.37"),
+  'Mu' = c("B.1.621")
+)
 
 ### Function to convert lineage to WHO name
 getWHO <<- function(x){
@@ -109,12 +124,12 @@ WICounty_geojson <<- fromJSON(file=file.path("geojsons","us-counties-fips.json")
 HERC_geojson <<- fromJSON(file=file.path("geojsons","WI_HERC.json"))
 
 # GISAID Data
-#sc2Data <<- get_GISAID_Metadata_data()
+sc2Data <<- get_GISAID_Metadata_data()
 sc2Data <<- unique(sc2Data,by="GISAID_ID")
 sc2Data <<- sc2Data[!is.na(sc2Data$GISAID_ID),]
 
 # DHS Data
-#dhsdata <<- get_DHS_county_data()
+dhsdata <<- get_DHS_county_data()
 
 ### load data and set last update date
 preProcess()
