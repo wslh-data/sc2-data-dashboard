@@ -26,6 +26,5 @@ plotVOC <- function(sc2Data){
       ),
       hovermode = 'compare'
     )
-  fig
   return(fig)
 }
