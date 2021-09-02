@@ -131,15 +131,15 @@ plotHERCMap <- function(data){
   HERCData$Freq[is.na(HERCData$Freq)] <- 0
 
   # add variant counts
-  emptyFrame <- data.frame(matrix(ncol=length(VOC_list)+2,nrow = nrow(HERCData)))
-  colnames(emptyFrame) <- c(VOC_list,"VarSum","Total")
+  emptyFrame <- data.frame(matrix(ncol=length(WHO_VOC)+2,nrow = nrow(HERCData)))
+  colnames(emptyFrame) <- c(WHO_VOC,"VarSum","Total")
   emptyFrame[is.na(emptyFrame)] <- 0
   HERCData <- cbind(HERCData,emptyFrame)
   
   for( i in 1:nrow(data)){
-    v <- c(data$Lineage[i],data$HERC[i])
+    v <- c(getWHO(data$Lineage[i]),data$HERC[i])
     if(!any(is.na(data))){
-      if(v[1] %in% VOC_list){
+      if(v[1] %in% WHO_VOC){
         HERCData[HERCData$HERC==v[2],which(colnames(HERCData)==v[1])] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)==v[1])] + 1
         HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='VarSum')] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='VarSum')] + 1
         HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='Total')] = HERCData[HERCData$HERC==v[2],which(colnames(HERCData)=='Total')] + 1
@@ -149,19 +149,19 @@ plotHERCMap <- function(data){
       }
     }
   }
-
-  #Hover Format
-  HERCData$hover <- with(HERCData, paste("HERC Region: ",HERC,'<br>',
-                                         "B.1.1.7: ",B.1.1.7,'<br>',
-                                         "B.1.351:",B.1.351,'<br>',
-                                         "P.1:",P.1,'<br>',
-                                         "B.1.617.2:",B.1.617.2,'<br>',
-                                         "AY.1:",AY.1,'<br>',
-                                         "AY.2:",AY.2,'<br>',
-                                         "AY.3:",AY.3,'<br>',
-                                         "Variants of Concern:",signif((VarSum/Total)*100,2),'%<br>',
-                                         "Total Sequences:",Total,'<br>'))
-
+  
+  #Build hover template
+  for(row in seq(1,length(HERCData$HERC))){
+    hover <- c("HERC Region: ",HERCData$HERC[row],'<br>')
+    for ( w in WHO_VOC){
+      hover <- c(hover,w,': ',HERCData[row,w],'<br>')
+    }
+    hover <- c(hover,"Variants of Concern:",trunc((HERCData$VarSum[row]/HERCData$Total[row])*100,2),'%<br>')
+    hover <- c(hover,"Total Sequences:",HERCData$Total[row],'<br>')
+    HERCData[row,'hover'] <- paste(hover,collapse = "")
+  }
+  
+  
 
   # give county boundaries a white border
   l <- list(color = "#CDCDCD", width = 1)
