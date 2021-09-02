@@ -8,7 +8,6 @@ library(shinycssloaders)
 library(shinyWidgets)
 library(shinyBS)
 library(stringr)
-library(wesanderson)
 
 source("cumulativeSequences.R")
 source("plotVOC.R")
@@ -26,8 +25,11 @@ VOI_list <<- c(
   "B.1.525",
   "B.1.526",
   "C.37",
+  "C.37.1",
   "B.1.617.1",
-  "B.1.617.3"
+  "B.1.617.3",
+  "B.1.621",
+  "B.1.621.1"
 )
 
 VOC_list <<- c(
@@ -99,8 +101,8 @@ WHO_list <<- list(
   'Eta' = c("B.1.525"),
   'Iota' = c("B.1.526"),
   'Kappa' = c("B.1.617.1"),
-  'Lambda' = c("C.37"),
-  'Mu' = c("B.1.621")
+  'Lambda' = c("C.37","C.37.1"),
+  'Mu' = c("B.1.621","B.1.621.1")
 )
 
 ### Function to convert lineage to WHO name
