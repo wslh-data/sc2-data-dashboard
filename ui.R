@@ -19,7 +19,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
       <li>Alias: 20I/501Y.V1</li>
       <li>First Identified: United Kingdom</li>
       <li>Sublineages: N/A</li>
-      <li><a href="https://outbreak.info/situation-reports?pango=B.1.1.7">More Information</a></li>
+      <li><a href="https://outbreak.info/situation-reports/alpha">More Information</a></li>
     </ul>
   </li>
 
@@ -28,7 +28,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
       <li>Alias: 20H/501Y.V2</li>
       <li>First Identified: South Africa</li>
       <li>Sublineages: B.1.351.2, B.1.351.3</li>
-      <li><a href="https://outbreak.info/situation-reports?pango=B.1.351">More Information</a></li>
+      <li><a href="https://outbreak.info/situation-reports/beta">More Information</a></li>
     </ul>
   </li>
 
@@ -37,7 +37,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
       <li>Alias: 20J/501Y.V3</li>
       <li>First Identified: Brazil</li>
       <li>Sublineages: P.1.1, P.1.2</li>
-      <li><a href="https://outbreak.info/situation-reports?pango=P.1">More Information</a></li>
+      <li><a href="https://outbreak.info/situation-reports/gamma">More Information</a></li>
     </ul>
   </li>
 
@@ -46,7 +46,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
       <li>Alias: 20A/S:478K</li>
       <li>First Identified: India</li>
       <li>Sublineages: AY.1 - AY.25</li>
-      <li><a href="https://outbreak.info/situation-reports?pango=B.1.617.2">More Information</a></li>
+      <li><a href="https://outbreak.info/situation-reports/delta">More Information</a></li>
     </ul>
   </li>
 
@@ -56,11 +56,12 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
 voitext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of Interest contain specific mutations that have been associated with changes to receptor binding, reduced neutralization by antibodies generated against previous infection or vaccination, reduced efficacy of treatments, potential diagnostic impact, or predicted increase in transmissibility or disease severity.</p><p>For more information on these variants of concern visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
 <ul>
-  <li><b>B.1.525 (Eta)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.525">More Information</a></li>
-  <li><b>B.1.526 (Iota)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.526">More Information</a></li>
-  <li><b>B.1.617.1 (Kappa)</b>: <a href="https://outbreak.info/situation-reports?pango=B.1.617.1">More Information</a></li>
+  <li><b>B.1.525 (Eta)</b>: <a href="https://outbreak.info/situation-reports/eta">More Information</a></li>
+  <li><b>B.1.526 (Iota)</b>: <a href="https://outbreak.info/situation-reports/iota">More Information</a></li>
+  <li><b>B.1.617.1 (Kappa)</b>: <a href="https://outbreak.info/situation-reports/kappa">More Information</a></li>
   <li><b>B.1.617.3 </b>: <a href="https://outbreak.info/situation-reports?pango=B.1.617.3">More Information</a></li>
-  <li><b>C.37 (Lambda)</b>: <a href="https://outbreak.info/situation-reports?pango=C.37">More Information</a></li>
+  <li><b>C.37 (Lambda)</b>: <a href="https://outbreak.info/situation-reports/lambda">More Information</a></li>
+  <li><b>B.1.621 (Mu)</b>: <a href="https://outbreak.info/situation-reports/mu">More Information</a></li>
 </ul>
 ')
 
@@ -110,7 +111,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
             ),
             tabPanel("Proportion of Lineages",
                plotlyOutput("lineageByTimeFrame")%>% withSpinner(color="#c5050c"),
-               tags$h3('Proportion of all sequence lineages over time by sample collection date.'),
+               tags$h3('Proportion of all sequence lineages over time by sample collection date. Variants of concern are shown in red, variants of interest are shown in purple, everything else is shown in blue.'),
                selectInput("timelinchoice", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Monthly")
             )
           )
