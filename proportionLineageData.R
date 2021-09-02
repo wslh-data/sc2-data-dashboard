@@ -33,17 +33,54 @@ prepareLineagePropData <- function(data){
 
 #render a plot of the lineages sequenced by week/month/quarter
 plotTimeLineage <- function(data){
+  #remove na and none
+  data <- data[!is.na(data$lineage),]
+  data <- data[data$lineage != "None",]
   fig <- plot_ly()
+  #Else
+  other_data <- data[!data$lineage %in% VOC_list & !data$lineage %in% VOI_list,]
   fig <- fig %>% add_trace(
     type = "bar",
-    x = data$date,
-    y = data$num,
-    name = data$lineage,
-    color = data$lineage,
+    x = other_data$date,
+    y = other_data$num,
+    name = other_data$lineage,
+    color = other_data$lineage,
     colors = "Blues",
     hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-    text = data$num
+    text = other_data$num
   )
+  #VOI
+  pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VOI_list))
+  c = 1
+  for(voi in rev(VOI_list)){
+    data_holder <- data[data$lineage %in% VOI_list,]
+    fig <- fig %>% add_trace(
+      type = "bar",
+      x = data_holder$date,
+      y = data_holder$num,
+      name = voi,
+      marker= list(color=pallet[c]),
+      hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+      text = data_holder$num
+    )
+    c = c + 1
+  }
+  #VOC
+  c = 1
+  pallet = colorRampPalette(c("#880e0c","#f69593"))(length(VOC_list))
+  for(voc in rev(VOC_list)){
+    data_holder <- data[data$lineage == voc,]
+    fig <- fig %>% add_trace(
+      type = "bar",
+      x = data_holder$date,
+      y = data_holder$num,
+      name = voc,
+      marker= list(color=pallet[c]),
+      hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+      text = data_holder$num
+    )
+    c = c + 1
+  }
   fig <- fig %>% layout(
     barmode="stack",
     barnorm="percent",
