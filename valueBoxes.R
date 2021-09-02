@@ -202,7 +202,7 @@ generateValueBoxPlots <- function() {
     icon = icon("virus"),
     sparkobj = b117hc,
     width = NULL,
-    href = "https://outbreak.info/situation-reports?pango=B.1.1.7"
+    href = "https://outbreak.info/situation-reports/alpha"
   )
   
   b1351 <<- valueBoxSpark(
@@ -212,7 +212,7 @@ generateValueBoxPlots <- function() {
     sparkobj = b1351hc,
     icon = icon("virus"),
     width = NULL,
-    href = "https://outbreak.info/situation-reports?pango=B.1.351"
+    href = "https://outbreak.info/situation-reports/beta"
   )
   
   p1 <<- valueBoxSpark(
@@ -222,7 +222,7 @@ generateValueBoxPlots <- function() {
     sparkobj = p1hc,
     icon = icon("virus"),
     width = NULL,
-    href = "https://outbreak.info/situation-reports?pango=P.1"
+    href = "https://outbreak.info/situation-reports/gamma"
   )
   
   b16172 <<- valueBoxSpark(
@@ -232,7 +232,7 @@ generateValueBoxPlots <- function() {
     sparkobj = b16172hc,
     icon = icon("virus"),
     width = NULL,
-    href = "https://outbreak.info/situation-reports?pango=B.1.617.2"
+    href = "https://outbreak.info/situation-reports/delta"
   )
 }
 
