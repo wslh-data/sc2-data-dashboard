@@ -127,6 +127,9 @@ plotVariantTimeLineage <- function(data,label){
     )
     return(fig)
   } else {
+    #Collapse Data Num
+    data <- data[,c('date','who','num')]
+    data <- data %>% summarise(num=sum(num))
     data_other <- data[data$who == "Other",]
     data <- data[data$who != "Other",]
     fig <- plot_ly()
@@ -186,7 +189,7 @@ plotVariantTimeLineage <- function(data,label){
       ),
       yaxis = list(
         categoryorder = "category array",
-        categoryarray = data$lineage
+        categoryarray = data$who
       )
     )
     return(fig)
