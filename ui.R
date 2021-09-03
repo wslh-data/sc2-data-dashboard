@@ -111,7 +111,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
             ),
             tabPanel("Proportion of Lineages",
                plotlyOutput("lineageByTimeFrame")%>% withSpinner(color="#c5050c"),
-               tags$h3('Proportion of all sequence lineages over time by sample collection date. Variants of concern are shown in red, variants of interest are shown in purple, everything else is shown in blue.'),
+               tags$h3('Proportion of all sequence lineages over time by sample collection date. Variants of concern are shown in red, variants of interest are shown in purple, all other lineages are shown in blue.'),
                selectInput("timelinchoice", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Monthly")
             )
           )
