@@ -43,6 +43,7 @@ RUN mkdir /app && mkdir /data
 
 # copy app into container
 COPY *.R /app/
+COPY lib/ /app/lib/
 COPY www/ /app/www/
 COPY geojsons/ /app/geojsons/
 

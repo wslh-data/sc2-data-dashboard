@@ -1,4 +1,3 @@
-library(paws)
 
 get_DHS_county_data <- function(){
   svc <- dynamodb()

@@ -4,7 +4,7 @@ library(viridis)
 
 ### Function to pre-analyze data to be subsetable by timescale and pango vs who
 prepareVariantPropData <- function(data){
-  variantList <- c(VOI_list,VOC_list)
+  variantList <- unlist(WHO_list)
   sc2bylineage <- data.frame(table(data$DOC,data$Lineage))
   names(sc2bylineage) <- c("date","lineage","num")
   sc2bylineage$who <- unlist(lapply(sc2bylineage$lineage,getWHO))
@@ -69,8 +69,8 @@ plotVariantTimeLineage <- function(data,label){
     data <- data[data$lineage != "Other",]
     fig <- plot_ly()
     c = 1
-    pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VOI_list))
-    for(voi in VOI_list){
+    pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VBM_list))
+    for(voi in VBM_list){
       data_holder <- data[data$lineage == voi,]
       fig <- fig %>% add_trace(
         type = "bar",
@@ -134,9 +134,9 @@ plotVariantTimeLineage <- function(data,label){
     data <- data[data$who != "Other",]
     fig <- plot_ly()
     #VOI
-    pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(WHO_VOI))
+    pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(WHO_VBM))
     c = 1
-    for(voi in rev(WHO_VOI)){
+    for(voi in rev(WHO_VBM)){
       data_holder <- data[data$who == voi,]
       fig <- fig %>% add_trace(
         type = "bar",

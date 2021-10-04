@@ -3,8 +3,6 @@ library(usmap)
 library(stringr)
 library(viridis)
 
-source("county_to_herc.R")
-
 plotCountyMap <- function(gData,eData){
   # filter out everything but WI
   c = 1
