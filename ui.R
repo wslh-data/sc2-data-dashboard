@@ -14,42 +14,30 @@ DOI: <a href='https://doi.org/10.2807/1560-7917.es.2017.22.13.30494'>10.2807/156
 voctext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
 <p>Variants of concern have evidence of an increase in transmissibility, more severe disease (increased hospitalizations or deaths), significant reduction in neutralization by antibodies generated during previous infection or vaccination, reduced effectiveness of treatments or vaccines, or diagnostic detection failures.</p><p>For more information on these variants of concern visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
 <ul>
-  <li><b>B.1.1.7 (Alpha)</b>:
-    <ul>
-      <li>Alias: 20I/501Y.V1</li>
-      <li>First Identified: United Kingdom</li>
-      <li>Sublineages: N/A</li>
-      <li><a href="https://outbreak.info/situation-reports/alpha">More Information</a></li>
-    </ul>
-  </li>
-
-  <li><b>B.1.351 (Beta)</b>:
-    <ul>
-      <li>Alias: 20H/501Y.V2</li>
-      <li>First Identified: South Africa</li>
-      <li>Sublineages: B.1.351.2, B.1.351.3</li>
-      <li><a href="https://outbreak.info/situation-reports/beta">More Information</a></li>
-    </ul>
-  </li>
-
-  <li><b>P.1 (Gamma)</b>:
-    <ul>
-      <li>Alias: 20J/501Y.V3</li>
-      <li>First Identified: Brazil</li>
-      <li>Sublineages: P.1.1, P.1.2</li>
-      <li><a href="https://outbreak.info/situation-reports/gamma">More Information</a></li>
-    </ul>
-  </li>
-
   <li><b>B.1.617.2 (Delta)</b>:
     <ul>
       <li>Alias: 20A/S:478K</li>
       <li>First Identified: India</li>
-      <li>Sublineages: AY.1 - AY.25</li>
+      <li>Sublineages: All AY sublineages</li>
       <li><a href="https://outbreak.info/situation-reports/delta">More Information</a></li>
     </ul>
   </li>
+</ul>
+')
 
+vbmtext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
+<p>Variants Being Monitored include variants where there has been data to suggest an impact on interventions or are assocated with increased transmission or severity but are circulating at low levels.</p><p>For more information on these variants visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
+<ul>
+  <li><b>Alpha</b>: <a href="https://outbreak.info/situation-reports/alpha">More Information</a></li>
+  <li><b>Beta</b>: <a href="https://outbreak.info/situation-reports/beta">More Information</a></li>
+  <li><b>Gamma</b>: <a href="https://outbreak.info/situation-reports/gamma">More Information</a></li>
+  <li><b>Epsilon</b>: <a href="https://outbreak.info/situation-reports/epsilon">More Information</a></li>
+  <li><b>Zeta</b>: <a href="https://outbreak.info/situation-reports/zeta">More Information</a></li>
+  <li><b>Eta</b>: <a href="https://outbreak.info/situation-reports/eta">More Information</a></li>
+  <li><b>Iota</b>: <a href="https://outbreak.info/situation-reports/iota">More Information</a></li>
+  <li><b>Kappa</b>: <a href="https://outbreak.info/situation-reports/kappa">More Information</a></li>
+  <li><b>B.1.617.3</b>: <a href="https://outbreak.info/situation-reports/B.1.617.3">More Information</a></li>
+  <li><b>Mu</b>: <a href="https://outbreak.info/situation-reports/mu">More Information</a></li>
 </ul>
 ')
 
@@ -142,9 +130,9 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
            tabPanel("Variants of Concern",
                     plotlyOutput("VOC")%>% withSpinner(color="#c5050c"),
                     voctext),
-           tabPanel("Variants of Interest",
-                    plotlyOutput("VOI")%>% withSpinner(color="#c5050c"),
-                    voitext),
+           tabPanel("Variants Being Monitored",
+                    plotlyOutput("VBM")%>% withSpinner(color="#c5050c"),
+                    vbmtext),
            tabPanel("Search Variants",
                     plotlyOutput("selectVariantByTimeframe")%>% withSpinner(color="#c5050c"),
                     tags$h3("Proportion of sequenced strains matching the selected variant, over time by sample collection date."),

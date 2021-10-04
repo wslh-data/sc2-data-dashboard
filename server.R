@@ -25,9 +25,9 @@ function(input,output,session) {
   #plot proportion of variants
   output$sequenceVariantByTimeframe <- renderPlotly(plotVariantTimeLineage(sequenceVariantTimeframe(input$timevarchoice),input$labelchoice))
   #plot variants of concern
-  output$VOC <- renderPlotly(plotVOC(sc2Data))
-  #plot variants of interest
-  output$VOI <- renderPlotly(plotVOI(sc2Data))
+  output$VOC <- renderPlotly(plotCumulativeVariants(sc2Data,VOC_list))
+  #plot variants being monitored
+  output$VBM <- renderPlotly(plotCumulativeVariants(sc2Data,VBM_list))
   #plot variants searched
   output$selectVariantByTimeframe <- renderPlotly(plotSelectedLineage(sequenceLineageTimeframe(input$timeselectvarchoice),input$selectVariant))
   
