@@ -193,6 +193,8 @@ plotHERCMap <- function(data){
     text = HERCData$hover,
     hoverinfo = "text",
     showlegend = FALSE,
+    zmin = 0,
+    zmax = 100,
     color = HERCData$VarSum,
     colors = "Blues",
     colorbar = list(ticksuffix="%",title=list(text="Variants of Concern")),
