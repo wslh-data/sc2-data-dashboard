@@ -38,7 +38,7 @@ plotTimeLineage <- function(data){
   data <- data[data$lineage != "None",]
   fig <- plot_ly()
   #Else
-  other_data <- data[!data$lineage %in% VOC_list & !data$lineage %in% VOI_list,]
+  other_data <- data[!data$lineage %in% VOC_list & !data$lineage %in% VBM_list,]
   fig <- fig %>% add_trace(
     type = "bar",
     x = other_data$date,
@@ -50,10 +50,10 @@ plotTimeLineage <- function(data){
     text = other_data$num
   )
   #VOI
-  pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VOI_list))
+  pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VBM_list))
   c = 1
-  for(voi in rev(VOI_list)){
-    data_holder <- data[data$lineage %in% VOI_list,]
+  for(voi in rev(VBM_list)){
+    data_holder <- data[data$lineage %in% VBM_list,]
     fig <- fig %>% add_trace(
       type = "bar",
       x = data_holder$date,
