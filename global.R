@@ -20,6 +20,11 @@ source("lib/retrieve_data.R")
 source("lib/valueBoxes.R")
 source("lib/county_to_herc.R")
 
+### Get ENV Var if exists
+if (file.exists('.env-test')){
+  readRenviron(".env-test")
+}
+
 ### Set VOC/VOI List and WHO Lineages
 WHO_list <<- list(
   'Alpha' = c("B.1.1.7","Q.1","Q.2","Q.3","Q.4","Q.5","Q.6",
