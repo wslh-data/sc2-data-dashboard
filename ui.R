@@ -26,7 +26,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
 ')
 
 vbmtext <- HTML('<h3>Cumulative number of variants sequences identified over time by sample collection date.</h3>
-<p>Variants Being Monitored include variants where there has been data to suggest an impact on interventions or are assocated with increased transmission or severity but are circulating at low levels.</p><p>For more information on these variants visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
+<p>Variants Being Monitored include variants where there has been data to suggest an impact on medical interventions or are assocated with increased transmission or severity but are currently circulating at low levels.</p><p>For more information on these variants visit <a href="https://www.cdc.gov/coronavirus/2019-ncov/cases-updates/variant-surveillance/variant-info.html">CDC\'s Variant Surveillance</a> or Wisconsin DHS <a href="https://www.dhs.wisconsin.gov/covid-19/variants.htm">Emerging SARS-CoV-2 Variants</a>.</p>
 <ul>
   <li><b>Alpha</b>: <a href="https://outbreak.info/situation-reports/alpha">More Information</a></li>
   <li><b>Beta</b>: <a href="https://outbreak.info/situation-reports/beta">More Information</a></li>
@@ -99,7 +99,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
             ),
             tabPanel("Proportion of Lineages",
                plotlyOutput("lineageByTimeFrame")%>% withSpinner(color="#c5050c"),
-               tags$h3('Proportion of all sequence lineages over time by sample collection date. Variants of concern are shown in red, variants of interest are shown in purple, all other lineages are shown in blue.'),
+               tags$h3('Proportion of all sequence lineages over time by sample collection date. Variants of concern are shown in red, variants being monitored are shown in purple, all other lineages are shown in blue.'),
                selectInput("timelinchoice", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Monthly")
             )
           )
@@ -120,7 +120,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
          tabsetPanel(
            tabPanel("Proportion of Variants",
                     plotlyOutput("sequenceVariantByTimeframe")%>% withSpinner(color="#c5050c"),
-                    tags$h3("Proportion of sequenced strains that are variants, over time by sample collection date."),
+                    tags$h3("Proportion of sequenced strains that are variants of concern (red) and variants being monitored (purple), over time by sample collection date."),
                     fluidRow(
                       column(6,selectInput("timevarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly")),
                       column(6,selectInput("labelchoice", "Variant Label", choices = c("WHO","Pangolin"), selected = "WHO"))
