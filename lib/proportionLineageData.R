@@ -53,7 +53,7 @@ plotTimeLineage <- function(data){
   pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VBM_list))
   c = 1
   for(voi in rev(VBM_list)){
-    data_holder <- data[data$lineage %in% VBM_list,]
+    data_holder <- data[data$lineage == voi,]
     fig <- fig %>% add_trace(
       type = "bar",
       x = data_holder$date,
