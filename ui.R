@@ -7,7 +7,7 @@ aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are o
 (a) Elbe, S., and Buckland-Merrett, G. (2017) Data, disease and diplomacy: GISAID’s innovative contribution to global health. Global Challenges, 1:33-46. DOI: <a href='https://doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</a> PMCID: <a href='https://pubmed.ncbi.nlm.nih.gov/31565258/'>31565258</a>
 </p>
 <p>
-(b) Shu, Y., McCauley, J. (2017) GISAID: From vision to reality. EuroSurveillance, 22(13)
+(b) Shu, Y., McCauley, J. (2017) GISAID: From vision to reality. EuroSurveillance, 22(13)
 DOI: <a href='https://doi.org/10.2807/1560-7917.es.2017.22.13.30494'>10.2807/1560-7917.ES.2017.22.13.30494</a>  PMCID: <a href='https://pubmed.ncbi.nlm.nih.gov/28382917/'>PMC5388101</a>
 </p>A full list of the laboratories contributing to this data is available here:</p>")
 
@@ -125,7 +125,7 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
                       column(6,selectInput("timevarchoice", "Time Period", choices = c("Weekly","Monthly","Quarterly"), selected = "Weekly")),
                       column(6,selectInput("labelchoice", "Variant Label", choices = c("WHO","Pangolin"), selected = "WHO"))
                     ),
-                    
+
            ),
            tabPanel("Variants of Concern",
                     plotlyOutput("VOC")%>% withSpinner(color="#c5050c"),

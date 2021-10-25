@@ -133,7 +133,7 @@ generateValueBoxPlots <- function() {
   b16172 <<- valueBoxRecent(
     title = "Delta",
     value = delta_counts,
-    subtitle = "B.1.617.2, AY.1 - AY.38",
+    subtitle = "B.1.617.2, AY.1 - AY.47",
     recent_value = delta_recent_counts,
     icon = icon("virus"),
     width = NULL,
