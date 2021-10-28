@@ -60,13 +60,12 @@ determineTrend <- function(start,end){
 
 ### Generate the Value Boxes
 generateValueBoxPlots <- function() {
-  vbdata <- sc2Data
+  vbdata <- na.omit(sc2Data)
   
   vbdata$Lineage[vbdata$Lineage%in%WHO_list$Alpha] <- "Alpha"
   vbdata$Lineage[vbdata$Lineage%in%WHO_list$Beta] <- "Beta"
   vbdata$Lineage[vbdata$Lineage%in%WHO_list$Gamma] <- "Gamma"
   vbdata$Lineage[vbdata$Lineage%in%WHO_list$Delta] <- "Delta"
-  
   
   ### Get counts
   alpha_counts <- nrow(vbdata[vbdata$Lineage == "Alpha",])
@@ -74,10 +73,10 @@ generateValueBoxPlots <- function() {
   gamma_counts <- nrow(vbdata[vbdata$Lineage == "Gamma",])
   delta_counts <- nrow(vbdata[vbdata$Lineage == "Delta",])
   
-  alpha_recent_counts <- nrow(vbdata[vbdata$Lineage == "Alpha" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,])
-  beta_recent_counts <- nrow(vbdata[vbdata$Lineage == "Beta" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,])
-  gamma_recent_counts <- nrow(vbdata[vbdata$Lineage == "Gamma" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,])
-  delta_recent_counts <- nrow(vbdata[vbdata$Lineage == "Delta" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,])
+  alpha_recent_counts <- nrow(na.omit(vbdata[vbdata$Lineage == "Alpha" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,]))
+  beta_recent_counts <- nrow(na.omit(vbdata[vbdata$Lineage == "Beta" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,]))
+  gamma_recent_counts <- nrow(na.omit(vbdata[vbdata$Lineage == "Gamma" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,]))
+  delta_recent_counts <- nrow(na.omit(vbdata[vbdata$Lineage == "Delta" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,]))
   
   alpha_trend <- determineTrend(
     nrow(vbdata[vbdata$Lineage == "Alpha" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30,]) - alpha_recent_counts,
