@@ -27,9 +27,8 @@ if (file.exists('.env-test')){
 }
 
 ### Get Delta Lineage List
-url_lineages = 'https://raw.githubusercontent.com/cov-lineages/pango-designation/master/lineages.csv'
-lineage_data <- read_csv(url(url_lineages))
-delta_ays <- unique(lineage_data[grepl("AY",lineage_data$lineage),2])$lineage
+lineage_df <- get_lineage_data()
+delta_ays <- lineage_df[grepl("AY",lineage_df$lineage),]
 
 ### Set VOC/VOI List and WHO Lineages
 WHO_list <<- list(

@@ -1,4 +1,27 @@
 
+get_lineage_data <- function(){
+  svc <- dynamodb()
+  projexp = "lineage"
+  data <- svc$scan("pango_designations",ProjectionExpression=projexp)
+  lineage_data <- list()
+  while(TRUE){
+    lineage_data <- c(lineage_data,data$Items)
+    if(is.null(data$LastEvaluatedKey$`GISAID-ID`$S)){
+      break
+    }
+    data <- svc$scan("pango_designations",ExclusiveStartKey = data$LastEvaluatedKey,ProjectionExpression = projexp)
+  }
+  
+  df <- data.frame(matrix(ncol=1))
+  colnames(df) <- c('lineages')
+  for(i in lineage_data){
+    lineages <- i$lineage$S
+    df[nrow(df)+1,] <- c(lineages)
+  }
+  df <- na.omit(df)
+  return(df)
+}
+
 get_DHS_county_data <- function(){
   svc <- dynamodb()
   
