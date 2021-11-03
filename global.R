@@ -8,6 +8,7 @@ library(shinyWidgets)
 library(shinyBS)
 library(stringr)
 library(paws)
+library(readr)
 
 source("lib/cumulativeSequences.R")
 source("lib/plotVariantCurve.R")
@@ -25,23 +26,18 @@ if (file.exists('.env-test')){
   readRenviron(".env-test")
 }
 
+### Get Delta Lineage List
+url_lineages = 'https://raw.githubusercontent.com/cov-lineages/pango-designation/master/lineages.csv'
+lineage_data <- read_csv(url(url_lineages))
+delta_ays <- unique(lineage_data[grepl("AY",lineage_data$lineage),2])$lineage
+
 ### Set VOC/VOI List and WHO Lineages
 WHO_list <<- list(
   'Alpha' = c("B.1.1.7","Q.1","Q.2","Q.3","Q.4","Q.5","Q.6",
               "Q.7","Q.8"),
   'Beta' = c("B.1.351","B.1.351.2","B.1.351.3"),
   'Gamma' = c("P.1","P.1.1","P.1.2"),
-  'Delta' = c("B.1.617.2","AY.1","AY.2","AY.3","AY.3.1","AY.4",
-             "AY.4.1","AY.4.2","AY.4.3","AY.4.4","AY.4.5","AY.5",
-             "AY.5.1","AY.5.2","AY.6","AY.7","AY.7.1","AY.7.2",
-             "AY.8","AY.9","AY.10","AY.11","AY.12",
-             "AY.13","AY.14","AY.15","AY.16","AY.17","AY.18",
-             "AY.19","AY.20","AY.21","AY.22","AY.23","AY.23.1","AY.24",
-             "AY.25","AY.26","AY.27","AY.28","AY.29","AY.29.1","AY.30",
-             "AY.31","AY.32","AY.33","AY.34","AY.35","AY.36",
-             "AY.37","AY.38","AY.39","AY.39.1","AY.40","AY.41","AY.42",
-             "AY.43","AY.44","AY.45","AY.46","AY.46.1","AY.46.2","AY.46.3",
-             "AY.46.4","AY.46.5","AY.46.6","AY.47"),
+  'Delta' = c("B.1.617.2",delta_ays),
   'Epsilon' = c("B.1.427","B.1.429"),
   'Eta' = c("B.1.525"),
   'Iota' = c("B.1.526"),
