@@ -24,8 +24,7 @@ plotCumulativeVariants <- function(sc2Data,variant_list){
       xaxis = list(
         type = "date",
         range=c('2020-01-01', format(Sys.Date(),"%Y-%m-%d"))
-      ),
-      hovermode = 'compare'
+      )
     )
   return(fig)
 }
