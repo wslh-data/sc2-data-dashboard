@@ -6,7 +6,7 @@ get_lineage_data <- function(){
   lineage_data <- list()
   while(TRUE){
     lineage_data <- c(lineage_data,data$Items)
-    if(is.null(data$LastEvaluatedKey$`GISAID-ID`$S)){
+    if(is.null(data$LastEvaluatedKey$`lineage`$S)){
       break
     }
     data <- svc$scan("pango_designations",ExclusiveStartKey = data$LastEvaluatedKey,ProjectionExpression = projexp)
