@@ -4,9 +4,6 @@
 
 preProcess <- function() {
   
-  ### Combine B.1.427 and B.1.429 into B.1.427/429
-  sc2Data$Lineage[sc2Data$Lineage=="B.1.427"] <- "B.1.427/429"
-  sc2Data$Lineage[sc2Data$Lineage=="B.1.429"] <- "B.1.427/429"
   sc2Data <<- sc2Data
   
   ### Generate Acknowledgement Data
