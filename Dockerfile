@@ -36,6 +36,7 @@ RUN R -e "install.packages(c(\
   'viridis',\
   'pdftools',\
   'paws',\
+  'readr',\
   'highcharter',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
