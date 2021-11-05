@@ -19,6 +19,9 @@ plotCountyMap <- function(gData,eData){
   gData$County <- sapply(gData$County,function(x) gsub(" [C,c]ounty","",as.character(x)))
   gData$County <- tolower(gData$County)
 
+  #fix saint croix
+  gData$County[which(gData$County == 'saint croix')] <- 'st. croix'
+
   # organize data by county
   countyCounts <- as.data.frame(table(gData$County))
   names(countyCounts) <- c("County","Freq")
@@ -133,7 +136,7 @@ plotHERCMap <- function(data){
   colnames(emptyFrame) <- c(WHO_VOC,"VarSum","Total")
   emptyFrame[is.na(emptyFrame)] <- 0
   HERCData <- cbind(HERCData,emptyFrame)
-  
+
   for( i in 1:nrow(data)){
     v <- c(getWHO(data$Lineage[i]),data$HERC[i])
     if(!any(is.na(data))){
@@ -147,7 +150,7 @@ plotHERCMap <- function(data){
       }
     }
   }
-  
+
   #Build hover template
   for(row in seq(1,length(HERCData$HERC))){
     hover <- c("HERC Region: ",HERCData$HERC[row],'<br>')
@@ -158,8 +161,8 @@ plotHERCMap <- function(data){
     hover <- c(hover,"Total Sequences:",HERCData$Total[row],'<br>')
     HERCData[row,'hover'] <- paste(hover,collapse = "")
   }
-  
-  
+
+
 
   # give county boundaries a white border
   l <- list(color = "#CDCDCD", width = 1)
