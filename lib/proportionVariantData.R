@@ -79,7 +79,8 @@ plotVariantTimeLineage <- function(data,label){
         name = voi,
         marker= list(color=pallet[c]),
         hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-        text = data_holder$num
+        text = data_holder$num,
+        textposition = "none"
       )
       c = c + 1
     }
@@ -94,7 +95,8 @@ plotVariantTimeLineage <- function(data,label){
         name = voc,
         marker= list(color=pallet[c]),
         hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-        text = data_holder$num
+        text = data_holder$num,
+        textposition = "none"
       )
       c = c + 1
     }
@@ -105,7 +107,8 @@ plotVariantTimeLineage <- function(data,label){
       name = data_other$lineage,
       marker= list(color="#CCCCCC"),
       hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-      text = data_other$num
+      text = data_other$num,
+      textposition = "none"
     )
     
     fig <- fig %>% layout(
@@ -145,7 +148,8 @@ plotVariantTimeLineage <- function(data,label){
         name = voi,
         marker= list(color=pallet[c]),
         hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-        text = data_holder$num
+        text = data_holder$num,
+        textposition = "none"
       )
       c = c + 1
     }
@@ -161,7 +165,8 @@ plotVariantTimeLineage <- function(data,label){
         name = w,
         marker= list(color=pallet[c]),
         hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-        text = data_holder$num
+        text = data_holder$num,
+        textposition = "none"
       )
       c = c + 1
     }
@@ -172,7 +177,8 @@ plotVariantTimeLineage <- function(data,label){
       name = data_other$who,
       marker= list(color="#CCCCCC"),
       hovertemplate = "%{x} \n %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-      text = data_other$num
+      text = data_other$num,
+      textposition = "none"
     )
     
     fig <- fig %>% layout(
@@ -223,7 +229,8 @@ plotSelectedLineage <- function(data,lineages){
         name = lineage,
         marker= list(color=pallet[c]),
         hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-        text = data_holder$num
+        text = data_holder$num,
+        textposition = "none"
       )
       c = c + 1
     }
@@ -235,7 +242,8 @@ plotSelectedLineage <- function(data,lineages){
     name = "Other",
     marker= list(color="#CCCCCC"),
     hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-    text = data_other$num
+    text = data_other$num,
+    textposition = "none"
   )
   
   fig <- fig %>% layout(

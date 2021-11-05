@@ -47,7 +47,8 @@ plotTimeLineage <- function(data){
     color = other_data$lineage,
     colors = "Blues",
     hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-    text = other_data$num
+    text = other_data$num,
+    textposition = "none"
   )
   #VOI
   pallet = colorRampPalette(c("#320c55","#c18ff0"))(length(VBM_list))
@@ -61,7 +62,8 @@ plotTimeLineage <- function(data){
       name = voi,
       marker= list(color=pallet[c]),
       hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-      text = data_holder$num
+      text = data_holder$num,
+      textposition = "none"
     )
     c = c + 1
   }
@@ -77,7 +79,8 @@ plotTimeLineage <- function(data){
       name = voc,
       marker= list(color=pallet[c]),
       hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-      text = data_holder$num
+      text = data_holder$num,
+      textposition = "none"
     )
     c = c + 1
   }
