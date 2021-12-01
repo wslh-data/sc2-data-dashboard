@@ -94,7 +94,7 @@ sc2Data <<- unique(sc2Data,by="GISAID_ID")
 sc2Data <<- sc2Data[!is.na(sc2Data$GISAID_ID),]
 
 # DHS Data
-dhsdata <<- get_DHS_county_data()
+dhsdata <<- get_DHS_county_data("DHS-SC2-County-DataV2")
 
 ### load data and set last update date
 preProcess()

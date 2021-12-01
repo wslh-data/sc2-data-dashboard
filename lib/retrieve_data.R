@@ -22,7 +22,7 @@ get_lineage_data <- function(){
   return(df)
 }
 
-get_DHS_county_data <- function(){
+get_DHS_county_data <- function(dynamodb_table){
   svc <- dynamodb()
   
   wi_counties <- c(
@@ -41,7 +41,7 @@ get_DHS_county_data <- function(){
   c = 0
   while(is.na(last_date)){
     key = paste(Sys.Date()-c,"Dane",sep="_")
-    hit <- svc$query("DHS-SC2-County-Data",
+    hit <- svc$query(dynamodb_table,
                      KeyConditionExpression = "date_county = :value",
                      ExpressionAttributeValues = list(':value' = list('S' = key)))
     if(hit$Count > 0){
@@ -52,7 +52,7 @@ get_DHS_county_data <- function(){
   
   for(item in wi_counties){
     key = paste(last_date,item,sep="_")
-    hit <- svc$query("DHS-SC2-County-Data",
+    hit <- svc$query(dynamodb_table,
                      KeyConditionExpression = "date_county = :value",
                      ExpressionAttributeValues = list(':value' = list('S' = key))
     )
@@ -62,8 +62,8 @@ get_DHS_county_data <- function(){
   df <- data.frame(matrix(ncol=2,nrow=0))
   colnames(df) <- c('County','Positives')
   for(i in data){
-    county <- i$NAME$S
-    cases <- i$POSITIVE$N
+    county <- i$GEOName$S
+    cases <- i$POS_CUM_CONF$N
     df[nrow(df)+1,] <- c(county,cases)
     df$Positives <- as.numeric(df$Positives)
   }

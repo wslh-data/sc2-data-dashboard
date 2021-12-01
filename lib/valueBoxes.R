@@ -66,17 +66,20 @@ generateValueBoxPlots <- function() {
   vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Beta)] <- "Beta"
   vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Gamma)] <- "Gamma"
   vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Delta)] <- "Delta"
+  vbdata$Lineage[which(vbdata$Lineage=='B.1.1.529')] <- "Omicron"
   
   ### Get counts
   alpha_counts <- nrow(vbdata[which(vbdata$Lineage == "Alpha"),])
   beta_counts <- nrow(vbdata[which(vbdata$Lineage == "Beta"),])
   gamma_counts <- nrow(vbdata[which(vbdata$Lineage == "Gamma"),])
   delta_counts <- nrow(vbdata[which(vbdata$Lineage == "Delta"),])
+  omicron_counts <- nrow(vbdata[which(vbdata$Lineage == "Omicron"),])
   
   alpha_recent_counts <- nrow(vbdata[which(vbdata$Lineage == "Alpha" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30),])
   beta_recent_counts <- nrow(vbdata[which(vbdata$Lineage == "Beta" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30),])
   gamma_recent_counts <- nrow(vbdata[which(vbdata$Lineage == "Gamma" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30),])
   delta_recent_counts <- nrow(vbdata[which(vbdata$Lineage == "Delta" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30),])
+  omicron_recent_counts <- nrow(vbdata[which(vbdata$Lineage == "Omicron" & as.Date(vbdata$DOC) >= as.Date(lastUpdate)-30),])
   
   #### Variant Value Boxes
   b117 <<- valueBoxRecent(
@@ -117,6 +120,16 @@ generateValueBoxPlots <- function() {
     icon = icon("virus"),
     width = NULL,
     href = "https://outbreak.info/situation-reports/delta"
+  )
+  
+  b11529 <<- valueBoxRecent(
+    title = "Omicron",
+    value = omicron_counts,
+    subtitle = "B.1.1.529",
+    recent_value = omicron_recent_counts,
+    icon = icon("virus"),
+    width = NULL,
+    href = "https://outbreak.info/situation-reports/omicron"
   )
 }
 

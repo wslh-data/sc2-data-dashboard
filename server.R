@@ -8,6 +8,7 @@ function(input,output,session) {
   output$b1351vb.c <- output$b1351vb.b <- output$b1351vb.a <- renderValueBox(b1351)
   output$p1vb.c <- output$p1vb.b <- output$p1vb.a <- renderValueBox(p1)
   output$b16172.c <- output$b16172.b <- output$b16172.a <- renderValueBox(b16172)
+  output$b11529.c <- output$b11529.b <- output$b11529.a <- renderValueBox(b11529)
   
   ### Selectable lineage plot
   updateSelectizeInput(session,"selectVariant",choices=sort(unique(sc2Data$Lineage)),server=TRUE)
