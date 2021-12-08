@@ -66,7 +66,7 @@ generateValueBoxPlots <- function() {
   vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Beta)] <- "Beta"
   vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Gamma)] <- "Gamma"
   vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Delta)] <- "Delta"
-  vbdata$Lineage[which(vbdata$Lineage=='B.1.1.529')] <- "Omicron"
+  vbdata$Lineage[which(vbdata$Lineage%in%WHO_list$Omicron)] <- "Omicron"
   
   ### Get counts
   alpha_counts <- nrow(vbdata[which(vbdata$Lineage == "Alpha"),])
@@ -125,7 +125,7 @@ generateValueBoxPlots <- function() {
   b11529 <<- valueBoxRecent(
     title = "Omicron",
     value = omicron_counts,
-    subtitle = "B.1.1.529",
+    subtitle = "B.1.1.529/BA.1",
     recent_value = omicron_recent_counts,
     icon = icon("virus"),
     width = NULL,

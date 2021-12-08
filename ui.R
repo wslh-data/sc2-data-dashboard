@@ -4,7 +4,7 @@ aboutthedataText <- HTML("<p>The sequencing data results in this dashboard are o
 <p> Stored samples may be sequenced at a later date altering historic data. On average, sequence data is uploaded about 2-3 weeks after collection from a patient but this varies between laboratories.</p><p>Variant nomenclature is dynamic and can change as new strains are characterized.</p>
 <hr><p>We are grateful to the data contributors who shared the data used in this Web Application via the GISAID Initiative*: the Authors, the Originating Laboratories responsible for obtaining the specimens, and the Submitting Laboratories that generated the genetic sequences and metadata.</p>
 <p>
-(a) Elbe, S., and Buckland-Merrett, G. (2017) Data, disease and diplomacy: GISAID’s innovative contribution to global health. Global Challenges, 1:33-46. DOI: <a href='https://doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</a> PMCID: <a href='https://pubmed.ncbi.nlm.nih.gov/31565258/'>31565258</a>
+(a) Elbe, S., and Buckland-Merrett, G. (2017) Data, disease and diplomacy: GISAID’s innovative contribution to global health. Global Challenges, 1:33-46. DOI: <a href='https://doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</a> PMCID: <a href='https://pubmed.ncbi.nlm.nih.gov/31565258/'>31565258</a>
 </p>
 <p>
 (b) Shu, Y., McCauley, J. (2017) GISAID: From vision to reality. EuroSurveillance, 22(13)
@@ -20,6 +20,14 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
       <li>First Identified: India</li>
       <li>Sublineages: All AY sublineages</li>
       <li><a href="https://outbreak.info/situation-reports/delta">More Information</a></li>
+    </ul>
+  </li>
+  <li><b>B.1.1.529/BA.1 (Omicron)</b>:
+    <ul>
+      <li>Alias: 21K</li>
+      <li>First Identified: South Africa</li>
+      <li>Sublineages: None</li>
+      <li><a href="https://outbreak.info/situation-reports/omicron">More Information</a></li>
     </ul>
   </li>
 </ul>
@@ -78,11 +86,11 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
   navbarPage(id='navtabs',"",footer=HTML("<h5 style='font-weight:200'>GISAID data provided on this website are subject to GISAID’s <a href='https://www.gisaid.org/DAA/'>Terms and Conditions</a></h5>"),
     tabPanel("Sequencing Report",
       sidebarPanel(
-        valueBoxOutput("b117vb.a",width=NULL),
-        valueBoxOutput("b1351vb.a",width=NULL),
-        valueBoxOutput("p1vb.a",width=NULL),
+        #valueBoxOutput("b117vb.a",width=NULL),
+        #valueBoxOutput("b1351vb.a",width=NULL),
+        #valueBoxOutput("p1vb.a",width=NULL),
         valueBoxOutput("b16172.a",width=NULL),
-        #valueBoxOutput("b11529.a",width=NULL),
+        valueBoxOutput("b11529.a",width=NULL),
         HTML('<b>Data Updated</b>: '),
         textOutput('update_time.a')
       ),
@@ -109,11 +117,11 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
     ),
     tabPanel("Variant Report",
       sidebarPanel(
-        valueBoxOutput("b117vb.b",width=NULL),
-        valueBoxOutput("b1351vb.b",width=NULL),
-        valueBoxOutput("p1vb.b",width=NULL),
+        #valueBoxOutput("b117vb.b",width=NULL),
+        #valueBoxOutput("b1351vb.b",width=NULL),
+        #valueBoxOutput("p1vb.b",width=NULL),
         valueBoxOutput("b16172.b",width=NULL),
-        #valueBoxOutput("b11529.b",width=NULL),
+        valueBoxOutput("b11529.b",width=NULL),
         HTML('<b>Data Updated</b>: '),
         textOutput('update_time.b')
       ),
@@ -149,11 +157,11 @@ fluidPage(title="WI SARS-CoV-2 Genomic Report",
     ),
     tabPanel("Geographical Report",
     sidebarPanel(
-      valueBoxOutput("b117vb.c",width=NULL),
-      valueBoxOutput("b1351vb.c",width=NULL),
-      valueBoxOutput("p1vb.c",width=NULL),
+      #valueBoxOutput("b117vb.c",width=NULL),
+      #valueBoxOutput("b1351vb.c",width=NULL),
+      #valueBoxOutput("p1vb.c",width=NULL),
       valueBoxOutput("b16172.c",width=NULL),
-      #valueBoxOutput("b11529.c",width=NULL),
+      valueBoxOutput("b11529.c",width=NULL),
       HTML('<b>Data Updated</b>: '),
       textOutput('update_time.c')
     ),

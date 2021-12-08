@@ -43,11 +43,13 @@ WHO_list <<- list(
   'Kappa' = c("B.1.617.1"),
   'Lambda' = c("C.37","C.37.1"),
   'Mu' = c("B.1.621","B.1.621.1"),
-  'Zeta' = c("P.2")
+  'Zeta' = c("P.2"),
+  'Omicron' = c("B.1.1.529","BA.1")
 )
 
 WHO_VOC <<- c(
-  'Delta'
+  'Delta',
+  'Omicron'
 )
 
 WHO_VBM <<- c(
@@ -63,7 +65,7 @@ WHO_VBM <<- c(
   'Mu'
 )
 
-VOC_list <<- WHO_list$Delta
+VOC_list <<-c(WHO_list$Delta,WHO_list$Omicron)
 
 VBM_list <<- c("B.1.617.3", WHO_list$Alpha, WHO_list$Beta, WHO_list$Gamma,
                WHO_list$Epsilon, WHO_list$Eta, WHO_list$Iota, WHO_list$Kappa,
