@@ -11,8 +11,8 @@ preProcess <- function() {
   colnames(ackdf) <<- c("GISAID_Acc_IDs","Date_of_Submission","Submitting_Lab")
   
   #### Remove last 2 weeks of data from sc2Data
-  date_filter <<- as.Date(sc2Data$DOC) < (Sys.Date() - 21)
-  sc2Data <<- sc2Data[date_filter,]
+  #date_filter <<- as.Date(sc2Data$DOC) < (Sys.Date() - 21)
+  #sc2Data <<- sc2Data[date_filter,]
   
   #### Remove Samples with Blank Lineage
   sc2Data <<- sc2Data[sc2Data$Lineage != "",]
