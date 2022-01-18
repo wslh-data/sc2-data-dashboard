@@ -26,7 +26,7 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
     <ul>
       <li>Alias: 21K</li>
       <li>First Identified: South Africa</li>
-      <li>Sublineages: None</li>
+      <li>Sublineages: BA.1,BA.2,BA.3</li>
       <li><a href="https://outbreak.info/situation-reports/omicron">More Information</a></li>
     </ul>
   </li>

@@ -125,7 +125,7 @@ generateValueBoxPlots <- function() {
   b11529 <<- valueBoxRecent(
     title = "Omicron",
     value = omicron_counts,
-    subtitle = "B.1.1.529/BA.1",
+    subtitle = "B.1.1.529,BA.1,BA.2,BA.3",
     recent_value = omicron_recent_counts,
     icon = icon("virus"),
     width = NULL,

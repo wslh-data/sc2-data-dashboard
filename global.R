@@ -32,8 +32,7 @@ delta_ays <- lineage_df[grepl("AY",lineage_df$lineage),]
 
 ### Set VOC/VOI List and WHO Lineages
 WHO_list <<- list(
-  'Alpha' = c("B.1.1.7","Q.1","Q.2","Q.3","Q.4","Q.5","Q.6",
-              "Q.7","Q.8"),
+  'Alpha' = c("B.1.1.7","Q.1","Q.2","Q.3","Q.4","Q.5","Q.6","Q.7","Q.8"),
   'Beta' = c("B.1.351","B.1.351.2","B.1.351.3"),
   'Gamma' = c("P.1","P.1.1","P.1.2"),
   'Delta' = c("B.1.617.2",delta_ays),
@@ -44,7 +43,7 @@ WHO_list <<- list(
   'Lambda' = c("C.37","C.37.1"),
   'Mu' = c("B.1.621","B.1.621.1"),
   'Zeta' = c("P.2"),
-  'Omicron' = c("B.1.1.529","BA.1")
+  'Omicron' = c("B.1.1.529","BA.1","BA.2","BA.3")
 )
 
 WHO_VOC <<- c(
