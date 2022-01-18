@@ -72,30 +72,35 @@ get_DHS_county_data <- function(dynamodb_table){
 }
 
 get_GISAID_Metadata_data <- function(){
-  svc <- dynamodb()
-  projexp = "covv_accession_id,covv_collection_date,covv_lineage,covv_location,covv_subm_date,covv_subm_lab,pangolin_lineages_version"
-  data <- svc$scan("SC2-Dashboard-GISAID",ProjectionExpression=projexp)
-  gisaid_data <- list()
-  while(TRUE){
-    gisaid_data <- c(gisaid_data,data$Items)
-    if(is.null(data$LastEvaluatedKey$`GISAID-ID`$S)){
-      break
-    }
-    data <- svc$scan("SC2-Dashboard-GISAID",ExclusiveStartKey = data$LastEvaluatedKey,ProjectionExpression = projexp)
+  svc <- athena()
+  query <- "SELECT covv_accession_id,
+    covv_collection_date,
+    covv_lineage,
+    covv_location,
+    covv_subm_date,
+    covv_subm_lab,
+    pangolin_lineages_version 
+FROM \"covid-dashboard\".\"gisaid\" 
+WHERE covv_location LIKE 'North America / USA / Wisconsin%';"
+  query_exe <- svc$start_query_execution(QueryString = query)
+  Sys.sleep(5)
+  status <- svc$get_query_execution(query_exe)
+  state =  status$QueryExecution$Status$State
+  while(state == 'RUNNING' | state == 'QUEUED'){
+    Sys.sleep(5)
+    status <- svc$get_query_execution(query_exe)
+    state =  status$QueryExecution$Status$State
   }
-  
-  df <- data.frame(matrix(ncol=7))
-  colnames(df) <- c('GISAID_ID','DOC','Location','Lineage','PangoVersion','DOS','SubLAB')
-  for(i in gisaid_data){
-    lineage <- i$covv_lineage$S
-    location <- i$covv_location$S
-    doc <- i$covv_collection_date$S
-    dos <- i$covv_subm_date$S
-    id <- i$covv_accession_id$S
-    sublab <- i$covv_subm_lab$S
-    pangover <- i$pangolin_lineages_version$S
-    df[nrow(df)+1,] <- c(id,doc,location,lineage,pangover,dos,sublab)
+  if(state == 'SUCCEEDED'){
+    svc <- s3()
+    key = paste('query_results/',query_exe$QueryExecutionId,'.csv',sep='')
+    data <- svc$get_object(Bucket='sars-cov-2-dashboard',Key=key)
+    df <- read.csv(text=readBin(data$Body,character()))
+    colnames(df) <- c('GISAID_ID','DOC','Lineage','Location','DOS','SubLAB','PangoVersion')
+    df <- na.omit(df)
+    return(df)
   }
-  df <- na.omit(df)
-  return(df)
+  else{
+    return()
+  }
 }
