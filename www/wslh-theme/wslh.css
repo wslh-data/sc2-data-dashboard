@@ -21,7 +21,11 @@ body {
   color: var(--uw-body-font);
   font-size: 2rem;
 }
-
+.shiny-notification {
+             position:fixed;
+             bottom: calc(2%);
+             left: calc(10%);
+             }
 .row {
   padding-right: 15px;
   padding-left: 15px
