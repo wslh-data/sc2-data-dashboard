@@ -8,7 +8,7 @@ prepareLineagePropData <- function(data){
   sc2bylineage <- sc2bylineage[!(sc2bylineage$date=="2020"|sc2bylineage$date=="2021"),]
   sc2bylineage$date <- as.Date(sc2bylineage$date, format= "%Y-%m-%d")
   sc2bylineage <- within(sc2bylineage, {
-    weeks <- format(date, "%U-%Y")
+    weeks <- format(date, "%W-%Y")
     weeks <- factor(weeks, levels = unique(weeks))
     
     months <- format(date, "%B-%Y")

@@ -7,7 +7,7 @@ prepareTimeFrameData <- function(data){
   sc2byDate <- sc2byDate[!(sc2byDate$date=="2020"|sc2byDate$date=="2021"),]
   sc2byDate$date <- as.Date(sc2byDate$date, format= "%Y-%m-%d")
   sc2byDate <- within(sc2byDate, {
-    weeks <- format(date, "%U-%Y")
+    weeks <- format(date, "%W-%Y")
     weeks <- factor(weeks, levels = unique(weeks))
     
     months <- format(date, "%B-%Y")
