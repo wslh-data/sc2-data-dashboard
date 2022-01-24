@@ -38,6 +38,7 @@ RUN R -e "install.packages(c(\
   'paws',\
   'readr',\
   'highcharter',\
+  'lubridate',\
   'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
 
 RUN mkdir /app && mkdir /data
