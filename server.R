@@ -1,15 +1,12 @@
 
 function(input,output,session) { 
   ### Notifications
-  id <- NULL
-  
-  observe({
-    # If there's currently a notification, don't add another
-    if (!is.null(id))
-      return()
-    # Save the ID for removal later
-    id <<- showNotification(type="warning",paste("Please note the sudden changes in sequencing counts and variant numbers was due to a data transfer issue that was recently identified and corrected. We apologize for the inconvenience."), duration = 20)
-  })
+  #id <- NULL
+  #observe({
+  #  if (!is.null(id))
+  #    return()
+  #  id <<- showNotification(type="warning",paste("Please note the sudden changes in sequencing counts and variant numbers was due to a data transfer issue that was recently identified and corrected. We apologize for the inconvenience."), duration = 20)
+  #})
   
   ### Data update date
   output$update_time.c <- output$update_time.b <- output$update_time.a <- renderText({lastUpdate})
