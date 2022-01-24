@@ -9,6 +9,7 @@ library(shinyBS)
 library(stringr)
 library(paws)
 library(readr)
+library(lubridate)
 
 source("lib/cumulativeSequences.R")
 source("lib/plotVariantCurve.R")
