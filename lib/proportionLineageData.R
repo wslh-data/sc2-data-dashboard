@@ -1,5 +1,3 @@
-library(plotly)
-library(dplyr)
 
 prepareLineagePropData <- function(data){
   #### Sequence Lineage Top List

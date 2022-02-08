@@ -10,6 +10,8 @@ library(stringr)
 library(paws)
 library(readr)
 library(lubridate)
+library(viridis)
+library(usmap)
 
 source("lib/cumulativeSequences.R")
 source("lib/plotVariantCurve.R")
@@ -44,7 +46,7 @@ WHO_list <<- list(
   'Lambda' = c("C.37","C.37.1"),
   'Mu' = c("B.1.621","B.1.621.1"),
   'Zeta' = c("P.2"),
-  'Omicron' = c("B.1.1.529","BA.1","BA.2","BA.3")
+  'Omicron' = c("B.1.1.529","BA.1","BA.1.1","BA.2","BA.3")
 )
 
 WHO_VOC <<- c(

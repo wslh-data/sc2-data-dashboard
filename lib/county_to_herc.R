@@ -1,5 +1,4 @@
 
-
 hercRegions = list(
   "Northwest"=c("douglas","bayfield","ashland","burnett","washburn","sawyer","polk","barron","rusk",
                 "saint croix","dunn","chippewa","pierce","pepin","eau claire"),

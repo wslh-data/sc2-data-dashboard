@@ -1,7 +1,3 @@
-library(plotly)
-library(usmap)
-library(stringr)
-library(viridis)
 
 plotCountyMap <- function(gData,eData){
   # filter out everything but WI

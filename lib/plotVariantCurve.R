@@ -1,4 +1,3 @@
-library(plotly)
 
 #render a plot of the variants
 plotCumulativeVariants <- function(sc2Data,variant_list){

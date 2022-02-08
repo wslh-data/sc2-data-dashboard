@@ -1,4 +1,3 @@
-library(plotly)
 
 prepareTimeFrameData <- function(data){
   ### Sequence Frequencies by Timeframe

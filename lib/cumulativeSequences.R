@@ -1,4 +1,4 @@
-library(plotly)
+
 #render a plot of the cumulative total of sequences in GISAID
 cumulativeSequences <- function(sc2Data){
   # load SC2 data

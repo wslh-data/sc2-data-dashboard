@@ -1,6 +1,3 @@
-library(plotly)
-library(dplyr)
-library(viridis)
 
 ### Function to pre-analyze data to be subsetable by timescale and pango vs who
 prepareVariantPropData <- function(data){
