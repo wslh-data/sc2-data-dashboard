@@ -32,6 +32,7 @@ if (file.exists('.env-test')){
 ### Get Delta Lineage List
 lineage_df <- get_lineage_data()
 delta_ays <- lineage_df[grepl("AY",lineage_df$lineage),]
+omicron <- lineage_df[grepl("BA",lineage_df$lineage),]
 
 ### Set VOC/VOI List and WHO Lineages
 WHO_list <<- list(
@@ -46,7 +47,7 @@ WHO_list <<- list(
   'Lambda' = c("C.37","C.37.1"),
   'Mu' = c("B.1.621","B.1.621.1"),
   'Zeta' = c("P.2"),
-  'Omicron' = c("B.1.1.529","BA.1","BA.1.1","BA.2","BA.3")
+  'Omicron' = c("B.1.1.529",omicron)
 )
 
 WHO_VOC <<- c(

@@ -22,11 +22,11 @@ voctext <- HTML('<h3>Cumulative number of variants sequences identified over tim
       <li><a href="https://outbreak.info/situation-reports/delta">More Information</a></li>
     </ul>
   </li>
-  <li><b>B.1.1.529/BA.1 (Omicron)</b>:
+  <li><b>B.1.1.529 (Omicron)</b>:
     <ul>
       <li>Alias: 21K</li>
       <li>First Identified: South Africa</li>
-      <li>Sublineages: BA.1,BA.2,BA.3</li>
+      <li>Sublineages: All BA sublineages</li>
       <li><a href="https://outbreak.info/situation-reports/omicron">More Information</a></li>
     </ul>
   </li>
