@@ -14,14 +14,13 @@ LABEL maintainer.email="kelsey.florek@slh.wisc.edu"
 # prevents having to enter commands during apt-get install
 ENV DEBIAN_FRONTEND=noninteractive
 
-COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
-
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
   build-essential \
   libpoppler-cpp-dev \
   pkg-config \
   python-dev \
-  libjpeg-dev
+  libjpeg-dev \
+  libpng-dev
 
 # install R packages
 RUN R -e "install.packages(c(\
@@ -30,25 +29,30 @@ RUN R -e "install.packages(c(\
   'usmap',\
   'stringr',\
   'dplyr',\
-  'shinydashboard',\
-  'shinyWidgets',\
-  'shinyBS',\
   'viridis',\
   'pdftools',\
-  'paws',\
   'readr',\
-  'highcharter',\
   'lubridate',\
-  'shinycssloaders'), repos = 'http://cran.us.r-project.org')"
+  'shinycssloaders',\
+  'paws',\
+  'noctua',\
+  'RAthena'), repos = 'http://cran.us.r-project.org')"
 
-RUN mkdir /app && mkdir /data
+RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -O "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install && rm awscliv2.zip
+
+ENV CONDA_DIR /home/shiny/conda
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && /bin/bash ~/miniconda.sh -b -p $CONDA_DIR
+ENV PATH=$CONDA_DIR/bin:$PATH
+RUN conda init && pip install boto3
+
+RUN rm -r /srv/shiny-server/*
 
 # copy app into container
-COPY *.R /app/
-COPY lib/ /app/lib/
-COPY www/ /app/www/
-COPY geojsons/ /app/geojsons/
+COPY .Rprofile /home/shiny/.Rprofile
+COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
+COPY seqTime /srv/shiny-server/seqTime
+COPY seqTotal /srv/shiny-server/seqTotal
+COPY geojsons /srv/shiny-server/assets/geojsons
 
 EXPOSE 3838
 
-CMD ["R", "-e", "shiny::runApp('/app',port=3838,host='0.0.0.0')"]
