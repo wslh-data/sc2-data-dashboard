@@ -20,23 +20,24 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
   pkg-config \
   python-dev \
   libjpeg-dev \
-  libpng-dev
+  libpng-dev \
+  libssl-dev \
+  libcurl4-openssl-dev \
+  libgdal-dev \
+  libudunits2-dev
 
 # install R packages
 RUN R -e "install.packages(c(\
-  'plotly',\
-  'rjson',\
-  'usmap',\
-  'stringr',\
-  'dplyr',\
-  'viridis',\
-  'pdftools',\
-  'readr',\
-  'lubridate',\
-  'shinycssloaders',\
-  'paws',\
-  'noctua',\
-  'RAthena'), repos = 'http://cran.us.r-project.org')"
+'shiny', \
+'shinycssloaders', \
+'plotly', \
+'leaflet', \
+'leaflet.minicharts', \
+'dplyr', \
+'rgdal', \
+'RAthena', \
+'lubridate', \
+), repos = 'http://cran.us.r-project.org')"
 
 RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -O "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install && rm awscliv2.zip
 
