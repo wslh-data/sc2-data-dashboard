@@ -5,20 +5,21 @@ library(shinycssloaders)
 library(plotly)
 library(RAthena)
 library(lubridate)
+library(dplyr)
 
 # starting variant selection regular expression
 var_expre <- "BA.5.*|BF.*|BE.*|BA.2.12|BA.4.*"
 selectionChoices <- NULL
 
-# athena connection
-athenaConnection <- dbConnect(athena(),
-                              s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
-                              work_group = 'prod-sc2dashboard',
-                              region_name='us-east-2')
-
 #data fetch and light processing function
 getData <- function(){
+  # athena connection
+  athenaConnection <- dbConnect(athena(),
+                                s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
+                                work_group = 'prod-sc2dashboard',
+                                region_name='us-east-2')
   data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  dbDisconnect(athenaConnection)
   data <- data[!(is.na(data$covv_lineage) | data$covv_lineage=="" | data$covv_lineage=="Unassigned"), ]
   data <- data %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
   data <- aggregate(data$total, by=list(week=data$week,lineage=data$covv_lineage),FUN=sum)
