@@ -12,8 +12,22 @@ library(dplyr)
 library(tidyr)
 
 # starting variant selection regular expression
-var_expre <- "BA.5.*|BF.*|BE.*|BA.2.12|BA.4.*"
-selectionChoices <- NULL
+var_expre <- list(
+  'BA.5' = "BA\\.5|BF.*|BE.*",
+  'BA.4' = "(?!BA.4.6)BA.4.*",
+  'BA.4.6' = "BA.4.6",
+  'BA.2.12.1' = "BA.2.12.1|BG.*"
+)
+
+
+lineageGrouping <- function(x){
+  for(i in names(var_expre)){
+    if(grepl(var_expre[[i]],x,perl=TRUE)){
+      return(i)
+    }
+  }
+  return("Other")
+}
 
 # data fetch and light processing function
 getData <- function(){
@@ -30,9 +44,8 @@ getData <- function(){
   data <- aggregate(data$total, by=list(week=data$week,lineage=data$covv_lineage,lat=data$lat,lng=data$long,county=data$county),FUN=sum)
   data <- data[order(data$week),]
   colnames(data) <- c('week','lineage','lat','lng','county','total')
-  selectionChoices <<- sort(unique(data$lineage))
-  selectionSelected <- selectionChoices[grep(var_expre,selectionChoices)]
-  updateSelectizeInput(getDefaultReactiveDomain(),"selectVariant",selected=selectionSelected,choices=selectionChoices,server=TRUE)
+  # group lineages
+  data$lineage <- sapply(data$lineage,FUN=lineageGrouping)
   return(data)
 }
 
@@ -53,15 +66,17 @@ ui <- fluidPage(
   ),
   fluidRow(
     tags$h4("Date Range:"),
-    dateRangeInput("dateRange", "",start=(Sys.Date()-51),end=(Sys.Date()-21))
-  ),
-  fluidRow(
-    tags$h4("Variant Selection:"),
-    actionButton("showAll","Select All",width='100px'),
-    actionButton("reset","Reset",width='100px')
-  ),
-  fluidRow(
-    selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='100%')
+    sliderInput(inputId = "dateRange",
+      label = '',
+      width = '100%',
+      min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
+      max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
+      step=7,
+      value = c(
+        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
+        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+      )
+    )
   )
 )
 
@@ -72,61 +87,34 @@ server <- function(input, output, session) {
     getData()
   }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
   
-  observeEvent(input$showAll, {
-    updateSelectizeInput(session,"selectVariant",selected=selectionChoices,choices=selectionChoices,server=TRUE)
-  })
-  
-  observeEvent(input$reset,{
-    selectionSelected <- selectionChoices[grep(var_expre,selectionChoices)]
-    updateSelectizeInput(session,"selectVariant",selected=selectionSelected,choices=selectionChoices,server=TRUE)
-  })
-  
   # Initialize map
   output$map <- renderLeaflet({
     data <- reactiveGetData()
-    # aggregate the data
-    data <- aggregate(data$total, by=list(lineage=data$lineage,lat=data$lat,lng=data$lng,county=data$county),FUN=sum)
-    colnames(data) <- c('lineage','lat','lng','county','total')
-    data <- data[order(data$county),]
-    chartData <- pivot_wider(data[,c('county','lat','lng','lineage','total')],names_from="lineage",values_from="total")
-    
-    basemap %>%
-      addMinicharts(
-        lng = chartData$lng, 
-        lat = chartData$lat,
-        layerId = chartData$county,
-        width = 35, height = 35
-      )
-  }) 
-
-  observe({
-    data <- reactiveGetData()
     # subset by selected date
     data <- data[data$week >= min(input$dateRange) & data$week <= max(input$dateRange),]
-    # subset by selected lineages
-    if(!is.null(input$selectVariant)){
-      data <- data[(data$lineage %in% input$selectVariant),]
-    } else {
-      selectionSelected <- selectionChoices[grep(var_expre,selectionChoices)]
-      data <- data[(data$lineage %in% selectionSelected),]
-    }
-    
     # aggregate the data
     data <- aggregate(data$total, by=list(lineage=data$lineage,lat=data$lat,lng=data$lng,county=data$county),FUN=sum)
     colnames(data) <- c('lineage','lat','lng','county','total')
-    data <- data[order(data$county),]
+    data <- data[order(data$lineage),]
     chartData <- pivot_wider(data[,c('county','lat','lng','lineage','total')],names_from="lineage",values_from="total")
-
+    # create count matrix
     chartDataM <- chartData[,-which(names(chartData) %in% c('county','lat','lng'))]
     chartDataM[is.na(chartDataM)] <- 0
     chartDataM <- mutate_all(chartDataM, function(x) as.numeric(as.character(x)))
     chartDataM <- data.matrix(chartDataM)
-
-    leafletProxy("map",session) %>%
-      updateMinicharts(
+    
+    basemap %>%
+      addMinicharts(
+        type="pie",
+        colorPalette = c("#c5050c","#218380","#fbb13c","#65afff","#CCCCCC"),
+        lng = chartData$lng, 
+        lat = chartData$lat,
         chartdata = chartDataM,
-        layerId = chartData$county
+        layerId = chartData$county,
+        width = 35, height = 35
       )
   })
+  
+  
 }
 shinyApp(ui, server)
