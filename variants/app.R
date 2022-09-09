@@ -6,30 +6,36 @@ library(plotly)
 library(RAthena)
 library(lubridate)
 library(dplyr)
+library(later)
 
 # starting variant selection regular expression
 var_expre <- "BA.5.*|BF.*|BE.*|BA.2.12|BA.4.*"
 selectionChoices <- NULL
+data <- NULL
 
 #data fetch and light processing function
 getData <- function(){
+  print('Fetching data from AWS')
+  print(Sys.time())
   # athena connection
   athenaConnection <- dbConnect(athena(),
                                 s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
                                 work_group = 'prod-sc2dashboard',
                                 region_name='us-east-2')
-  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
   dbDisconnect(athenaConnection)
-  data <- data[!(is.na(data$covv_lineage) | data$covv_lineage=="" | data$covv_lineage=="Unassigned"), ]
-  data <- data %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
-  data <- aggregate(data$total, by=list(week=data$week,lineage=data$covv_lineage),FUN=sum)
-  data <- data[order(data$week),]
-  colnames(data) <- c('week','lineage','total')
-  selectionChoices <<- sort(unique(data$lineage))
-  selectionSelected <- selectionChoices[grep(var_expre,selectionChoices)]
-  updateSelectizeInput(getDefaultReactiveDomain(),"selectVariant",selected=selectionSelected,choices=selectionChoices,server=TRUE)
-  return(data)
+  d <- d[!(is.na(d$covv_lineage) | d$covv_lineage=="" | d$covv_lineage=="Unassigned"), ]
+  d <- d %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
+  d <- aggregate(d$total, by=list(week=d$week,lineage=d$covv_lineage),FUN=sum)
+  d <- d[order(d$week),]
+  colnames(d) <- c('week','lineage','total')
+  selectionChoices <<- sort(unique(d$lineage))
+  data <<- d
 }
+
+# fetech data from AWS and schedule for update every 6 hours
+getData()
+later(getData,60*60*6)
 
 ui <- fluidPage(
   fluidRow(
@@ -44,8 +50,8 @@ ui <- fluidPage(
       max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
       step=7,
       value = c(
-       floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-       floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
+        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
       )
     )
   ),
@@ -76,13 +82,7 @@ server <- function(input, output, session) {
     updateSelectizeInput(session,"selectVariant",selected=selectionSelected,choices=selectionChoices,server=TRUE)
   })
   
-  reactiveGetData <- reactive({
-    getData()
-  }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
-  
   output$totalSeq <- renderPlotly({
-    data <- reactiveGetData()
-    
     # add bar for each selected lineage
     fig <- plot_ly()
     inc_lineages <- input$selectVariant
