@@ -5,19 +5,29 @@ library(shinycssloaders)
 library(plotly)
 library(RAthena)
 library(lubridate)
+library(later)
+
+data <- NULL
 
 #data fetch and light processing function
 getData <- function(){
+  print('Fetching data from AWS')
+  print(Sys.time())
   # athena connection
   athenaConnection <- dbConnect(athena(),
-                                s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
+                                s3_staging_dir = "s3://prod-wslh-public-d/sc2dashboard/",
                                 work_group = 'prod-sc2dashboard',
                                 region_name='us-east-2')
-  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
   dbDisconnect(athenaConnection)
-  data <- data[order(covv_collection_date),]
-  return(data)
+  d <- d[order(covv_collection_date),]
+  data <<- d
 }
+
+# fetech data from AWS and schedule for update every 6 hours
+getData()
+later(getData,60*60*6)
+
 
 ui <- fluidPage(
     fluidRow(
@@ -26,14 +36,8 @@ ui <- fluidPage(
 )
 
 server <- function(input, output) {
-  
-  reactiveGetData <- reactive({
-    getData()
-  }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
 
   output$totalSeq <- renderPlotly({
-    data <- reactiveGetData()
-    
     fig <- plot_ly()
     fig <- fig %>% add_trace(
       type = "scatter",

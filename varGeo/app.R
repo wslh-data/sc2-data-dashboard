@@ -10,6 +10,8 @@ library(rgdal)
 library(sf)
 library(dplyr)
 library(tidyr)
+library(later)
+
 
 # starting variant selection regular expression
 var_expre <- list(
@@ -29,31 +31,39 @@ lineageGrouping <- function(x){
   return("Other")
 }
 
+data <- NULL
+
 # data fetch and light processing function
 getData <- function(){
+  print('Fetching data from AWS')
+  print(Sys.time())
   # athena connection
   athenaConnection <- dbConnect(athena(),
-                                s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
+                                s3_staging_dir = "s3://prod-wslh-public-d/sc2dashboard/",
                                 work_group = 'prod-sc2dashboard',
                                 region_name='us-east-2')
-  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total,lat,long,county FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_county\"")
+  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total,lat,long,county FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_county\"")
   dbDisconnect(athenaConnection)
-  data <- data[!(is.na(data$covv_lineage) | data$covv_lineage=="" | data$covv_lineage=="Unassigned"), ]
-  data <- data[!(is.na(data$lat) | data$lat=="" | is.na(data$long) | data$long==""), ]
-  data <- data %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
-  data <- aggregate(data$total, by=list(week=data$week,lineage=data$covv_lineage,lat=data$lat,lng=data$long,county=data$county),FUN=sum)
-  data <- data[order(data$week),]
-  colnames(data) <- c('week','lineage','lat','lng','county','total')
+  d <- d[!(is.na(d$covv_lineage) | d$covv_lineage=="" | d$covv_lineage=="Unassigned"), ]
+  d <- d[!(is.na(d$lat) | d$lat=="" | is.na(d$long) | d$long==""), ]
+  d <- d %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
+  d <- aggregate(d$total, by=list(week=d$week,lineage=d$covv_lineage,lat=d$lat,lng=d$long,county=d$county),FUN=sum)
+  d <- d[order(d$week),]
+  colnames(d) <- c('week','lineage','lat','lng','county','total')
   # group lineages
-  data$lineage <- sapply(data$lineage,FUN=lineageGrouping)
-  return(data)
+  d$lineage <- sapply(d$lineage,FUN=lineageGrouping)
+  data <<- d
 }
+
+# fetech data from AWS and schedule for update every 6 hours
+getData()
+later(getData,60*60*6)
 
 # create basemap
 us_counties <- readOGR('https://wslhdatacloud.net/assets/geojsons/us-counties-fips.json')
 wi_counties <- us_counties[us_counties$STATE=='55',]
 bbox <- st_bbox(wi_counties) %>% as.vector()
-basemap <- leaflet(wi_counties, width = "100%", height = "650px", options = leafletOptions(zoomControl=FALSE,minZoom=7,maxZoom=7)) %>%
+basemap <- leaflet(wi_counties, width = "100%", height = "100%", options = leafletOptions(zoomControl=TRUE,minZoom=7,maxZoom=9)) %>%
   addProviderTiles(providers$CartoDB.Positron) %>%
   setView(lng=-89.9941,lat=44.6243,zoom=7) %>%
   fitBounds(bbox[1], bbox[2], bbox[3], bbox[4]) %>%
@@ -83,13 +93,9 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  reactiveGetData <- reactive({
-    getData()
-  }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
-  
   # Initialize map
   output$map <- renderLeaflet({
-    data <- reactiveGetData()
+
     # subset by selected date
     data <- data[data$week >= min(input$dateRange) & data$week <= max(input$dateRange),]
     # aggregate the data

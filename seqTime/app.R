@@ -5,18 +5,23 @@ library(shinycssloaders)
 library(plotly)
 library(RAthena)
 library(lubridate)
+library(later)
+
+databytime <- NULL
 
 #data fetch and light processing function
 getData <- function(){
+  print('Fetching data from AWS')
+  print(Sys.time())
   # athena connection
   athenaConnection <- dbConnect(athena(),
-                                s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
+                                s3_staging_dir = "s3://prod-wslh-public-d/sc2dashboard/",
                                 work_group = 'prod-sc2dashboard',
                                 region_name='us-east-2')
-  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
   dbDisconnect(athenaConnection)
-  data <- data[order(covv_collection_date),]
-  data <- within(data, {
+  d <- d[order(covv_collection_date),]
+  d <- within(d, {
     weeks <- paste(epiweek(covv_collection_date),epiyear(covv_collection_date),sep='-')
     weeks <- factor(weeks, levels = unique(weeks))
     
@@ -26,18 +31,22 @@ getData <- function(){
     quarters <- paste(quarters(covv_collection_date), format(covv_collection_date, "%Y"), sep = "-")
     quarters <- factor(quarters, levels = unique(quarters))
   })
-  data <- data[!is.na(data$covv_collection_date),]
-  data <- droplevels(data)
+  d <- d[!is.na(d$covv_collection_date),]
+  d <- droplevels(d)
   
-  weekly <- data %>% group_by(weeks) %>% summarise(total = sum(total))
+  weekly <- d %>% group_by(weeks) %>% summarise(total = sum(total))
   names(weekly) <- c("covv_collection_date","total")
-  monthly <- data %>% group_by(months) %>% summarise(total = sum(total))
+  monthly <- d %>% group_by(months) %>% summarise(total = sum(total))
   names(monthly) <- c("covv_collection_date","total")
-  quarterly <- data %>% group_by(quarters) %>% summarise(total = sum(total))
+  quarterly <- d %>% group_by(quarters) %>% summarise(total = sum(total))
   names(quarterly) <- c("covv_collection_date","total")
   
-  return(list("Weekly"=weekly,"Monthly"=monthly,"Quarterly"=quarterly))
+  databytime <<- list("Weekly"=weekly,"Monthly"=monthly,"Quarterly"=quarterly)
 }
+
+# fetech data from AWS and schedule for update every 6 hours
+getData()
+later(getData,60*60*6)
 
 # interaction components
 ui <- fluidPage(
@@ -51,14 +60,9 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
-  # cache the data processing by day
-  reactiveGetData <- reactive({
-    getData()
-  }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
-  
+
   output$plot <- renderPlotly({
-    databytime <- reactiveGetData()
-    
+
     fig <- plot_ly()
     # total number
     fig <- fig %>% add_trace(
