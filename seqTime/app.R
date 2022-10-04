@@ -5,7 +5,6 @@ library(shinycssloaders)
 library(plotly)
 library(RAthena)
 library(lubridate)
-library(later)
 
 databytime <- NULL
 
@@ -44,10 +43,6 @@ getData <- function(){
   databytime <<- list("Weekly"=weekly,"Monthly"=monthly,"Quarterly"=quarterly)
 }
 
-# fetech data from AWS and schedule for update every 6 hours
-getData()
-later(getData,60*60*6)
-
 # interaction components
 ui <- fluidPage(
     fluidRow(
@@ -60,8 +55,14 @@ ui <- fluidPage(
 
 
 server <- function(input, output) {
+  
+  reactiveGetData <- reactive({
+    getData()
+  }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
 
   output$plot <- renderPlotly({
+    
+    data <- reactiveGetData()
 
     fig <- plot_ly()
     # total number

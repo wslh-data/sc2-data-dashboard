@@ -6,17 +6,17 @@ library(plotly)
 library(RAthena)
 library(lubridate)
 library(dplyr)
-library(later)
 
 # starting variant selection regular expression
-var_expre <- "BA.5.*|BF.*|BE.*|BA.2.12|BA.4.*"
 selectionChoices <- NULL
 data <- NULL
+updateTS <- NULL
 
 #data fetch and light processing function
 getData <- function(){
   print('Fetching data from AWS')
   print(Sys.time())
+  updateTS <<- Sys.time()
   # athena connection
   athenaConnection <- dbConnect(athena(),
                                 s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
@@ -32,10 +32,6 @@ getData <- function(){
   selectionChoices <<- sort(unique(d$lineage))
   data <<- d
 }
-
-# fetech data from AWS and schedule for update every 6 hours
-getData()
-later(getData,60*60*6)
 
 ui <- fluidPage(
   fluidRow(
@@ -56,33 +52,35 @@ ui <- fluidPage(
     )
   ),
   fluidRow(
-    tags$h4("Variant Selection:"),
-    actionButton("showAll","Select All",width='100px'),
-    actionButton("reset","Reset",width='100px')
+    tags$h4("Variant Selection:")
   ),
   fluidRow(
     selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='100%')
+  ),
+  fluidRow(
+    textOutput("updateTime")
   )
 )
 
 
 server <- function(input, output, session) {
   
+  reactiveGetData <- reactive({
+    getData()
+  }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
+  
+  output$updateTime <- renderText({
+    data <- reactiveGetData()
+    paste("Last Update: ", as.character(updateTS), ", Latest Available Data Point: ", as.character(max(data$week)), sep="")
+  })
+  
   observe({
-    selectionSelected <- selectionChoices[grep(var_expre,selectionChoices)]
-    updateSelectizeInput(session,"selectVariant",selected=selectionSelected,choices=selectionChoices,server=TRUE)
-  })
-  
-  observeEvent(input$showAll, {
-    updateSelectizeInput(session,"selectVariant",selected=selectionChoices,choices=selectionChoices,server=TRUE)
-  })
-  
-  observeEvent(input$reset,{
-    selectionSelected <- selectionChoices[grep(var_expre,selectionChoices)]
-    updateSelectizeInput(session,"selectVariant",selected=selectionSelected,choices=selectionChoices,server=TRUE)
+    data <- reactiveGetData()
+    updateSelectizeInput(session,"selectVariant",choices=selectionChoices,server=TRUE)
   })
   
   output$totalSeq <- renderPlotly({
+    data <- reactiveGetData()
     # add bar for each selected lineage
     fig <- plot_ly()
     inc_lineages <- input$selectVariant

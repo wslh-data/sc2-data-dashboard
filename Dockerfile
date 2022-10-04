@@ -34,6 +34,7 @@ RUN R -e "install.packages(c(\
 'leaflet', \
 'leaflet.minicharts', \
 'dplyr', \
+'tidyr', \
 'rgdal', \
 'sf', \
 'RAthena', \
@@ -55,7 +56,7 @@ COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 COPY seqTime /srv/shiny-server/seqTime
 COPY seqTotal /srv/shiny-server/seqTotal
 COPY varGeo /srv/shiny-server/varGeo
-COPY variants /srv/shiny-server/variants
+COPY variantSearch /srv/shiny-server/variantSearch
 COPY geojsons /srv/shiny-server/assets/geojsons
 
 EXPOSE 3838
