@@ -1,15 +1,15 @@
 #varGeo
-
 library(shiny)
 library(shinycssloaders)
 library(leaflet)
 library(leaflet.minicharts)
 library(RAthena)
 library(lubridate)
-library(rgdal)
 library(sf)
 library(dplyr)
 library(tidyr)
+library(geojsonio)
+library(htmltools)
 
 # starting variant selection regular expression
 var_expre <- list(
@@ -49,16 +49,16 @@ getData <- function(){
   return(data)
 }
 
-# create basemap
-us_counties <- readOGR('https://wslhdatacloud.net/assets/geojsons/us-counties-fips.json')
+# create map
+us_counties <- geojson_read('https://data.slhcddcloud.org/assets/geojsons/us-counties-fips.json',what="sp")
 wi_counties <- us_counties[us_counties$STATE=='55',]
+wi_counties <- wi_counties[order(wi_counties$NAME),]
 bbox <- st_bbox(wi_counties) %>% as.vector()
-basemap <- leaflet(wi_counties, width = "100%", height = "650px", options = leafletOptions(zoomControl=TRUE,minZoom=7,maxZoom=7)) %>%
+map <- leaflet(wi_counties, width = "100%", height = "650px", options = leafletOptions(zoomControl=TRUE,minZoom=6,maxZoom=9)) %>%
   addProviderTiles(providers$CartoDB.Positron) %>%
   setView(lng=-89.9941,lat=44.6243,zoom=7) %>%
   fitBounds(bbox[1], bbox[2], bbox[3], bbox[4]) %>%
-  setMaxBounds(bbox[1], bbox[2], bbox[3], bbox[4]) %>%
-  addPolygons(stroke=TRUE,color='black',weight=1,smoothFactor = 0.3,fill=FALSE, fillOpacity = 0.2, fillColor = "#c5050c")
+  setMaxBounds(bbox[1] - 1, bbox[2] - 1, bbox[3] + 1, bbox[4] + 1)
 
 ui <- fluidPage(
   fluidRow(
@@ -90,20 +90,57 @@ server <- function(input, output, session) {
   # Initialize map
   output$map <- renderLeaflet({
     data <- reactiveGetData()
+    
     # subset by selected date
     data <- data[data$week >= min(input$dateRange) & data$week <= max(input$dateRange),]
+    
     # aggregate the data
     data <- aggregate(data$total, by=list(lineage=data$lineage,lat=data$lat,lng=data$lng,county=data$county),FUN=sum)
     colnames(data) <- c('lineage','lat','lng','county','total')
+    data$total <- as.numeric(data$total)
     data <- data[order(data$lineage),]
     chartData <- pivot_wider(data[,c('county','lat','lng','lineage','total')],names_from="lineage",values_from="total")
-    # create count matrix
+    
+    # create table for choropleth
+    chartDataC <- chartData[,'county']
+    chartDataC$total <- rowSums(chartData[,seq(4,ncol(chartData))],na.rm = TRUE)
+    chartDataC[is.na(chartDataC)] <- 0
+    wi_counties <- us_counties[us_counties$STATE=='55',]
+    wi_counties <- wi_counties[order(wi_counties$NAME),]
+    wi_counties@data <- merge(wi_counties@data,chartDataC,by.x="NAME",by.y="county",all.x=TRUE)
+
+
+    # create count matrix for pie chart
     chartDataM <- chartData[,-which(names(chartData) %in% c('county','lat','lng'))]
     chartDataM[is.na(chartDataM)] <- 0
-    chartDataM <- mutate_all(chartDataM, function(x) as.numeric(as.character(x)))
     chartDataM <- data.matrix(chartDataM)
     
-    basemap %>%
+    bins <- c(0,50,100,500,1000,5000,Inf)
+    pal <- colorBin(colorRampPalette(c("#f7f7f7","#c5050c"))(length(bins)),domain=wi_counties$total,bins=bins)
+    
+    mapLabels <- paste(
+      "County: ", wi_counties$NAME, "<br/>",
+      "Total Sequences: ", wi_counties$total, "<br/>"
+    ) %>%
+      lapply(htmltools::HTML)
+
+    map <- map %>% 
+      addPolygons(
+        data = wi_counties,
+        label = mapLabels,
+        stroke=TRUE,
+        color='black',
+        weight=1,
+        smoothFactor = 0.3,
+        fill=TRUE,
+        fillOpacity = 1,
+        fillColor = ~pal(total)
+      )
+    
+    map <- map %>% addLegend(pal = pal, values = wi_counties$total, opacity = 1, title = NULL,
+                    position = "bottomright")
+  
+    map %>%
       addMinicharts(
         type="pie",
         colorPalette = c("#c5050c","#218380","#fbb13c","#65afff","#CCCCCC"),

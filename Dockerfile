@@ -24,7 +24,14 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
   libssl-dev \
   libcurl4-openssl-dev \
   libgdal-dev \
-  libudunits2-dev
+  libudunits2-dev \
+  libjq-dev \
+  libprotobuf-dev \
+  protobuf-compiler \
+  libv8-dev \
+  libfontconfig1-dev \
+  libharfbuzz-dev \
+  libfribidi-dev
 
 # install R packages
 RUN R -e "install.packages(c(\
@@ -35,11 +42,11 @@ RUN R -e "install.packages(c(\
 'leaflet.minicharts', \
 'dplyr', \
 'tidyr', \
-'rgdal', \
+'geojsonio', \
 'sf', \
 'RAthena', \
 'lubridate', \
-'later' \
+'htmltools' \
 ), repos = 'http://cran.us.r-project.org')"
 
 RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -O "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install && rm awscliv2.zip
