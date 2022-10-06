@@ -7,8 +7,7 @@ library(RAthena)
 library(lubridate)
 library(dplyr)
 
-# starting variant selection regular expression
-selectionChoices <- NULL
+# starting data
 data <- NULL
 updateTS <- NULL
 
@@ -22,14 +21,13 @@ getData <- function(){
                                 s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
                                 work_group = 'prod-sc2dashboard',
                                 region_name='us-east-2')
-  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,variant,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_voc\"")
   dbDisconnect(athenaConnection)
-  d <- d[!(is.na(d$covv_lineage) | d$covv_lineage=="" | d$covv_lineage=="Unassigned"), ]
+  d <- d[!(is.na(d$variant) | d$variant=="" | d$variant=="Unassigned"), ]
   d <- d %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
-  d <- aggregate(d$total, by=list(week=d$week,lineage=d$covv_lineage),FUN=sum)
+  d <- aggregate(d$total, by=list(week=d$week,lineage=d$variant),FUN=sum)
   d <- d[order(d$week),]
   colnames(d) <- c('week','lineage','total')
-  selectionChoices <<- sort(unique(d$lineage))
   data <<- d
 }
 
@@ -52,12 +50,6 @@ ui <- fluidPage(
     )
   ),
   fluidRow(
-    tags$h4("Variant Selection:")
-  ),
-  fluidRow(
-    selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='100%')
-  ),
-  fluidRow(
     textOutput("updateTime")
   )
 )
@@ -74,16 +66,12 @@ server <- function(input, output, session) {
     paste("Last Update: ", as.character(updateTS), ", Latest Available Data Point: ", as.character(max(data$week)), sep="")
   })
   
-  observe({
-    data <- reactiveGetData()
-    updateSelectizeInput(session,"selectVariant",choices=selectionChoices,server=TRUE)
-  })
-  
   output$totalSeq <- renderPlotly({
     data <- reactiveGetData()
     # add bar for each selected lineage
     fig <- plot_ly()
-    inc_lineages <- input$selectVariant
+    inc_lineages <- unique(data$lineage)
+    inc_lineages <- inc_lineages[! inc_lineages == "Other"]
     pallet = colorRampPalette(c("#B0090F","#1F77B4"))(length(inc_lineages))
     counter = 1
     for(lineage in inc_lineages){
@@ -102,22 +90,18 @@ server <- function(input, output, session) {
     }
     
     # add bar for unselected lineages and label as other
-    plotOtherData <- data[!(data$lineage %in% inc_lineages),]
-    if(dim(plotOtherData)[1] != 0){
-      plotOtherData <- aggregate(plotOtherData$total,by=list(week=plotOtherData$week),FUN=sum)
-      colnames(plotOtherData) <- c('week','total')
-      # add other bars
-      fig <- fig %>% add_trace(
-        type = "bar",
-        x = plotOtherData$week,
-        y = plotOtherData$total,
-        name = "Other",
-        marker= list(color="#CCCCCC"),
-        hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
-        text = plotOtherData$total,
-        textposition = "none"
-      )
-    }
+    plotOtherData <- data[data$lineage == "Other",]
+    # add other bars
+    fig <- fig %>% add_trace(
+      type = "bar",
+      x = plotOtherData$week,
+      y = plotOtherData$total,
+      name = "Other",
+      marker= list(color="#CCCCCC"),
+      hovertemplate = "%{x} \n Lineage: %{data.name} \n Number of Sequences: %{text} \n Percent of Sequences: %{y:.2f}<extra></extra>",
+      text = plotOtherData$total,
+      textposition = "none"
+    )
     
     options(warn=-1)
     fig <- fig %>% layout(

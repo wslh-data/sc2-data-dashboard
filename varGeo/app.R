@@ -11,24 +11,6 @@ library(tidyr)
 library(geojsonio)
 library(htmltools)
 
-# starting variant selection regular expression
-var_expre <- list(
-  'BA.5' = "BA\\.5|BF.*|BE.*",
-  'BA.4' = "(?!BA.4.6)BA.4.*",
-  'BA.4.6' = "BA.4.6",
-  'BA.2.12.1' = "BA.2.12.1|BG.*"
-)
-
-
-lineageGrouping <- function(x){
-  for(i in names(var_expre)){
-    if(grepl(var_expre[[i]],x,perl=TRUE)){
-      return(i)
-    }
-  }
-  return("Other")
-}
-
 # data fetch and light processing function
 getData <- function(){
   # athena connection
@@ -36,16 +18,14 @@ getData <- function(){
                                 s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
                                 work_group = 'prod-sc2dashboard',
                                 region_name='us-east-2')
-  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total,lat,long,county FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_county\"")
+  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,variant,total,lat,long,county FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_county\"")
   dbDisconnect(athenaConnection)
-  data <- data[!(is.na(data$covv_lineage) | data$covv_lineage=="" | data$covv_lineage=="Unassigned"), ]
+  data <- data[!(is.na(data$variant) | data$variant=="" | data$variant=="Unassigned"), ]
   data <- data[!(is.na(data$lat) | data$lat=="" | is.na(data$long) | data$long==""), ]
   data <- data %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
-  data <- aggregate(data$total, by=list(week=data$week,lineage=data$covv_lineage,lat=data$lat,lng=data$long,county=data$county),FUN=sum)
+  data <- aggregate(data$total, by=list(week=data$week,lineage=data$variant,lat=data$lat,lng=data$long,county=data$county),FUN=sum)
   data <- data[order(data$week),]
   colnames(data) <- c('week','lineage','lat','lng','county','total')
-  # group lineages
-  data$lineage <- sapply(data$lineage,FUN=lineageGrouping)
   return(data)
 }
 
@@ -109,6 +89,8 @@ server <- function(input, output, session) {
     wi_counties <- wi_counties[order(wi_counties$NAME),]
     wi_counties@data <- merge(wi_counties@data,chartDataC,by.x="NAME",by.y="county",all.x=TRUE)
 
+    # number of VOCs
+    voc_count = length(unique(data$lineage))
 
     # create count matrix for pie chart
     chartDataM <- chartData[,-which(names(chartData) %in% c('county','lat','lng'))]
@@ -116,7 +98,7 @@ server <- function(input, output, session) {
     chartDataM <- data.matrix(chartDataM)
     
     bins <- c(0,50,100,500,1000,5000,Inf)
-    pal <- colorBin(colorRampPalette(c("#f7f7f7","#c5050c"))(length(bins)),domain=wi_counties$total,bins=bins)
+    pal <- colorBin(colorRampPalette(c("#f7f7f7","#428BCA"))(length(bins)),domain=wi_counties$total,bins=bins)
     
     mapLabels <- paste(
       "County: ", wi_counties$NAME, "<br/>",
@@ -137,18 +119,19 @@ server <- function(input, output, session) {
         fillColor = ~pal(total)
       )
     
-    map <- map %>% addLegend(pal = pal, values = wi_counties$total, opacity = 1, title = NULL,
+    map <- map %>% addLegend(pal = pal, values = wi_counties$total, opacity = 1, title = "Number of Sequences",
                     position = "bottomright")
   
     map %>%
       addMinicharts(
         type="pie",
-        colorPalette = c("#c5050c","#218380","#fbb13c","#65afff","#CCCCCC"),
+        colorPalette = c(hcl.colors(voc_count-1, "viridis"),"#CCCCCC"),
         lng = chartData$lng, 
         lat = chartData$lat,
         chartdata = chartDataM,
         layerId = chartData$county,
-        width = 35, height = 35
+        width = 35, 
+        height = 35
       )
   })
   
