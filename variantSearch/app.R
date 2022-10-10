@@ -11,6 +11,7 @@ library(dplyr)
 selectionChoices <- NULL
 data <- NULL
 updateTS <- NULL
+latestDataPoint <- NULL
 
 #data fetch and light processing function
 getData <- function(){
@@ -25,6 +26,7 @@ getData <- function(){
   d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
   dbDisconnect(athenaConnection)
   d <- d[!(is.na(d$covv_lineage) | d$covv_lineage=="" | d$covv_lineage=="Unassigned"), ]
+  latestDataPoint <<- as.character(max(d$covv_collection_date))
   d <- d %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
   d <- aggregate(d$total, by=list(week=d$week,lineage=d$covv_lineage),FUN=sum)
   d <- d[order(d$week),]
@@ -71,7 +73,7 @@ server <- function(input, output, session) {
   
   output$updateTime <- renderText({
     data <- reactiveGetData()
-    paste("Last Update: ", as.character(updateTS), ", Latest Available Data Point: ", as.character(max(data$week)), sep="")
+    paste("Last Update: ", as.character(updateTS), ", Latest Available Data Point: ", latestDataPoint, sep="")
   })
   
   observe({
