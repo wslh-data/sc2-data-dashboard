@@ -26,7 +26,9 @@ getData <- function(){
 
 ui <- fluidPage(
     fluidRow(
-      plotlyOutput(outputId = "totalSeq")%>% withSpinner(color="#c5050c")
+      column(width=12,
+        plotlyOutput(outputId = "totalSeq")%>% withSpinner(color="#c5050c")
+      )
     )
 )
 

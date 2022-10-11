@@ -9,14 +9,11 @@ library(dplyr)
 
 # starting data
 data <- NULL
-updateTS <- NULL
-latestDataPoint <- NULL
 
 #data fetch and light processing function
 getData <- function(){
   print('Fetching data from AWS')
   print(Sys.time())
-  updateTS <<- format(Sys.time(),"%Y-%m-%d")
   # athena connection
   athenaConnection <- dbConnect(athena(),
                                 s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
@@ -25,7 +22,6 @@ getData <- function(){
   d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,variant,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_voc\"")
   dbDisconnect(athenaConnection)
   d <- d[!(is.na(d$variant) | d$variant=="" | d$variant=="Unassigned"), ]
-  latestDataPoint <<- as.character(max(d$covv_collection_date))
   d <- d %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
   d <- aggregate(d$total, by=list(week=d$week,lineage=d$variant),FUN=sum)
   d <- d[order(d$week),]
@@ -35,24 +31,25 @@ getData <- function(){
 
 ui <- fluidPage(
   fluidRow(
-    plotlyOutput(outputId = "totalSeq")%>% withSpinner(color="#c5050c")
-  ),
-  fluidRow(
-    tags$h4("Date Range:"),
-    sliderInput(inputId = "dateRange",
-      label = '',
-      width = '100%',
-      min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
-      max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
-      step=7,
-      value = c(
-        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
-      )
+    column(width=12,
+      plotlyOutput(outputId = "totalSeq")%>% withSpinner(color="#c5050c")
     )
   ),
   fluidRow(
-    textOutput("updateTime")
+    column(width=12,
+      tags$h4("Date Range:"),
+      sliderInput(inputId = "dateRange",
+        label = '',
+        width = '100%',
+        min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
+        max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
+        step=7,
+        value = c(
+          floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
+          floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+        )
+      )
+    )
   )
 )
 
@@ -62,11 +59,6 @@ server <- function(input, output, session) {
   reactiveGetData <- reactive({
     getData()
   }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
-  
-  output$updateTime <- renderText({
-    data <- reactiveGetData()
-    paste("Last Update: ", as.character(updateTS), ", Latest Available Data Point: ", latestDataPoint, sep="")
-  })
   
   output$totalSeq <- renderPlotly({
     data <- reactiveGetData()

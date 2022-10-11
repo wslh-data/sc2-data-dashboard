@@ -42,20 +42,24 @@ map <- leaflet(wi_counties, width = "100%", height = "650px", options = leafletO
 
 ui <- fluidPage(
   fluidRow(
-    leafletOutput(outputId = "map",width="90%",height="600px")%>% withSpinner(color="#c5050c")
+    column(width=12,
+      leafletOutput(outputId = "map",width="90%",height="600px")%>% withSpinner(color="#c5050c")
+    )
   ),
   fluidRow(
-    tags$h4("Date Range:"),
-    sliderInput(inputId = "dateRange",
-                label = '',
-                width = '100%',
-                min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
-                max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
-                step=7,
-                value = c(
-                  floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-                  floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
-                )
+    column(width=12,
+      tags$h4("Date Range:"),
+      sliderInput(inputId = "dateRange",
+                  label = '',
+                  width = '100%',
+                  min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
+                  max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
+                  step=7,
+                  value = c(
+                    floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
+                    floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+                  )
+      )
     )
   )
 )

@@ -46,10 +46,14 @@ getData <- function(){
 # interaction components
 ui <- fluidPage(
     fluidRow(
-      plotlyOutput(outputId = "plot")%>% withSpinner(color="#c5050c")
+      column(width=12,
+        plotlyOutput(outputId = "plot")%>% withSpinner(color="#c5050c")
+      )
     ),
     fluidRow(
-      selectInput("timeselect", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Quarterly")
+      column(width=4,offset=4,
+        selectInput("timeselect", "Time Period:", choices = c("Weekly","Monthly","Quarterly"), selected = "Quarterly")
+      )
     )
 )
 
