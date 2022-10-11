@@ -40,27 +40,37 @@ ui <- fluidPage(
     plotlyOutput(outputId = "totalSeq")%>% withSpinner(color="#c5050c")
   ),
   fluidRow(
-    tags$h4("Date Range:"),
-    sliderInput(inputId = "dateRange",
-      label = '',
-      width = '100%',
-      min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
-      max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
-      step=7,
-      value = c(
-        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+    column(width=12,
+      tags$h4("Date Range:"),
+      sliderInput(inputId = "dateRange",
+        label = '',
+        width = '100%',
+        min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
+        max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
+        step=7,
+        value = c(
+          floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
+          floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+        )
       )
     )
   ),
   fluidRow(
-    tags$h4("Variant Selection:")
+    column(width=12,
+      tags$h4("Variant Selection:"),
+      actionButton("showAll","Select All",width='100px'),
+      actionButton("reset","Reset",width='100px')
+    )
   ),
   fluidRow(
-    selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='100%')
+    column(width=12,
+      selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='100%')
+    )
   ),
   fluidRow(
-    textOutput("updateTime")
+    column(width=12,
+      textOutput("updateTime")
+    )
   )
 )
 
@@ -79,6 +89,14 @@ server <- function(input, output, session) {
   observe({
     data <- reactiveGetData()
     updateSelectizeInput(session,"selectVariant",choices=selectionChoices,server=TRUE)
+  })
+  
+  observeEvent(input$showAll, {
+    updateSelectizeInput(session,"selectVariant",selected=selectionChoices,choices=selectionChoices,server=TRUE)
+  })
+  
+  observeEvent(input$reset,{
+    updateSelectizeInput(session,"selectVariant",selected=NULL,choices=selectionChoices,server=TRUE)
   })
   
   output$totalSeq <- renderPlotly({
