@@ -43,7 +43,7 @@ map <- leaflet(wi_counties, width = "100%", height = "650px", options = leafletO
 ui <- fluidPage(
   fluidRow(
     column(width=12,
-      leafletOutput(outputId = "map",width="90%",height="600px")%>% withSpinner(color="#c5050c")
+      leafletOutput(outputId = "map",width="100%",height="600px")%>% withSpinner(color="#c5050c")
     )
   ),
   fluidRow(
