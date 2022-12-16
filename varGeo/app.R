@@ -71,20 +71,20 @@ server <- function(input, output, session) {
     getData()
   }) %>% bindCache(format(Sys.time(),"%Y-%m-%d"))
   
+  # update slider date range
+  updateSliderInput(session, "dateRange", 
+    min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
+    max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
+    value = c(
+      floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
+      floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
+    )
+  )
+  
   # Initialize map
   output$map <- renderLeaflet({
     # get data
     data <- reactiveGetData()
-    
-    # update slider date range
-    updateSliderInput(session, "dateRange", 
-                      min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
-                      max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
-                      value = c(
-                        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-                        floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
-                      )
-    )
     
     # subset by selected date
     data <- data[data$week >= min(input$dateRange) & data$week <= max(input$dateRange),]
