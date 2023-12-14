@@ -23,6 +23,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
   libpng-dev \
   libssl-dev \
   libcurl4-openssl-dev \
+  libxml2-dev \
   libgdal-dev \
   libudunits2-dev \
   libjq-dev \
@@ -44,7 +45,8 @@ RUN R -e "install.packages(c(\
 'tidyr', \
 'geojsonio', \
 'sf', \
-'RAthena', \
+'paws', \
+'noctua', \
 'lubridate', \
 'htmltools' \
 ), repos = 'http://cran.us.r-project.org')"

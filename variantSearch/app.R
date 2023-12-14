@@ -3,7 +3,7 @@
 library(shiny)
 library(shinycssloaders)
 library(plotly)
-library(RAthena)
+library(noctua)
 library(lubridate)
 library(dplyr)
 
@@ -19,14 +19,25 @@ getData <- function(){
   print(Sys.time())
   updateTS <<- format(Sys.time(),"%Y-%m-%d")
   # athena connection
-  athenaConnection <- dbConnect(athena(),
-                                s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
-                                work_group = 'prod-sc2dashboard',
-                                region_name='us-east-2')
-  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,covv_lineage,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  pathena =  paws::athena()
+  
+  # get the named query
+  NamedQuery = pathena$get_named_query("a0147610-9f50-440c-b68e-16f347adda4e")
+  query = pathena$start_query_execution(
+    QueryString = NamedQuery$NamedQuery$QueryString,
+    WorkGroup = "sc2dashboard"
+  )
+  # setup athena connection
+  athenaConnection <- dbConnect(noctua::athena(), work_group = 'sc2dashboard')
+  
+  # query data
+  d <- dbGetQuery(athenaConnection, NamedQuery$NamedQuery$QueryString)
   dbDisconnect(athenaConnection)
+  
+  d$covv_collection_date <- as.Date(d$covv_collection_date)
+  
   d <- d[!(is.na(d$covv_lineage) | d$covv_lineage=="" | d$covv_lineage=="Unassigned"), ]
-  latestDataPoint <<- as.character(max(d$covv_collection_date))
+  latestDataPoint <<- as.character(max(d$covv_collection_date, na.rm = TRUE))
   d <- d %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
   d <- aggregate(d$total, by=list(week=d$week,lineage=d$covv_lineage),FUN=sum)
   d <- d[order(d$week),]

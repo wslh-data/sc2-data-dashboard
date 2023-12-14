@@ -3,7 +3,7 @@
 library(shiny)
 library(shinycssloaders)
 library(plotly)
-library(RAthena)
+library(noctua)
 library(lubridate)
 
 data <- NULL
@@ -13,12 +13,23 @@ getData <- function(){
   print('Fetching data from AWS')
   print(Sys.time())
   # athena connection
-  athenaConnection <- dbConnect(athena(),
-                                s3_staging_dir = "s3://prod-wslh-public-d/sc2dashboard/",
-                                work_group = 'prod-sc2dashboard',
-                                region_name='us-east-2')
-  d <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,total FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts\"")
+  pathena =  paws::athena()
+  
+  # get the named query
+  NamedQuery = pathena$get_named_query("a0147610-9f50-440c-b68e-16f347adda4e")
+  query = pathena$start_query_execution(
+    QueryString = NamedQuery$NamedQuery$QueryString,
+    WorkGroup = "sc2dashboard"
+  )
+  # setup athena connection
+  athenaConnection <- dbConnect(noctua::athena(), work_group = 'sc2dashboard')
+  
+  # query data
+  d <- dbGetQuery(athenaConnection, NamedQuery$NamedQuery$QueryString)
   dbDisconnect(athenaConnection)
+  
+  d$covv_collection_date <- as.Date(d$covv_collection_date)
+  
   d <- d[order(covv_collection_date),]
   data <<- d
 }

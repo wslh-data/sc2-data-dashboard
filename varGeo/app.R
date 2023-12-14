@@ -3,7 +3,7 @@ library(shiny)
 library(shinycssloaders)
 library(leaflet)
 library(leaflet.minicharts)
-library(RAthena)
+library(noctua)
 library(lubridate)
 library(sf)
 library(dplyr)
@@ -14,12 +14,23 @@ library(htmltools)
 # data fetch and light processing function
 getData <- function(){
   # athena connection
-  athenaConnection <- dbConnect(athena(),
-                                s3_staging_dir = "s3://prod-wslh-public-data/sc2dashboard/",
-                                work_group = 'prod-sc2dashboard',
-                                region_name='us-east-2')
-  data <- dbGetQuery(athenaConnection,"SELECT covv_collection_date,variant,total,lat,long,county FROM \"sc2dataportal\".\"prod_gisaid_sars_cov_2_variant_counts_county\"")
+  pathena =  paws::athena()
+  
+  # get the named query
+  NamedQuery = pathena$get_named_query("214540e5-dcb7-42ea-96c2-dc6cddeec53c")
+  query = pathena$start_query_execution(
+    QueryString = NamedQuery$NamedQuery$QueryString,
+    WorkGroup = "sc2dashboard"
+  )
+  # setup athena connection
+  athenaConnection <- dbConnect(noctua::athena(), work_group = 'sc2dashboard')
+  
+  # query data
+  data <- dbGetQuery(athenaConnection, NamedQuery$NamedQuery$QueryString)
   dbDisconnect(athenaConnection)
+  
+  data$covv_collection_date <- as.Date(data$covv_collection_date)
+  
   data <- data[!(is.na(data$variant) | data$variant=="" | data$variant=="Unassigned"), ]
   data <- data[!(is.na(data$lat) | data$lat=="" | is.na(data$long) | data$long==""), ]
   data <- data %>% mutate(week = floor_date(covv_collection_date, unit = 'week', week_start = 1))
@@ -106,6 +117,13 @@ server <- function(input, output, session) {
 
     # number of VOCs
     voc_count = length(unique(data$lineage))
+    
+    # order factor levels with Other last
+    vocs = as.character(unique(data$lineage))
+    vocs = vocs[!vocs == "Other"]
+    
+    # order the columns in the data frame so other is last
+    chartData <- chartData[,c("county","lat","lng",vocs,"Other")]
 
     # create count matrix for pie chart
     chartDataM <- chartData[,-which(names(chartData) %in% c('county','lat','lng'))]
@@ -140,7 +158,7 @@ server <- function(input, output, session) {
     map %>%
       addMinicharts(
         type="pie",
-        colorPalette = c(hcl.colors(voc_count-1, "viridis"),"#CCCCCC"),
+        colorPalette = voc_pallet <- c(hcl.colors(voc_count-1, "viridis"),"#CCCCCC"),
         lng = chartData$lng, 
         lat = chartData$lat,
         chartdata = chartDataM,
