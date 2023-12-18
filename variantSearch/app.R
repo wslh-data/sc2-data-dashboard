@@ -1,4 +1,4 @@
-#variants
+#variant search
 
 library(shiny)
 library(shinycssloaders)
@@ -6,12 +6,15 @@ library(plotly)
 library(noctua)
 library(lubridate)
 library(dplyr)
+library(paws)
 
 # starting variant selection regular expression
 selectionChoices <- NULL
 data <- NULL
 updateTS <- NULL
 latestDataPoint <- NULL
+
+AthenaQueryName <- "sc2_variants_all"
 
 #data fetch and light processing function
 getData <- function(){
@@ -22,16 +25,17 @@ getData <- function(){
   pathena =  paws::athena()
   
   # get the named query
-  NamedQuery = pathena$get_named_query("a0147610-9f50-440c-b68e-16f347adda4e")
-  query = pathena$start_query_execution(
-    QueryString = NamedQuery$NamedQuery$QueryString,
-    WorkGroup = "sc2dashboard"
-  )
+  NamedQueries = lapply(pathena$list_named_queries(WorkGroup = "sc2dashboard")$NamedQueryIds,pathena$get_named_query)
+  for (NamedQuery in NamedQueries) {
+    if (NamedQuery$NamedQuery$Name == AthenaQueryName)
+      query = NamedQuery$NamedQuery$QueryString
+  }
+
   # setup athena connection
   athenaConnection <- dbConnect(noctua::athena(), work_group = 'sc2dashboard')
   
   # query data
-  d <- dbGetQuery(athenaConnection, NamedQuery$NamedQuery$QueryString)
+  d <- dbGetQuery(athenaConnection, query)
   dbDisconnect(athenaConnection)
   
   d$covv_collection_date <- as.Date(d$covv_collection_date)

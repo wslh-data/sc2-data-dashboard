@@ -11,22 +11,25 @@ library(tidyr)
 library(geojsonio)
 library(htmltools)
 
+AthenaQueryName <- "sc2_voc_bygeography"
+
 # data fetch and light processing function
 getData <- function(){
   # athena connection
   pathena =  paws::athena()
   
   # get the named query
-  NamedQuery = pathena$get_named_query("214540e5-dcb7-42ea-96c2-dc6cddeec53c")
-  query = pathena$start_query_execution(
-    QueryString = NamedQuery$NamedQuery$QueryString,
-    WorkGroup = "sc2dashboard"
-  )
+  NamedQueries = lapply(pathena$list_named_queries(WorkGroup = "sc2dashboard")$NamedQueryIds,pathena$get_named_query)
+  for (NamedQuery in NamedQueries) {
+    if (NamedQuery$NamedQuery$Name == AthenaQueryName)
+      query = NamedQuery$NamedQuery$QueryString
+  }
+  
   # setup athena connection
   athenaConnection <- dbConnect(noctua::athena(), work_group = 'sc2dashboard')
   
   # query data
-  data <- dbGetQuery(athenaConnection, NamedQuery$NamedQuery$QueryString)
+  data <- dbGetQuery(athenaConnection, query)
   dbDisconnect(athenaConnection)
   
   data$covv_collection_date <- as.Date(data$covv_collection_date)
@@ -41,7 +44,7 @@ getData <- function(){
 }
 
 # create map
-us_counties <- geojson_read('https://data.slhcddcloud.org/assets/geojsons/us-counties-fips.json',what="sp")
+us_counties <- geojson_read('https://raw.githubusercontent.com/wslh-data/sc2-data-dashboard/main/geojsons/us-counties-fips.json',what="sp")
 wi_counties <- us_counties[us_counties$STATE=='55',]
 wi_counties <- wi_counties[order(wi_counties$NAME),]
 bbox <- st_bbox(wi_counties) %>% as.vector()

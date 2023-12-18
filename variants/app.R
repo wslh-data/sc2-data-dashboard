@@ -11,6 +11,8 @@ library(dplyr)
 # starting data
 data <- NULL
 
+AthenaQueryName <- "sc2_voc_bydate"
+
 #data fetch and light processing function
 getData <- function(){
   print('Fetching data from AWS')
@@ -20,16 +22,17 @@ getData <- function(){
   pathena =  paws::athena()
   
   # get the named query
-  NamedQuery = pathena$get_named_query("0be277ac-e21a-4a09-9a97-ee55ea707740")
-  query = pathena$start_query_execution(
-    QueryString = NamedQuery$NamedQuery$QueryString,
-    WorkGroup = "sc2dashboard"
-  )
+  NamedQueries = lapply(pathena$list_named_queries(WorkGroup = "sc2dashboard")$NamedQueryIds,pathena$get_named_query)
+  for (NamedQuery in NamedQueries) {
+    if (NamedQuery$NamedQuery$Name == AthenaQueryName)
+      query = NamedQuery$NamedQuery$QueryString
+  }
+  
   # setup athena connection
   athenaConnection <- dbConnect(noctua::athena(), work_group = 'sc2dashboard')
   
   # query data
-  d <- dbGetQuery(athenaConnection, NamedQuery$NamedQuery$QueryString)
+  d <- dbGetQuery(athenaConnection, query)
   dbDisconnect(athenaConnection)
   
   d$covv_collection_date <- as.Date(d$covv_collection_date)
