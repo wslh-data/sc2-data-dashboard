@@ -48,7 +48,8 @@ RUN R -e "install.packages(c(\
 'paws', \
 'noctua', \
 'lubridate', \
-'htmltools' \
+'htmltools', \
+'bit64' \
 ), repos = 'http://cran.us.r-project.org')"
 
 RUN wget "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -O "awscliv2.zip" && unzip awscliv2.zip && sudo ./aws/install && rm awscliv2.zip
@@ -64,10 +65,8 @@ RUN rm -r /srv/shiny-server/*
 COPY shiny-server.conf /etc/shiny-server/shiny-server.conf
 COPY seqTime /srv/shiny-server/seqTime
 COPY seqTotal /srv/shiny-server/seqTotal
-COPY varGeo /srv/shiny-server/varGeo
 COPY variants /srv/shiny-server/variants
 COPY variantSearch /srv/shiny-server/variantSearch
-COPY geojsons /srv/shiny-server/assets/geojsons
 
 EXPOSE 3838
 
