@@ -7,9 +7,19 @@ library(noctua)
 library(paws)
 library(lubridate)
 library(dplyr)
+library(bit64)
 
 # starting data
 data <- NULL
+
+#Set the Min date to 2020
+minDatasetDate <- as.Date('2020-01-01',"%Y-%m-%d")
+#Set the Max date to today (will change later when dataset is loaded)
+maxDatasetDate <- as.Date(format(Sys.Date(),"%Y-%m-%d"))
+
+#Set the default selection start date to 6 months ago and selection end date as 2 weeks ago (will change when dataset is loaded)
+defaultSelectStart <- floor_date(seq(maxDatasetDate, length = 2, by = "-6 months")[2], unit='week', week_start = 1)
+defaultSelectEnd <- floor_date(seq(maxDatasetDate, length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
 
 AthenaQueryName <- "sc2_voc_bydate"
 
@@ -43,8 +53,13 @@ getData <- function(){
   d <- aggregate(d$total, by=list(week=d$week,lineage=d$variant),FUN=sum)
   d <- d[order(d$week),]
   colnames(d) <- c('week','lineage','total')
+  minDatasetDate <<- min(d$week, na.rm = TRUE)
+  maxDatasetDate <<- max(d$week, na.rm = TRUE)
+  defaultSelectStart <<- floor_date(seq(maxDatasetDate, length = 2, by = "-6 months")[2], unit='week', week_start = 1)
+  defaultSelectEnd <<- floor_date(maxDatasetDate, unit='week', week_start = 1)
   data <<- d
 }
+getData()
 
 ui <- fluidPage(
   fluidRow(
@@ -59,12 +74,9 @@ ui <- fluidPage(
         label = '',
         width = '100%',
         min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
-        max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
+        max = floor_date(maxDatasetDate, unit='week', week_start = 1),
         step=7,
-        value = c(
-          floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-          floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
-        )
+        value = c(defaultSelectStart, defaultSelectEnd)
       )
     )
   )
@@ -80,11 +92,8 @@ server <- function(input, output, session) {
   # update slider date range
   updateSliderInput(session, "dateRange", 
                     min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
-                    max = floor_date(as.Date(format(Sys.Date(),"%Y-%m-%d")), unit='week', week_start = 1),
-                    value = c(
-                      floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-6 months")[2], unit='week', week_start = 1),
-                      floor_date(seq(as.Date(format(Sys.Date(),"%Y-%m-%d")), length = 2, by = "-2 weeks")[2], unit='week', week_start = 1)
-                    )
+                    max = floor_date(maxDatasetDate, unit='week', week_start = 1),
+                    value = c(defaultSelectStart, defaultSelectEnd)
   )
   
   output$totalSeq <- renderPlotly({
@@ -140,7 +149,7 @@ server <- function(input, output, session) {
         autotick = FALSE,
         tickmode = "array",
         tickvals = data$week,
-        range = input$dateRange,
+        range = c(input$dateRange[1]-weeks(1), input$dateRange[2]+weeks(1)),
         tickformat = "%Y-%m-%d",
         tickangle=90
       ),
