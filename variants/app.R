@@ -72,7 +72,7 @@ ui <- fluidPage(
       tags$h4("Date Range:"),
       sliderInput(inputId = "dateRange",
         label = '',
-        width = '100%',
+        width = '90%',
         min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
         max = floor_date(maxDatasetDate, unit='week', week_start = 1),
         step=7,

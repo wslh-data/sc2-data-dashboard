@@ -71,7 +71,7 @@ ui <- fluidPage(
       tags$h4("Date Range:"),
       sliderInput(inputId = "dateRange",
         label = '',
-        width = '100%',
+        width = '90%',
         min = floor_date(as.Date('2020-01-01',"%Y-%m-%d"), unit='week', week_start = 1),
         max = floor_date(maxDatasetDate, unit='week', week_start = 1),
         step=7,
@@ -88,7 +88,7 @@ ui <- fluidPage(
   ),
   fluidRow(
     column(width=12,
-      selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='100%')
+      selectizeInput("selectVariant",label='',choices=NULL,multiple=TRUE,width='90%')
     )
   ),
   fluidRow(
